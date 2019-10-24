@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on 重案组之虎</title>
+    <link>https://ascii.run/tags/</link>
+    <description>Recent content in Tags on 重案组之虎</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Mon, 01 Oct 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://ascii.run/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>代码规范</title>
+      <link>https://ascii.run/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/</link>
+      <pubDate>Mon, 01 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://ascii.run/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>编程</title>
+      <link>https://ascii.run/tags/%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Mon, 01 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://ascii.run/tags/%E7%BC%96%E7%A8%8B/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

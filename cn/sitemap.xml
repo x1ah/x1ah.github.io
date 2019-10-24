@@ -3,66 +3,66 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://x1ah.github.io/cn/posts/unmain/</loc>
+    <loc>ascii.run/cn/posts/unmain/</loc>
     <lastmod>2018-10-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://x1ah.github.io/cn/posts/</loc>
+    <loc>ascii.run/cn/posts/</loc>
     <lastmod>2018-10-01T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://x1ah.github.io/cn/tags/</loc>
-    <lastmod>2018-10-01T00:00:00+00:00</lastmod>
-    <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://x1ah.github.io/en/tags/"
-                />
-    <xhtml:link
-                rel="alternate"
-                hreflang="cn"
-                href="https://x1ah.github.io/cn/tags/"
-                />
-  </url>
-  
-  <url>
-    <loc>https://x1ah.github.io/cn/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/</loc>
-    <lastmod>2018-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://x1ah.github.io/cn/tags/%E7%BC%96%E7%A8%8B/</loc>
-    <lastmod>2018-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://x1ah.github.io/cn/</loc>
+    <loc>ascii.run/cn/tags/</loc>
     <lastmod>2018-10-01T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://x1ah.github.io/en/"
+                href="ascii.run/en/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="cn"
-                href="https://x1ah.github.io/cn/"
+                href="ascii.run/cn/tags/"
                 />
   </url>
   
   <url>
-    <loc>https://x1ah.github.io/cn/categories/</loc>
+    <loc>ascii.run/cn/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/</loc>
+    <lastmod>2018-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>ascii.run/cn/tags/%E7%BC%96%E7%A8%8B/</loc>
+    <lastmod>2018-10-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>ascii.run/cn/</loc>
+    <lastmod>2018-10-01T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://x1ah.github.io/en/categories/"
+                href="ascii.run/en/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="cn"
-                href="https://x1ah.github.io/cn/categories/"
+                href="ascii.run/cn/"
+                />
+  </url>
+  
+  <url>
+    <loc>ascii.run/cn/categories/</loc>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="ascii.run/en/categories/"
+                />
+    <xhtml:link
+                rel="alternate"
+                hreflang="cn"
+                href="ascii.run/cn/categories/"
                 />
   </url>
   

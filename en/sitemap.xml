@@ -3,44 +3,44 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://x1ah.github.io/en/categories/</loc>
+    <loc>ascii.run/en/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="cn"
-                href="https://x1ah.github.io/cn/categories/"
+                href="ascii.run/cn/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://x1ah.github.io/en/categories/"
+                href="ascii.run/en/categories/"
                 />
   </url>
   
   <url>
-    <loc>https://x1ah.github.io/en/tags/</loc>
+    <loc>ascii.run/en/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="cn"
-                href="https://x1ah.github.io/cn/tags/"
+                href="ascii.run/cn/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://x1ah.github.io/en/tags/"
+                href="ascii.run/en/tags/"
                 />
   </url>
   
   <url>
-    <loc>https://x1ah.github.io/en/</loc>
+    <loc>ascii.run/en/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="cn"
-                href="https://x1ah.github.io/cn/"
+                href="ascii.run/cn/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://x1ah.github.io/en/"
+                href="ascii.run/en/"
                 />
   </url>
   
