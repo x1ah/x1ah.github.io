@@ -3,17 +3,32 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://ascii.run/posts/unmain/</loc>
-    <lastmod>2018-10-01T00:00:00+00:00</lastmod>
+    <loc>https://ascii.run/posts/</loc>
+    <lastmod>2019-11-08T10:31:23+08:00</lastmod>
   </url>
   
   <url>
-    <loc>https://ascii.run/posts/</loc>
-    <lastmod>2018-10-01T00:00:00+00:00</lastmod>
+    <loc>https://ascii.run/tags/rss/</loc>
+    <lastmod>2019-11-08T10:31:23+08:00</lastmod>
   </url>
   
   <url>
     <loc>https://ascii.run/tags/</loc>
+    <lastmod>2019-11-08T10:31:23+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ascii.run/posts/rss-rec/</loc>
+    <lastmod>2019-11-08T10:31:23+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ascii.run/</loc>
+    <lastmod>2019-11-08T10:31:23+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ascii.run/posts/unmain/</loc>
     <lastmod>2018-10-01T00:00:00+00:00</lastmod>
   </url>
   
@@ -24,11 +39,6 @@
   
   <url>
     <loc>https://ascii.run/tags/%E7%BC%96%E7%A8%8B/</loc>
-    <lastmod>2018-10-01T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://ascii.run/</loc>
     <lastmod>2018-10-01T00:00:00+00:00</lastmod>
   </url>
   
