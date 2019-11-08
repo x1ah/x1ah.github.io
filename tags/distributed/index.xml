@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Distributed on 重案组之虎</title>
-    <link>https://ascii.run/tags/distributed/</link>
+    <link>https://when.run/tags/distributed/</link>
     <description>Recent content in Distributed on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Fri, 08 Nov 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://ascii.run/tags/distributed/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://when.run/tags/distributed/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>向量时钟(Vector Clock)</title>
-      <link>https://ascii.run/posts/vector-clock/</link>
+      <link>https://when.run/posts/vector-clock/</link>
       <pubDate>Fri, 08 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://ascii.run/posts/vector-clock/</guid>
+      <guid>https://when.run/posts/vector-clock/</guid>
       <description></description>
     </item>
     
