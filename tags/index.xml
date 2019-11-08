@@ -6,19 +6,10 @@
     <description>Recent content in Tags on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Fri, 08 Nov 2019 10:31:23 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 08 Nov 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://ascii.run/tags/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>RSS</title>
-      <link>https://ascii.run/tags/rss/</link>
-      <pubDate>Fri, 08 Nov 2019 10:31:23 +0800</pubDate>
-      
-      <guid>https://ascii.run/tags/rss/</guid>
-      <description></description>
-    </item>
     
     <item>
       <title>Distributed</title>
@@ -26,6 +17,15 @@
       <pubDate>Fri, 08 Nov 2019 00:00:00 +0000</pubDate>
       
       <guid>https://ascii.run/tags/distributed/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>RSS</title>
+      <link>https://ascii.run/tags/rss/</link>
+      <pubDate>Fri, 01 Nov 2019 10:31:23 +0800</pubDate>
+      
+      <guid>https://ascii.run/tags/rss/</guid>
       <description></description>
     </item>
     

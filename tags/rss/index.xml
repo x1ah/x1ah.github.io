@@ -6,7 +6,7 @@
     <description>Recent content in RSS on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Fri, 08 Nov 2019 10:31:23 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 01 Nov 2019 10:31:23 +0800</lastBuildDate>
     
 	<atom:link href="https://ascii.run/tags/rss/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>我订阅的 RSS 源</title>
       <link>https://ascii.run/posts/rss-rec/</link>
-      <pubDate>Fri, 08 Nov 2019 10:31:23 +0800</pubDate>
+      <pubDate>Fri, 01 Nov 2019 10:31:23 +0800</pubDate>
       
       <guid>https://ascii.run/posts/rss-rec/</guid>
       <description> 之前一直寻找好用的 RSS 订阅软件，起初试了 Reeder, 可是不能设置代理，同步速度让我捉急，后来发现 slack 有 RSS APP，因此转而使用 slack 订阅。slack 订阅很方便，免费的空间也够用。
