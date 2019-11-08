@@ -28,6 +28,16 @@
   </url>
   
   <url>
+    <loc>https://ascii.run/tags/distributed/</loc>
+    <lastmod>2019-11-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://ascii.run/posts/vector-clock/</loc>
+    <lastmod>2019-11-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://ascii.run/posts/unmain/</loc>
     <lastmod>2018-10-01T00:00:00+00:00</lastmod>
   </url>

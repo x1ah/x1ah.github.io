@@ -23,6 +23,15 @@
     </item>
     
     <item>
+      <title>向量时钟(Vector Clock)</title>
+      <link>https://ascii.run/posts/vector-clock/</link>
+      <pubDate>Fri, 08 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://ascii.run/posts/vector-clock/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>[转]如何编写无法维护的代码</title>
       <link>https://ascii.run/posts/unmain/</link>
       <pubDate>Mon, 01 Oct 2018 00:00:00 +0000</pubDate>
