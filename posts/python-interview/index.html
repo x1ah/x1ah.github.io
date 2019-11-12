@@ -10,7 +10,7 @@
  Python 语法  说说你平时 Python 都用哪些库
  == 和 is 区别。
  == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。  深拷贝和浅拷贝。
-# 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &#39;test&#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]  __init__ 和 __new__。"/>
+  # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &#39;test&#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。"/>
 <meta name="keywords" content="Python"/>
 <meta name="robots" content="noodp"/>
 <link rel="canonical" href="https://when.run/posts/python-interview/" />
@@ -35,7 +35,7 @@
  Python 语法  说说你平时 Python 都用哪些库
  == 和 is 区别。
  == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。  深拷贝和浅拷贝。
-# 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &#39;test&#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]  __init__ 和 __new__。" />
+  # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &#39;test&#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。" />
 <meta name="twitter:site" content="https://when.run" />
 <meta name="twitter:creator" content="x1ah" />
 <meta name="twitter:image" content="">
@@ -48,7 +48,7 @@
  Python 语法  说说你平时 Python 都用哪些库
  == 和 is 区别。
  == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。  深拷贝和浅拷贝。
-# 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &#39;test&#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]  __init__ 和 __new__。" />
+  # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &#39;test&#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。" />
 <meta property="og:url" content="https://when.run/posts/python-interview/" />
 <meta property="og:site_name" content="Python 面试题整理[实习]" />
 <meta property="og:image" content="">
@@ -176,7 +176,10 @@
 <li><code>==</code> 是比较两对象的值，<code>is</code> 是比较在内存中的地址(id)， <code>is</code> 相当于 <code>id(objx) == id(objy)</code>。</li>
 </ul></li>
 
-<li><p><em>深拷贝和浅拷贝。</em></p>
+<li><p><em>深拷贝和浅拷贝。</em></p></li>
+</ul>
+
+<hr />
 
 <pre><code class="language-python"># 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`
 # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷
@@ -200,8 +203,9 @@
 [1, 2, ['test', 4]]
 &gt;&gt;&gt; b
 [1, 2, [3, 4]]
-</code></pre></li>
+</code></pre>
 
+<ul>
 <li><p><code>__init__</code> 和 <code>__new__</code>。</p>
 
 <ul>
@@ -306,12 +310,15 @@
 <li><code>tup = (1,)</code></li>
 </ul></li>
 
-<li><p><em>函数默认参数是可变对象情况。</em></p>
+<li><p><em>函数默认参数是可变对象情况。</em></p></li>
+</ul>
+
+<hr />
 
 <pre><code class="language-python">&gt;&gt;&gt; def foo(a, b=[1, 2]):
-    print(b)
-    b.append(a)
-    print(b)
+        print(b)
+        b.append(a)
+        print(b)
 &gt;&gt;&gt; val = 4
 &gt;&gt;&gt; foo(val)
 # [1, 2]
@@ -322,8 +329,9 @@
 # 这里可以看到，第二次执行函数时，默认参数 b 的值已经变成 `[1, 2, 4]` 了，原因是，默认参数只在第
 # 一次执行时会进行初始化，后面就默认使用 **初始化后的这个对象(引用)**，但是这里 b 是可变对象，
 #添加了一个元素还是之前的对象，所以，引用没变，不过是值变了而已。
-</code></pre></li>
+</code></pre>
 
+<ul>
 <li><p><em>Flask 的 Route 是怎么实现的？</em> 你认为 Flask 框架有什么优缺点？</p>
 
 <ul>
@@ -372,7 +380,10 @@
 <h1 id="数据结构-算法">数据结构，算法</h1>
 
 <ul>
-<li><p>层次遍历二叉树用什么方法？</p>
+<li>层次遍历二叉树用什么方法？</li>
+</ul>
+
+<hr />
 
 <pre><code class="language-python"># coding: utf-8
 
@@ -380,31 +391,32 @@ from collections import deque
 
 
 class BNode:
-&quot;&quot;&quot; 二叉树节点 &quot;&quot;&quot;
+    &quot;&quot;&quot; 二叉树节点 &quot;&quot;&quot;
 
-def __init__(self, value, left=None, right=None):
-    self.value = value
-    self.left = left
-    self.right = right
+    def __init__(self, value, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
 
 
 def level_traverse(binary_tree):
-&quot;&quot;&quot; 层次遍历二叉树 &quot;&quot;&quot;
-stack = deque([binary_tree])
-while stack:
-    top = stack.popleft()
-    print(top.value)
-    if top.left:
-        stack.append(top.left)
-    if top.right:
-        stack.append(top.right)
+    &quot;&quot;&quot; 层次遍历二叉树 &quot;&quot;&quot;
+    stack = deque([binary_tree])
+    while stack:
+        top = stack.popleft()
+        print(top.value)
+        if top.left:
+            stack.append(top.left)
+        if top.right:
+            stack.append(top.right)
 
 
 if __name__ == &quot;__main__&quot;:
-b_tree = BNode(1, BNode(2, BNode(4, BNode(5, BNode(7)))), BNode(3, BNode(6, right=BNode(8))))
-level_traverse(b_tree)
-</code></pre></li>
+    b_tree = BNode(1, BNode(2, BNode(4, BNode(5, BNode(7)))), BNode(3, BNode(6, right=BNode(8))))
+    level_traverse(b_tree)
+</code></pre>
 
+<ul>
 <li><p>非平衡二叉数如何变成平衡二叉数？</p>
 
 <ul>
@@ -423,42 +435,46 @@ level_traverse(b_tree)
 <li><p>如何判断两个单链表是否相交于某个节点，包括 X 型，Y 型，V 型。</p>
 
 <ul>
-<li><p>X 型不可能存在，一个单链表节点不存在两个不同的后继。</p>
+<li>X 型不可能存在，一个单链表节点不存在两个不同的后继。</li>
+</ul></li>
+</ul>
+
+<hr />
 
 <pre><code class="language-python"># 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。
 # 反转单链表
 def reverse_single_link_lst(link_lst):
-if not link_lst:
-return link_lst
-pre = link_lst
-cur = link_lst.next
-pre.next = None
-while cur:
-tmp = cur.next
-cur.next = pre
-pre = cur
-cur = tmp
-return pre
+    if not link_lst:
+        return link_lst
+    pre = link_lst
+    cur = link_lst.next
+    pre.next = None
+    while cur:
+        tmp = cur.next
+        cur.next = pre
+        pre = cur
+        cur = tmp
+    return pre
 
 # 寻找交叉点
 def point(node_a, node_b):
-if node_a is None or node_b is None:
-return None
-next_a, next_b = node_a, node_b
-while next_a or next_b:
-if next_a.val == next_b.val:
-    if next_a.next and next_b.next and (next_a.next.val == next_b.next.val):
+    if node_a is None or node_b is None:
+        return None
+    next_a, next_b = node_a, node_b
+    while next_a or next_b:
+        if next_a.val == next_b.val:
+            if next_a.next and next_b.next and (next_a.next.val == next_b.next.val):
+                next_a, next_b = next_a.next, next_b.next
+                continue
+            return next_a.val
         next_a, next_b = next_a.next, next_b.next
-        continue
-    return next_a.val
-next_a, next_b = next_a.next, next_b.next
-return None
+    return None
 
 # 构造单链表
 class Node(object):
-def __init__(self, value, next=None):
-self.val = value
-self.next = next
+    def __init__(self, value, next=None):
+        self.val = value
+        self.next = next
 
 a = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
 b = ListNode(7, ListNode(9, ListNode(4, ListNode(5))))
@@ -468,9 +484,9 @@ rb = reverse_single_link_lst(b)
 point(ra, rb)
 # output:
 # 4
-</code></pre></li>
-</ul></li>
+</code></pre>
 
+<ul>
 <li><p>如何判断两个单链表是否是同一个链表。</p>
 
 <ul>
@@ -492,31 +508,35 @@ point(ra, rb)
 <li><p><em>说说你知道的排序算法以及其时间复杂度。</em>
 <img src="http://ww1.sinaimg.cn/large/005NaGmtly1fenoomcn03j30iz07874f.jpg" alt="" /></p></li>
 
-<li><p><em>手写快速排序。画画堆排序的原理及过程。</em></p>
+<li><p><em>手写快速排序。画画堆排序的原理及过程。</em></p></li>
+</ul>
+
+<hr />
 
 <pre><code class="language-python"># 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下
 def quick_sort(lst, start, stop):
-if start &lt; stop:
-    i, j, x = start, stop, lst[start]
-    while i &lt; j:
-        while (i &lt; j) and (lst[j] &gt; x):
-            j -= 1
-        if (i &lt; j):
-            lst[i] = lst[j]
-            i += 1
-        while (i &lt; j) and (lst[i] &lt; x):
-            i += 1
-        if (i &lt; j):
-            lst[j] = lst[i]
-            j -= 1
-    lst[i] = x
-    quick_sort(lst, start, i-1)
-    quick_sort(lst, i+1, stop)
-return lst
-</code></pre></li>
-</ul>
+    if start &lt; stop:
+        i, j, x = start, stop, lst[start]
+        while i &lt; j:
+            while (i &lt; j) and (lst[j] &gt; x):
+                j -= 1
+            if (i &lt; j):
+                lst[i] = lst[j]
+                i += 1
+            while (i &lt; j) and (lst[i] &lt; x):
+                i += 1
+            if (i &lt; j):
+                lst[j] = lst[i]
+                j -= 1
+        lst[i] = x
+        quick_sort(lst, start, i-1)
+        quick_sort(lst, i+1, stop)
+    return lst
+</code></pre>
 
 <p>之后面试官 <a href="https://github.com/akun">akun</a> 大哥给了个特别简洁的写法，三路复用，地址在 <a href="https://gist.github.com/akun/d90998068f4e1f3eb169">Gist</a></p>
+
+<hr />
 
 <pre><code class="language-python">def qsort(alist):
     &quot;&quot;&quot;
@@ -721,44 +741,46 @@ return lst
 <li>Python 中正则模块 <code>re</code> 里 <code>match</code> 函数 和 <code>search</code> 函数有什么区别？举例说明。</li>
 <li>一条语句求 0 - 999999 内能被 7 整除的所有数的和。</li>
 <li>实现一个链表结构，要求其插入第一个节点，删除最后一个节点的复杂度为 O(1)。</li>
+<li>实现一个 <code>retry</code> 装饰器，使用如下：</li>
+</ul>
 
-<li><p>实现一个 <code>retry</code> 装饰器，使用如下：</p>
+<hr />
 
 <pre><code class="language-python"># 可以指定重试次数，直到函数返回正确结果。
 @retry(retries=3)
 def func(*args, **kw):
-try:
-    # some action
-    return True
-except:
-    return False
+    try:
+        # some action
+        return True
+    except:
+        return False
 </code></pre>
 
 <p>大概可以像下面这样写，</p>
 
+<hr />
+
 <pre><code class="language-python">from functools import wraps
 
 def retry(retries=3):
-def timesf(func):
-    @wraps(func)
-    def wrap(*args, **kw):
-        i = 0
-        status = True
-        while status and i &lt; times:
-            status = func(*args, **kw)
-            i += 1
-        return status
-    return wrap
-return timesf
-</code></pre></li>
+    def timesf(func):
+        @wraps(func)
+        def wrap(*args, **kw):
+            i = 0
+            status = True
+            while status and i &lt; times:
+                status = func(*args, **kw)
+                i += 1
+            return status
+        return wrap
+    return timesf
+</code></pre>
 
-<li><p>有一个4G 的文本文件，存储的是酒店信息，每行存的是一个酒店ID，可以重复。请编写程序输出一个新文件，新文件内容为每行一条数据，每行的数据格式如下：<code>酒店ID + 出现次数</code>（最后提到了其他想法，如文件切片，bitmap 之类）</p></li>
-
-<li><p>实现一个函数，根据字典序比较两字符串大小，不允许用库函数，尽量越底层实现越好。（手写）</p></li>
-
-<li><p>实现一个函数，检验一个字符串是否符合 <code>xxxx-xx-xx</code> 这样的日期格式，注意润年，大小月，不允许用库函数，尽量越底层实现越好。（手写）</p></li>
-
-<li><p>我们是做地图相关工作的，现在给你提供一个三维的数据，数据描述的是不同时间一些地图上的一些地点坐标，分别有时间，x轴坐标，y轴坐标，请你设计一个算法，能够得到一天内地图上的 TOP 10 热点地区，地区大小也相应的自己作合适调整，开放性题目。</p></li>
+<ul>
+<li>有一个4G 的文本文件，存储的是酒店信息，每行存的是一个酒店ID，可以重复。请编写程序输出一个新文件，新文件内容为每行一条数据，每行的数据格式如下：<code>酒店ID + 出现次数</code>（最后提到了其他想法，如文件切片，bitmap 之类）</li>
+<li>实现一个函数，根据字典序比较两字符串大小，不允许用库函数，尽量越底层实现越好。（手写）</li>
+<li>实现一个函数，检验一个字符串是否符合 <code>xxxx-xx-xx</code> 这样的日期格式，注意润年，大小月，不允许用库函数，尽量越底层实现越好。（手写）</li>
+<li>我们是做地图相关工作的，现在给你提供一个三维的数据，数据描述的是不同时间一些地图上的一些地点坐标，分别有时间，x轴坐标，y轴坐标，请你设计一个算法，能够得到一天内地图上的 TOP 10 热点地区，地区大小也相应的自己作合适调整，开放性题目。</li>
 </ul>
 
 <h1 id="概率论">概率论</h1>
