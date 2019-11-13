@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on 重案组之虎</title>
-    <link>https://when.run/posts/</link>
+    <link>/posts/</link>
     <description>Recent content in Posts on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Tue, 12 Nov 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://when.run/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Python2 迁移到 Python3 小事记</title>
-      <link>https://when.run/posts/python2-to-python3/</link>
+      <link>/posts/python2-to-python3/</link>
       <pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/posts/python2-to-python3/</guid>
+      <guid>/posts/python2-to-python3/</guid>
       <description>前期规划 在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：
  主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖   在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
  排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。  在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
@@ -25,10 +25,10 @@
     
     <item>
       <title>向量时钟(Vector Clock)</title>
-      <link>https://when.run/posts/vector-clock/</link>
+      <link>/posts/vector-clock/</link>
       <pubDate>Fri, 08 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/posts/vector-clock/</guid>
+      <guid>/posts/vector-clock/</guid>
       <description>向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下： 1. 初始时，所有进程的时钟都为 0 2. 进程每次处理一个内部事件，其逻辑时钟加 1 3. 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 4. 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值
 每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
 +----+ |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;quot;向量时钟&amp;quot;，其中，A:0 为 A 的逻辑时钟 |C:5 | +----+  因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。</description>
@@ -36,10 +36,10 @@
     
     <item>
       <title>如何设计一个秒杀系统</title>
-      <link>https://when.run/posts/miao-sha/</link>
+      <link>/posts/miao-sha/</link>
       <pubDate>Wed, 02 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/posts/miao-sha/</guid>
+      <guid>/posts/miao-sha/</guid>
       <description> 如何设计一个秒杀系统  总结极客时间专栏《如何设计一个秒杀系统》
  极客时间
 问题 其实这类高并发问题，总结起来就是两点，并发读、 并发写。并且在这种情况下，系统还需要做到：
@@ -51,10 +51,10 @@
     
     <item>
       <title>我订阅的 RSS 源</title>
-      <link>https://when.run/posts/rss-rec/</link>
+      <link>/posts/rss-rec/</link>
       <pubDate>Tue, 01 Oct 2019 10:31:23 +0800</pubDate>
       
-      <guid>https://when.run/posts/rss-rec/</guid>
+      <guid>/posts/rss-rec/</guid>
       <description> 之前一直寻找好用的 RSS 订阅软件，起初试了 Reeder, 可是不能设置代理，同步速度让我捉急，后来发现 slack 有 RSS APP，因此转而使用 slack 订阅。slack 订阅很方便，免费的空间也够用。
  下面是我订阅的一些 RSS 源，备份一份以防丢失。
  面向信仰编程 - Articles 克鲁斯卡尔的博客 Techshack Weekly - issues JerryQu 的小站 有赞技术团队 Dave Cheney 美团技术团队 酷 壳 – CoolShell IBM Developer 中国 : Big data and analytics,Cloud computing,Internet of Things,Java technology,Open source,Web development : 技术文章,教程 云风的 BLOG The Go Programming Language Blog shonenada qcrao Posts on WKLKEN BUILDING  王垠的博客 - 当然我在扯淡 Instagram Engineering - Medium Armin Ronacher&amp;rsquo;s Thoughts and Writings (Flask&amp;rsquo;s author)  效果图: </description>
@@ -62,10 +62,10 @@
     
     <item>
       <title>Python 面试题整理[实习]</title>
-      <link>https://when.run/posts/python-interview/</link>
+      <link>/posts/python-interview/</link>
       <pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/posts/python-interview/</guid>
+      <guid>/posts/python-interview/</guid>
       <description>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
  Python 语法  说说你平时 Python 都用哪些库
  == 和 is 区别。
@@ -75,10 +75,10 @@
     
     <item>
       <title>[转]如何编写无法维护的代码</title>
-      <link>https://when.run/posts/unmain/</link>
+      <link>/posts/unmain/</link>
       <pubDate>Sat, 01 Oct 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/posts/unmain/</guid>
+      <guid>/posts/unmain/</guid>
       <description>永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &amp;ndash; 拿破仑
  为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！
 你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！

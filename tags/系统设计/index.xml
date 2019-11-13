@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>系统设计 on 重案组之虎</title>
-    <link>https://when.run/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</link>
+    <link>/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</link>
     <description>Recent content in 系统设计 on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Wed, 02 Oct 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://when.run/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>如何设计一个秒杀系统</title>
-      <link>https://when.run/posts/miao-sha/</link>
+      <link>/posts/miao-sha/</link>
       <pubDate>Wed, 02 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/posts/miao-sha/</guid>
+      <guid>/posts/miao-sha/</guid>
       <description> 如何设计一个秒杀系统  总结极客时间专栏《如何设计一个秒杀系统》
  极客时间
 问题 其实这类高并发问题，总结起来就是两点，并发读、 并发写。并且在这种情况下，系统还需要做到：

@@ -2,66 +2,66 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on 重案组之虎</title>
-    <link>https://when.run/tags/</link>
+    <link>/tags/</link>
     <description>Recent content in Tags on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Tue, 12 Nov 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://when.run/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Python</title>
-      <link>https://when.run/tags/python/</link>
+      <link>/tags/python/</link>
       <pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/tags/python/</guid>
+      <guid>/tags/python/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Distributed</title>
-      <link>https://when.run/tags/distributed/</link>
+      <link>/tags/distributed/</link>
       <pubDate>Fri, 08 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/tags/distributed/</guid>
+      <guid>/tags/distributed/</guid>
       <description></description>
     </item>
     
     <item>
       <title>系统设计</title>
-      <link>https://when.run/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</link>
+      <link>/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</link>
       <pubDate>Wed, 02 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</guid>
+      <guid>/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/</guid>
       <description></description>
     </item>
     
     <item>
       <title>RSS</title>
-      <link>https://when.run/tags/rss/</link>
+      <link>/tags/rss/</link>
       <pubDate>Tue, 01 Oct 2019 10:31:23 +0800</pubDate>
       
-      <guid>https://when.run/tags/rss/</guid>
+      <guid>/tags/rss/</guid>
       <description></description>
     </item>
     
     <item>
       <title>代码规范</title>
-      <link>https://when.run/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/</link>
+      <link>/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/</link>
       <pubDate>Sat, 01 Oct 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/</guid>
+      <guid>/tags/%E4%BB%A3%E7%A0%81%E8%A7%84%E8%8C%83/</guid>
       <description></description>
     </item>
     
     <item>
       <title>编程</title>
-      <link>https://when.run/tags/%E7%BC%96%E7%A8%8B/</link>
+      <link>/tags/%E7%BC%96%E7%A8%8B/</link>
       <pubDate>Sat, 01 Oct 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://when.run/tags/%E7%BC%96%E7%A8%8B/</guid>
+      <guid>/tags/%E7%BC%96%E7%A8%8B/</guid>
       <description></description>
     </item>
     
