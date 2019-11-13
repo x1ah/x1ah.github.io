@@ -3,6 +3,16 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://when.run/words/</loc>
+    <lastmod>2019-11-13T17:29:13+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://when.run/</loc>
+    <lastmod>2019-11-13T17:29:13+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://when.run/posts/</loc>
     <lastmod>2019-11-12T00:00:00+00:00</lastmod>
   </url>
@@ -19,11 +29,6 @@
   
   <url>
     <loc>https://when.run/tags/</loc>
-    <lastmod>2019-11-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://when.run/</loc>
     <lastmod>2019-11-12T00:00:00+00:00</lastmod>
   </url>
   
