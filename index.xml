@@ -6,20 +6,10 @@
     <description>Recent content on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Wed, 13 Nov 2019 17:29:13 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 12 Nov 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>关键字</title>
-      <link>/words/</link>
-      <pubDate>Wed, 13 Nov 2019 17:29:13 +0800</pubDate>
-      
-      <guid>/words/</guid>
-      <description> 一闪而过的计算机名词
-  Double check Copy On Write  </description>
-    </item>
     
     <item>
       <title>Python2 迁移到 Python3 小事记</title>
@@ -76,17 +66,6 @@
  答题、验证码等，在客户端直接过滤，将流量摊平，而不是瞬时洪峰流量 服务端请求排队，请求到达了不即时返回，而是塞进队列里，FIFO 方式进行处理，然后异步通知客户端（体验不好，用户无法实时收到反馈） 分层校验，保证落到数据库的请求都是有效请求  减库存 减库存是最关键的一个逻辑，需要保证高并发的情况下，不会发生超售。常用的有三种减库存方案：
  下单减库存：下单就减库存，会产生非常多无效订单，体验不好。 付款减库存：可能会有用户在付款完成之后，结果提示没库存了。 预扣库存：用户下单后减库存，但是库存只有几分钟有效期，过了有效期就回收库存，体验较好。  PlanB 高可用系统的 PlanB，针对秒杀系统，可以做一些事，比如：
  降级：如系统容量到达一点程度之后，关闭一些非核心功能，把有限的资源让给核心功能 限流：在事先进行压力测试时，预估一个最高 QPS，并将其设为阈值，到达这个阈值之后，其他请求扔队列或者直接丢弃 拒绝服务：最坏的情况，达到某个临界点（CPU 90%）直接拒绝服务，保护服务，等负载下降之后恢复，避免被直接长时间拖垮。  </description>
-    </item>
-    
-    <item>
-      <title>我订阅的 RSS 源</title>
-      <link>/posts/rss-rec/</link>
-      <pubDate>Tue, 01 Oct 2019 10:31:23 +0800</pubDate>
-      
-      <guid>/posts/rss-rec/</guid>
-      <description> 之前一直寻找好用的 RSS 订阅软件，起初试了 Reeder, 可是不能设置代理，同步速度让我捉急，后来发现 slack 有 RSS APP，因此转而使用 slack 订阅。slack 订阅很方便，免费的空间也够用。
- 下面是我订阅的一些 RSS 源，备份一份以防丢失。
- 面向信仰编程 - Articles 克鲁斯卡尔的博客 Techshack Weekly - issues JerryQu 的小站 有赞技术团队 Dave Cheney 美团技术团队 酷 壳 – CoolShell IBM Developer 中国 : Big data and analytics,Cloud computing,Internet of Things,Java technology,Open source,Web development : 技术文章,教程 云风的 BLOG The Go Programming Language Blog shonenada qcrao Posts on WKLKEN BUILDING  王垠的博客 - 当然我在扯淡 Instagram Engineering - Medium Armin Ronacher&amp;rsquo;s Thoughts and Writings (Flask&amp;rsquo;s author)  效果图: </description>
     </item>
     
     <item>
