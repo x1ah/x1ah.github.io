@@ -59,6 +59,18 @@
     </item>
     
     <item>
+      <title> 如何开发 Flask 扩展</title>
+      <link>/posts/flask-extensions/</link>
+      <pubDate>Sat, 28 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/flask-extensions/</guid>
+      <description>假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python + Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。
+ 先假装有一个存数据的客户端，👇
+class APIDogClient: &#39;&#39;&#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&#39;&#39;&#39; def __init__(self, secret_key): self.host = &#39;x.x.x.x&#39; # 假装我有一些配置需要初始化 self.port = &#39;xxx&#39; self.secret_key = secret_key self.secret_id = &#39;xxx&#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data)  现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
+import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &#39;&#39;&#39;Flask-APIDog extendsion&#39;&#39;&#39; def __init__(self, app=None): self.</description>
+    </item>
+    
+    <item>
       <title>Python 面试题整理[实习]</title>
       <link>/posts/python-interview/</link>
       <pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate>
