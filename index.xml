@@ -6,10 +6,19 @@
     <description>Recent content on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 12 Nov 2019 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 10 Feb 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>TCP 札记</title>
+      <link>/posts/tcp/</link>
+      <pubDate>Mon, 10 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/tcp/</guid>
+      <description> TCP </description>
+    </item>
     
     <item>
       <title>Python2 迁移到 Python3 小事记</title>
@@ -31,15 +40,6 @@
       <guid>/about/</guid>
       <description>&amp;ldquo;奥利给!&amp;rdquo;
  GitHub: x1ah Telegram: x1ahh QQ: x  </description>
-    </item>
-    
-    <item>
-      <title>我的收藏夹</title>
-      <link>/collects/</link>
-      <pubDate>Fri, 08 Nov 2019 13:04:04 +0800</pubDate>
-      
-      <guid>/collects/</guid>
-      <description> 文章  Go Concurrency Patterns The Go scheduler Raft: Understandable Distributed Consensus Distributed systems  电影  《新龙门客栈》- 张家辉 《末代皇帝》- 尊龙 《哪吒之魔童降世》 《白蛇：缘起》 《阳光灿烂的日子》  </description>
     </item>
     
     <item>
