@@ -2,7 +2,7 @@
 <html lang="cn">
 <head>
   
-    <title>Python2 迁移到 Python3 小事记 :: 重案组之虎</title>
+    <title>Python2 迁移到 Python3 规划和实施 :: 重案组之虎</title>
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -29,7 +29,7 @@
 
 
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Python2 迁移到 Python3 小事记 :: 重案组之虎 — " />
+<meta name="twitter:title" content="Python2 迁移到 Python3 规划和实施 :: 重案组之虎 — " />
 <meta name="twitter:description" content="前期规划 在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：
  主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖   在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
  排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。  在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
@@ -41,13 +41,13 @@
 
 <meta property="og:locale" content="cn" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="Python2 迁移到 Python3 小事记 :: 重案组之虎 — ">
+<meta property="og:title" content="Python2 迁移到 Python3 规划和实施 :: 重案组之虎 — ">
 <meta property="og:description" content="前期规划 在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：
  主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖   在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
  排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。  在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
 # .pre-commit-config.yaml - repo: https://github.com/xiachufang/mirrors-pylint rev: v1.9.2 hooks: - id: pylint args: - --py3k - --score=n  迁移中 迁移办法一般是先排查关键字，如 iteritems/itervalues/xrange 等，这些可以全部使用 six 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 futurize 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 Cheat Sheet: Writing Python 2-3 compatible code 来做对照，进行修改代码。" />
 <meta property="og:url" content="/posts/python2-to-python3/" />
-<meta property="og:site_name" content="Python2 迁移到 Python3 小事记" />
+<meta property="og:site_name" content="Python2 迁移到 Python3 规划和实施" />
 <meta property="og:image" content="">
 <meta property="og:image:width" content="2048">
 <meta property="og:image:height" content="1024">
@@ -123,7 +123,7 @@
     
 <div class="post">
   <h1 class="post-title">
-    <a href="/posts/python2-to-python3/">Python2 迁移到 Python3 小事记</a></h1>
+    <a href="/posts/python2-to-python3/">Python2 迁移到 Python3 规划和实施</a></h1>
   <div class="post-meta">
       
     <span class="post-date">
