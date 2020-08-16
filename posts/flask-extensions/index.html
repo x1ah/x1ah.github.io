@@ -8,8 +8,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <meta name="description" content="假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python &#43; Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。
  先假装有一个存数据的客户端，👇
-class APIDogClient: &#39;&#39;&#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&#39;&#39;&#39; def __init__(self, secret_key): self.host = &#39;x.x.x.x&#39; # 假装我有一些配置需要初始化 self.port = &#39;xxx&#39; self.secret_key = secret_key self.secret_id = &#39;xxx&#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data)  现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
-import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &#39;&#39;&#39;Flask-APIDog extendsion&#39;&#39;&#39; def __init__(self, app=None): self."/>
+class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
+import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self."/>
 <meta name="keywords" content="Flask"/>
 <meta name="robots" content="noodp"/>
 <link rel="canonical" href="/posts/flask-extensions/" />
@@ -32,8 +32,8 @@ import time from flask import Flask, request, current_app try: from flask import
 <meta name="twitter:title" content=" 如何开发 Flask 扩展 :: 重案组之虎 — " />
 <meta name="twitter:description" content="假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python &#43; Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。
  先假装有一个存数据的客户端，👇
-class APIDogClient: &#39;&#39;&#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&#39;&#39;&#39; def __init__(self, secret_key): self.host = &#39;x.x.x.x&#39; # 假装我有一些配置需要初始化 self.port = &#39;xxx&#39; self.secret_key = secret_key self.secret_id = &#39;xxx&#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data)  现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
-import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &#39;&#39;&#39;Flask-APIDog extendsion&#39;&#39;&#39; def __init__(self, app=None): self." />
+class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
+import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self." />
 <meta name="twitter:site" content="/" />
 <meta name="twitter:creator" content="x1ah" />
 <meta name="twitter:image" content="">
@@ -44,8 +44,8 @@ import time from flask import Flask, request, current_app try: from flask import
 <meta property="og:title" content=" 如何开发 Flask 扩展 :: 重案组之虎 — ">
 <meta property="og:description" content="假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python &#43; Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。
  先假装有一个存数据的客户端，👇
-class APIDogClient: &#39;&#39;&#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&#39;&#39;&#39; def __init__(self, secret_key): self.host = &#39;x.x.x.x&#39; # 假装我有一些配置需要初始化 self.port = &#39;xxx&#39; self.secret_key = secret_key self.secret_id = &#39;xxx&#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data)  现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
-import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &#39;&#39;&#39;Flask-APIDog extendsion&#39;&#39;&#39; def __init__(self, app=None): self." />
+class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
+import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self." />
 <meta property="og:url" content="/posts/flask-extensions/" />
 <meta property="og:site_name" content=" 如何开发 Flask 扩展" />
 <meta property="og:image" content="">
@@ -151,91 +151,80 @@ import time from flask import Flask, request, current_app try: from flask import
     <blockquote>
 <p>假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python + Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。</p>
 </blockquote>
-
 <p>先假装有一个存数据的客户端，👇</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">APIDogClient</span>:
+    <span style="color:#e6db74">&#39;&#39;&#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&#39;&#39;&#39;</span>
+    <span style="color:#66d9ef">def</span> __init__(self, secret_key):
+        self<span style="color:#f92672">.</span>host <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;x.x.x.x&#39;</span>   <span style="color:#75715e"># 假装我有一些配置需要初始化</span>
+        self<span style="color:#f92672">.</span>port <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;xxx&#39;</span>
+        self<span style="color:#f92672">.</span>secret_key <span style="color:#f92672">=</span> secret_key
+        self<span style="color:#f92672">.</span>secret_id <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;xxx&#39;</span>
+        self<span style="color:#f92672">.</span>bucket <span style="color:#f92672">=</span> []
 
-<pre><code class="language-python">class APIDogClient:
-    '''APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等'''
-    def __init__(self, secret_key):
-        self.host = 'x.x.x.x'   # 假装我有一些配置需要初始化
-        self.port = 'xxx'
-        self.secret_key = secret_key
-        self.secret_id = 'xxx'
-        self.bucket = []
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">storge</span>(self, data):
+        <span style="color:#75715e"># clean data</span>
+        self<span style="color:#f92672">.</span>bucket<span style="color:#f92672">.</span>append(data)
+</code></pre></div><p>现在可以开始着手插件了，给插件取名为 <code>flask-APIDog</code>，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> time
 
-    def storge(self, data):
-        # clean data
-        self.bucket.append(data)
-</code></pre>
+<span style="color:#f92672">from</span> flask <span style="color:#f92672">import</span> Flask, request, current_app
 
-<p>现在可以开始着手插件了，给插件取名为 <code>flask-APIDog</code>，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。</p>
-
-<pre><code class="language-python">import time
-
-from flask import Flask, request, current_app
-
-try:
-    from flask import _app_ctx_stack as stack
-except ImportError:
-    from flask import _request_ctx_stack as stack
+<span style="color:#66d9ef">try</span>:
+    <span style="color:#f92672">from</span> flask <span style="color:#f92672">import</span> _app_ctx_stack <span style="color:#66d9ef">as</span> stack
+<span style="color:#66d9ef">except</span> <span style="color:#a6e22e">ImportError</span>:
+    <span style="color:#f92672">from</span> flask <span style="color:#f92672">import</span> _request_ctx_stack <span style="color:#66d9ef">as</span> stack
 
 
-class APIDog:
-    '''Flask-APIDog extendsion'''
-    def __init__(self, app=None):
-        self.app = app
-        if app:
-            self.init_app(app)
-            self.api_dog = APIDogClient(self.app.config.get('api_dog_secret_key', ''))
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">APIDog</span>:
+    <span style="color:#e6db74">&#39;&#39;&#39;Flask-APIDog extendsion&#39;&#39;&#39;</span>
+    <span style="color:#66d9ef">def</span> __init__(self, app<span style="color:#f92672">=</span>None):
+        self<span style="color:#f92672">.</span>app <span style="color:#f92672">=</span> app
+        <span style="color:#66d9ef">if</span> app:
+            self<span style="color:#f92672">.</span>init_app(app)
+            self<span style="color:#f92672">.</span>api_dog <span style="color:#f92672">=</span> APIDogClient(self<span style="color:#f92672">.</span>app<span style="color:#f92672">.</span>config<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;api_dog_secret_key&#39;</span>, <span style="color:#e6db74">&#39;&#39;</span>))
 
-    def init_app(self, app=None):
-        self.app = app
-        self.api_dog = APIDogClient(self.app.config.get('api_dog_secret_key', ''))
-        app.before_request(self._before_request)
-        app.after_request(self._after_request)
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">init_app</span>(self, app<span style="color:#f92672">=</span>None):
+        self<span style="color:#f92672">.</span>app <span style="color:#f92672">=</span> app
+        self<span style="color:#f92672">.</span>api_dog <span style="color:#f92672">=</span> APIDogClient(self<span style="color:#f92672">.</span>app<span style="color:#f92672">.</span>config<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;api_dog_secret_key&#39;</span>, <span style="color:#e6db74">&#39;&#39;</span>))
+        app<span style="color:#f92672">.</span>before_request(self<span style="color:#f92672">.</span>_before_request)
+        app<span style="color:#f92672">.</span>after_request(self<span style="color:#f92672">.</span>_after_request)
 
-    def _before_request(self):
-        ctx = stack.top
-        ctx._api_dog_data = {
-            'request_begin_time': time.time()
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_before_request</span>(self):
+        ctx <span style="color:#f92672">=</span> stack<span style="color:#f92672">.</span>top
+        ctx<span style="color:#f92672">.</span>_api_dog_data <span style="color:#f92672">=</span> {
+            <span style="color:#e6db74">&#39;request_begin_time&#39;</span>: time<span style="color:#f92672">.</span>time()
         }
 
-    def _after_request(self, response):
-        ctx = stack.top
-        api_request_begin_time = ctx._api_dog_data.get('request_path', time.time())
-        request_time = time.time() - api_request_begin_time
-        api_data = {
-            'request_time': request_time,
-            'request_path': request.path,
-            'request_location': request.args.get('location', ''),
-            'remote_address': request.remote_addr
+    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_after_request</span>(self, response):
+        ctx <span style="color:#f92672">=</span> stack<span style="color:#f92672">.</span>top
+        api_request_begin_time <span style="color:#f92672">=</span> ctx<span style="color:#f92672">.</span>_api_dog_data<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;request_path&#39;</span>, time<span style="color:#f92672">.</span>time())
+        request_time <span style="color:#f92672">=</span> time<span style="color:#f92672">.</span>time() <span style="color:#f92672">-</span> api_request_begin_time
+        api_data <span style="color:#f92672">=</span> {
+            <span style="color:#e6db74">&#39;request_time&#39;</span>: request_time,
+            <span style="color:#e6db74">&#39;request_path&#39;</span>: request<span style="color:#f92672">.</span>path,
+            <span style="color:#e6db74">&#39;request_location&#39;</span>: request<span style="color:#f92672">.</span>args<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;location&#39;</span>, <span style="color:#e6db74">&#39;&#39;</span>),
+            <span style="color:#e6db74">&#39;remote_address&#39;</span>: request<span style="color:#f92672">.</span>remote_addr
         }
-        self.api_dog.storge(api_data)
-</code></pre>
-
-<p>👆 是第一版的 <code>flask-APIDog</code> 的代码，很简单的一些处理， Flask 扩展一般（官方建议）提供一个 <code>init_app</code> 方法，用于在实例化插件类后初始化 Flask APP，实际上这里只是简单的给 Flask APP 的 <code>before_request</code>，<code>after_request</code> 两个钩子函数提供两个具体流程，<code>_app_ctx_stack.top</code> 是 Flask
- 里面上下文的概念，意思是取当前应用。更甚至完全可以直接用 <code>before_request</code>，<code>after_request</code> 装饰两个函数来实现上面那些功能，但是后面迭代版本会越来越复杂，直接写在项目里很容易污染现有代码，抽象成插件不仅提高了鲁棒性，还符合 Flask 的插件系统理念。</p>
-
+        self<span style="color:#f92672">.</span>api_dog<span style="color:#f92672">.</span>storge(api_data)
+</code></pre></div><p>👆 是第一版的 <code>flask-APIDog</code> 的代码，很简单的一些处理， Flask 扩展一般（官方建议）提供一个 <code>init_app</code> 方法，用于在实例化插件类后初始化 Flask APP，实际上这里只是简单的给 Flask APP 的 <code>before_request</code>，<code>after_request</code> 两个钩子函数提供两个具体流程，<code>_app_ctx_stack.top</code> 是 Flask
+里面上下文的概念，意思是取当前应用。更甚至完全可以直接用 <code>before_request</code>，<code>after_request</code> 装饰两个函数来实现上面那些功能，但是后面迭代版本会越来越复杂，直接写在项目里很容易污染现有代码，抽象成插件不仅提高了鲁棒性，还符合 Flask 的插件系统理念。</p>
 <p>使用方法也与一般的 Flask 插件一致，👇</p>
-
-<pre><code class="language-python">from flask import Flask
-from flask_apidog import APIDog
-
-
-app = Flask('test_flask_extend')
-api_dog = ApiDog()
-api_dog.init_app(app)
-
-@app.route(&quot;/&quot;)
-def index():
-    return &quot;hello api dog&quot;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> flask <span style="color:#f92672">import</span> Flask
+<span style="color:#f92672">from</span> flask_apidog <span style="color:#f92672">import</span> APIDog
 
 
-if __name__ == &quot;__main__&quot;:
-    app.run()
-</code></pre>
+app <span style="color:#f92672">=</span> Flask(<span style="color:#e6db74">&#39;test_flask_extend&#39;</span>)
+api_dog <span style="color:#f92672">=</span> ApiDog()
+api_dog<span style="color:#f92672">.</span>init_app(app)
 
-<p>这样之后，APP 的每个请求都会记录请求耗时，请求 IP，请求路径并转发到 APIDog 后端服务，这样一个简单的 Flask 插件大致就完成了。</p>
+<span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#34;/&#34;</span>)
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">index</span>():
+    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;hello api dog&#34;</span>
+
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+    app<span style="color:#f92672">.</span>run()
+</code></pre></div><p>这样之后，APP 的每个请求都会记录请求耗时，请求 IP，请求路径并转发到 APIDog 后端服务，这样一个简单的 Flask 插件大致就完成了。</p>
 
   </div>
   
@@ -266,8 +255,14 @@ if __name__ == &quot;__main__&quot;:
   </div>
   
 
-  
-
+  <script src="https://utteranc.es/client.js"
+        repo="x1ah/x1ah.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="photon-dark"
+        crossorigin="anonymous"
+        async>
+</script>
 </div>
 
   </div>

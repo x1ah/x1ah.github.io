@@ -23,7 +23,7 @@
 全双工 通信双方任何时候都能相互通信。并且都有发送缓存、接受缓存。
 面向字节流 虽然应用层和 TCP 的交互是一次一个数据块（大小不等），但是 TCP 把这些数据看成仅仅是一连串的无结构字节流。TCP 并不知道所传送的字节流的含义。传输过程如下：
 这里看到，应用层发送其实不是同步发送的，而只是把数据拷到 TCP 发送缓存里，而下一步如何发送，如何把数据切成报文段，都与应用层无关了。
-基于这个字节流传输概念，对于偶尔能听到的 “黏包” 概念也能较为直接的解释。因为 TCP 并没有包的概念，因此自然也就不存在 “黏包” 为什么 TCP 协议有粘包问题。&amp;rdquo;黏包&amp;rdquo; 误解的原因是：&amp;rdquo;应用层协议没有使用基于长度或者基于终结符的消息边界，导致多个消息的粘连&amp;rdquo;
+基于这个字节流传输概念，对于偶尔能听到的 “黏包” 概念也能较为直接的解释。因为 TCP 并没有包的概念，因此自然也就不存在 “黏包” 为什么 TCP 协议有粘包问题。&amp;ldquo;黏包&amp;rdquo; 误解的原因是：&amp;ldquo;应用层协议没有使用基于长度或者基于终结符的消息边界，导致多个消息的粘连&amp;rdquo;
 报文段、字节流 TCP 存在一个 “报文段” 的概念，这个指的是：在 TCP 接收到应用层写入的数据之后，会暂存到发送缓存。而 TCP 在发送数据之前，会从发送缓存中取出一部分数据，并且加上 TCP 层的特定头部数据，再往下传输给 IP 层，加上了 TCP 头部的这部分数据，叫做 TCP 的 “报文段”，这个报文段的最大长度叫做 MSS（最大报文段长度）。而在传输时，报文段会被以字节流的形式进行传输，接收方收到字节流之后，再解析字节流还原成报文段，交付使用。
 可靠传输（滑动窗口） TCP 使用 滑动窗口 来实现可靠传输。TCP 的滑动窗口是以字节为单位的，并对窗口内的字节进行编号，如果窗口内某个低序号的字节未收到确认消息，那么滑动窗口将不会往后移，而会在确认超时之后，重新传送，即 超时重传。这时候，就有可能出现，一条 TCP 链接，某个时刻发生了超时重传，其他数据必须等这个重传恢复之后，才能继续发送。而 HTTP/3 使用的 QUIC 协议使用了多路流复用，同一个传输通道可以同时传输多路流，而不同流也使用不同的流量控制、滑动窗口等，这样即使某一路的流阻塞了，也不会影响其他路的流。</description>
     </item>
@@ -35,9 +35,9 @@
       
       <guid>/posts/python2-to-python3/</guid>
       <description>前期规划 在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：
- 主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖   在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
+ 主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖    在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
  排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。  在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
-# .pre-commit-config.yaml - repo: https://github.com/xiachufang/mirrors-pylint rev: v1.9.2 hooks: - id: pylint args: - --py3k - --score=n  迁移中 迁移办法一般是先排查关键字，如 iteritems/itervalues/xrange 等，这些可以全部使用 six 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 futurize 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 Cheat Sheet: Writing Python 2-3 compatible code 来做对照，进行修改代码。</description>
+# .pre-commit-config.yaml - repo: https://github.com/xiachufang/mirrors-pylint rev: v1.9.2 hooks: - id: pylint args: - --py3k - --score=n 迁移中 迁移办法一般是先排查关键字，如 iteritems/itervalues/xrange 等，这些可以全部使用 six 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 futurize 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 Cheat Sheet: Writing Python 2-3 compatible code 来做对照，进行修改代码。</description>
     </item>
     
     <item>
@@ -47,7 +47,7 @@
       
       <guid>/about/</guid>
       <description>&amp;ldquo;奥利给!&amp;rdquo;
- GitHub: x1ah Telegram: x1ahh QQ: x  </description>
+ GitHub: x1ah Telegram: x1ahh QQ: (http://i.imgur.com/s4mteP9.jpg)  </description>
     </item>
     
     <item>
@@ -56,9 +56,9 @@
       <pubDate>Fri, 08 Nov 2019 00:00:00 +0000</pubDate>
       
       <guid>/posts/vector-clock/</guid>
-      <description>向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下： 1. 初始时，所有进程的时钟都为 0 2. 进程每次处理一个内部事件，其逻辑时钟加 1 3. 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 4. 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值
-每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
-+----+ |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;quot;向量时钟&amp;quot;，其中，A:0 为 A 的逻辑时钟 |C:5 | +----+  因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。</description>
+      <description>向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
+ 初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值  每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
++----+ |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | +----+ 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。</description>
     </item>
     
     <item>
@@ -67,12 +67,12 @@
       <pubDate>Wed, 02 Oct 2019 00:00:00 +0000</pubDate>
       
       <guid>/posts/miao-sha/</guid>
-      <description> 如何设计一个秒杀系统  总结极客时间专栏《如何设计一个秒杀系统》
+      <description>如何设计一个秒杀系统  总结极客时间专栏《如何设计一个秒杀系统》
  极客时间
 问题 其实这类高并发问题，总结起来就是两点，并发读、 并发写。并且在这种情况下，系统还需要做到：
- 高性能：支持并发读并发写 一致性：保证系统正确，如不发生超卖等 高可用：保证系统在极端条件下的可用性，PlanB 等  原则  数据尽量少：c-s 传输过程中，数据尽量少，减少传输时间 请求数尽量少：减少资源消耗 路径尽量短：请求会经过若干个中间件，经过的中间件应该尽量少，每个节点都可能会挂，最后整体可用性(&amp;lt;1)就是经过的所有节点可用性的乘积 依赖尽量少：指的是业务依赖（优惠券、用户信息等），防止主要服务被其他附属依赖给拖垮掉 不要有单点：单点就是整个系统中最弱的地方，很容易被击垮  动静分离 静态数据  统一 cache 层 CDN 代理服务器缓存  动态数据  业务隔离：必须参加活动需要提前报名，服务器对这些热点进行预热 系统隔离：秒杀系统单独部署，落到不同集群当中，避免拖垮其他服务 数据隔离：针对这些热点数据，比如启用单独的 cache 或 MySQL 实例  流量削峰 面对秒杀系统需要承受的海量流量，如果全部落到数据库上，那么数据库将不堪重负，因此可以进行分层的流量削峰：
- 答题、验证码等，在客户端直接过滤，将流量摊平，而不是瞬时洪峰流量 服务端请求排队，请求到达了不即时返回，而是塞进队列里，FIFO 方式进行处理，然后异步通知客户端（体验不好，用户无法实时收到反馈） 分层校验，保证落到数据库的请求都是有效请求  减库存 减库存是最关键的一个逻辑，需要保证高并发的情况下，不会发生超售。常用的有三种减库存方案：
- 下单减库存：下单就减库存，会产生非常多无效订单，体验不好。 付款减库存：可能会有用户在付款完成之后，结果提示没库存了。 预扣库存：用户下单后减库存，但是库存只有几分钟有效期，过了有效期就回收库存，体验较好。  PlanB 高可用系统的 PlanB，针对秒杀系统，可以做一些事，比如：
+ 高性能：支持并发读并发写 一致性：保证系统正确，如不发生超卖等 高可用：保证系统在极端条件下的可用性，PlanB 等   原则  数据尽量少：c-s 传输过程中，数据尽量少，减少传输时间 请求数尽量少：减少资源消耗 路径尽量短：请求会经过若干个中间件，经过的中间件应该尽量少，每个节点都可能会挂，最后整体可用性(&amp;lt;1)就是经过的所有节点可用性的乘积 依赖尽量少：指的是业务依赖（优惠券、用户信息等），防止主要服务被其他附属依赖给拖垮掉 不要有单点：单点就是整个系统中最弱的地方，很容易被击垮   动静分离 静态数据  统一 cache 层 CDN 代理服务器缓存  动态数据  业务隔离：必须参加活动需要提前报名，服务器对这些热点进行预热 系统隔离：秒杀系统单独部署，落到不同集群当中，避免拖垮其他服务 数据隔离：针对这些热点数据，比如启用单独的 cache 或 MySQL 实例   流量削峰 面对秒杀系统需要承受的海量流量，如果全部落到数据库上，那么数据库将不堪重负，因此可以进行分层的流量削峰：
+ 答题、验证码等，在客户端直接过滤，将流量摊平，而不是瞬时洪峰流量 服务端请求排队，请求到达了不即时返回，而是塞进队列里，FIFO 方式进行处理，然后异步通知客户端（体验不好，用户无法实时收到反馈） 分层校验，保证落到数据库的请求都是有效请求   减库存 减库存是最关键的一个逻辑，需要保证高并发的情况下，不会发生超售。常用的有三种减库存方案：
+ 下单减库存：下单就减库存，会产生非常多无效订单，体验不好。 付款减库存：可能会有用户在付款完成之后，结果提示没库存了。 预扣库存：用户下单后减库存，但是库存只有几分钟有效期，过了有效期就回收库存，体验较好。   PlanB 高可用系统的 PlanB，针对秒杀系统，可以做一些事，比如：
  降级：如系统容量到达一点程度之后，关闭一些非核心功能，把有限的资源让给核心功能 限流：在事先进行压力测试时，预估一个最高 QPS，并将其设为阈值，到达这个阈值之后，其他请求扔队列或者直接丢弃 拒绝服务：最坏的情况，达到某个临界点（CPU 90%）直接拒绝服务，保护服务，等负载下降之后恢复，避免被直接长时间拖垮。  </description>
     </item>
     
@@ -84,8 +84,8 @@
       <guid>/posts/flask-extensions/</guid>
       <description>假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python + Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。
  先假装有一个存数据的客户端，👇
-class APIDogClient: &#39;&#39;&#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&#39;&#39;&#39; def __init__(self, secret_key): self.host = &#39;x.x.x.x&#39; # 假装我有一些配置需要初始化 self.port = &#39;xxx&#39; self.secret_key = secret_key self.secret_id = &#39;xxx&#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data)  现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
-import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &#39;&#39;&#39;Flask-APIDog extendsion&#39;&#39;&#39; def __init__(self, app=None): self.</description>
+class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
+import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self.</description>
     </item>
     
     <item>
@@ -95,10 +95,10 @@ import time from flask import Flask, request, current_app try: from flask import
       
       <guid>/posts/python-interview/</guid>
       <description>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
- Python 语法  说说你平时 Python 都用哪些库
- == 和 is 区别。
- == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。  深拷贝和浅拷贝。
-  # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &#39;test&#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&#39;test&#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。</description>
+ Python 语法   说说你平时 Python 都用哪些库
+  == 和 is 区别。
+ == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。    深拷贝和浅拷贝。
+   # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。</description>
     </item>
     
     <item>

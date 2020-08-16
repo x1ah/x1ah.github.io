@@ -6,9 +6,9 @@
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="description" content="向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下： 1. 初始时，所有进程的时钟都为 0 2. 进程每次处理一个内部事件，其逻辑时钟加 1 3. 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 4. 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值
-每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
-&#43;----&#43; |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;quot;向量时钟&amp;quot;，其中，A:0 为 A 的逻辑时钟 |C:5 | &#43;----&#43;  因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。"/>
+<meta name="description" content="向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
+ 初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值  每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
+&#43;----&#43; |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | &#43;----&#43; 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。"/>
 <meta name="keywords" content="Distributed"/>
 <meta name="robots" content="noodp"/>
 <link rel="canonical" href="/posts/vector-clock/" />
@@ -29,9 +29,9 @@
 
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="向量时钟(Vector Clock) :: 重案组之虎 — " />
-<meta name="twitter:description" content="向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下： 1. 初始时，所有进程的时钟都为 0 2. 进程每次处理一个内部事件，其逻辑时钟加 1 3. 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 4. 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值
-每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
-&#43;----&#43; |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;quot;向量时钟&amp;quot;，其中，A:0 为 A 的逻辑时钟 |C:5 | &#43;----&#43;  因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。" />
+<meta name="twitter:description" content="向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
+ 初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值  每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
+&#43;----&#43; |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | &#43;----&#43; 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。" />
 <meta name="twitter:site" content="/" />
 <meta name="twitter:creator" content="x1ah" />
 <meta name="twitter:image" content="">
@@ -40,9 +40,9 @@
 <meta property="og:locale" content="cn" />
 <meta property="og:type" content="article" />
 <meta property="og:title" content="向量时钟(Vector Clock) :: 重案组之虎 — ">
-<meta property="og:description" content="向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下： 1. 初始时，所有进程的时钟都为 0 2. 进程每次处理一个内部事件，其逻辑时钟加 1 3. 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 4. 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值
-每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
-&#43;----&#43; |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;quot;向量时钟&amp;quot;，其中，A:0 为 A 的逻辑时钟 |C:5 | &#43;----&#43;  因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。" />
+<meta property="og:description" content="向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
+ 初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值  每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
+&#43;----&#43; |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | &#43;----&#43; 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。" />
 <meta property="og:url" content="/posts/vector-clock/" />
 <meta property="og:site_name" content="向量时钟(Vector Clock)" />
 <meta property="og:image" content="">
@@ -145,36 +145,27 @@
   
 
   <div class="post-content">
-    
-
-<h2 id="向量时钟-vector-clock">向量时钟(Vector Clock)</h2>
-
-<p>向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：<img src="https://i.imgur.com/0XRtT9o.png" alt="Imgur" /></p>
-
-<p>系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
-1. 初始时，所有进程的时钟都为 0
-2. 进程每次处理一个内部事件，其逻辑时钟加 1
-3. 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送
-4. 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值</p>
-
+    <h2 id="向量时钟vector-clock">向量时钟(Vector Clock)</h2>
+<p>向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：<img src="https://i.imgur.com/0XRtT9o.png" alt="Imgur"></p>
+<p>系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：</p>
+<ol>
+<li>初始时，所有进程的时钟都为 0</li>
+<li>进程每次处理一个内部事件，其逻辑时钟加 1</li>
+<li>每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送</li>
+<li>每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值</li>
+</ol>
 <p>每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：</p>
-
-<pre><code class="language-python">+----+
-|A:0 |
-|B:3 |  ===&gt;  这个整体称为 A 的 &quot;向量时钟&quot;，其中，A:0 为 A 的逻辑时钟
-|C:5 |
-+----+
-</code></pre>
-
-<h3 id="因果关系判断规则">因果关系判断规则</h3>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">+----+</span>
+<span style="color:#f92672">|</span>A:<span style="color:#ae81ff">0</span> <span style="color:#f92672">|</span>
+<span style="color:#f92672">|</span>B:<span style="color:#ae81ff">3</span> <span style="color:#f92672">|</span>  <span style="color:#f92672">===&gt;</span>  <span style="color:#960050;background-color:#1e0010">这个整体称为</span> A <span style="color:#960050;background-color:#1e0010">的</span> <span style="color:#e6db74">&#34;向量时钟&#34;</span><span style="color:#960050;background-color:#1e0010">，其中，</span>A:<span style="color:#ae81ff">0</span> <span style="color:#960050;background-color:#1e0010">为</span> A <span style="color:#960050;background-color:#1e0010">的逻辑时钟</span>
+<span style="color:#f92672">|</span>C:<span style="color:#ae81ff">5</span> <span style="color:#f92672">|</span>
+<span style="color:#f92672">+----+</span>
+</code></pre></div><h3 id="因果关系判断规则">因果关系判断规则</h3>
 <ol>
 <li>如果时钟 V1 的每个逻辑时钟值都比时钟 V2  大，那么称 V1 比 V2 先发生。如： <code>V1: [A:2,B:4,C:2]</code> 与 <code>V2: [A:1,B:2,C:1]</code></li>
 <li>如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生</li>
 </ol>
-
 <h2 id="应用">应用</h2>
-
 <p>向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: <a href="https://cloudacademy.com/blog/data-versioning-with-dynamodb-an-inside-look-into-nosql-part-5/">Data Versioning With DynamoDB</a>。</p>
 
   </div>
@@ -206,8 +197,14 @@
   </div>
   
 
-  
-
+  <script src="https://utteranc.es/client.js"
+        repo="x1ah/x1ah.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="photon-dark"
+        crossorigin="anonymous"
+        async>
+</script>
 </div>
 
   </div>
