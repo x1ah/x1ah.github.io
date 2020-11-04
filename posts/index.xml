@@ -6,10 +6,23 @@
     <description>Recent content in Posts on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Mon, 10 Feb 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 04 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Elasticsearch terminology: Index &amp; Shard &amp; Segment</title>
+      <link>/posts/es-terminology/</link>
+      <pubDate>Wed, 04 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/es-terminology/</guid>
+      <description>References from https://stackoverflow.com/a/15429578
+To explain:
+Index An &amp;ldquo;index&amp;rdquo; in Elasticsearch is a bit like a database in a relational DB. It&amp;rsquo;s where you store/index your data. But actually, that&amp;rsquo;s just what your application sees. Internally, an index is a logical namespace that points to one or more shards.
+Also, &amp;ldquo;to index&amp;rdquo; means to &amp;ldquo;put&amp;rdquo; your data into Elasticsearch. Your data is both stored (for retrieval) and &amp;ldquo;indexed&amp;rdquo; for search.
+Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure that Lucene uses to make data searchable.</description>
+    </item>
     
     <item>
       <title>TCP 札记</title>
