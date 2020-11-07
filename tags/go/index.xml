@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go on 重案组之虎</title>
+    <link>/tags/go/</link>
+    <description>Recent content in Go on 重案组之虎</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh</language>
+    <lastBuildDate>Tue, 03 Nov 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>长连接聊天室 Demo</title>
+      <link>/posts/keep-alive-chat/</link>
+      <pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/keep-alive-chat/</guid>
+      <description>Server package main import ( &amp;#34;bufio&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;net&amp;#34; ) // 用来记录所有的客户端连接 var ConnMap map[string]*net.TCPConn func main() { var tcpAddr *net.TCPAddr ConnMap = make(map[string]*net.TCPConn) tcpAddr, _ = net.ResolveTCPAddr(&amp;#34;tcp&amp;#34;, &amp;#34;127.0.0.1:9999&amp;#34;) tcpListener, _ := net.ListenTCP(&amp;#34;tcp&amp;#34;, tcpAddr) defer tcpListener.Close() for { tcpConn, err := tcpListener.AcceptTCP() if err != nil { continue } fmt.Println(&amp;#34;A client connected : &amp;#34; + tcpConn.RemoteAddr().String()) // 新连接加入map  ConnMap[tcpConn.RemoteAddr().String()] = tcpConn go tcpPipe(tcpConn) } } func tcpPipe(conn *net.TCPConn) { ipStr := conn.</description>
+    </item>
+    
+  </channel>
+</rss>
