@@ -12,19 +12,19 @@
 # .pre-commit-config.yaml - repo: https://github.com/xiachufang/mirrors-pylint rev: v1.9.2 hooks: - id: pylint args: - --py3k - --score=n 迁移中 迁移办法一般是先排查关键字，如 iteritems/itervalues/xrange 等，这些可以全部使用 six 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 futurize 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 Cheat Sheet: Writing Python 2-3 compatible code 来做对照，进行修改代码。"/>
 <meta name="keywords" content="Python"/>
 <meta name="robots" content="noodp"/>
-<link rel="canonical" href="/posts/python2-to-python3/" />
+<link rel="canonical" href="https://when.run/posts/python2-to-python3/" />
 
 
-<link rel="stylesheet" href="/assets/style.css">
-
-
-
+<link rel="stylesheet" href="https://when.run/assets/style.css">
 
 
 
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
 
-<link rel="shortcut icon" href="/avator.jpeg">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://when.run/img/apple-touch-icon-144-precomposed.png">
+
+<link rel="shortcut icon" href="https://when.run/avator.jpeg">
 
 
 
@@ -34,7 +34,7 @@
  主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖    在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
  排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。  在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
 # .pre-commit-config.yaml - repo: https://github.com/xiachufang/mirrors-pylint rev: v1.9.2 hooks: - id: pylint args: - --py3k - --score=n 迁移中 迁移办法一般是先排查关键字，如 iteritems/itervalues/xrange 等，这些可以全部使用 six 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 futurize 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 Cheat Sheet: Writing Python 2-3 compatible code 来做对照，进行修改代码。" />
-<meta name="twitter:site" content="/" />
+<meta name="twitter:site" content="https://when.run" />
 <meta name="twitter:creator" content="x1ah" />
 <meta name="twitter:image" content="">
 
@@ -46,7 +46,7 @@
  主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖    在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
  排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。  在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
 # .pre-commit-config.yaml - repo: https://github.com/xiachufang/mirrors-pylint rev: v1.9.2 hooks: - id: pylint args: - --py3k - --score=n 迁移中 迁移办法一般是先排查关键字，如 iteritems/itervalues/xrange 等，这些可以全部使用 six 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 futurize 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 Cheat Sheet: Writing Python 2-3 compatible code 来做对照，进行修改代码。" />
-<meta property="og:url" content="/posts/python2-to-python3/" />
+<meta property="og:url" content="https://when.run/posts/python2-to-python3/" />
 <meta property="og:site_name" content="Python2 迁移到 Python3 规划和实施" />
 <meta property="og:image" content="">
 <meta property="og:image:width" content="2048">
@@ -135,7 +135,7 @@ if (!doNotTrack) {
     
 <div class="post">
   <h1 class="post-title">
-    <a href="/posts/python2-to-python3/">Python2 迁移到 Python3 规划和实施</a></h1>
+    <a href="https://when.run/posts/python2-to-python3/">Python2 迁移到 Python3 规划和实施</a></h1>
   <div class="post-meta">
       
     <span class="post-date">
@@ -152,7 +152,7 @@ if (!doNotTrack) {
   
   <span class="post-tags">
     
-    #<a href="/tags/python/">Python</a>&nbsp;
+    #<a href="https://when.run/tags/python/">Python</a>&nbsp;
     
   </span>
   
@@ -229,7 +229,7 @@ if (!doNotTrack) {
     <div class="pagination__buttons">
       
       <span class="button previous">
-        <a href="/posts/tcp/">
+        <a href="https://when.run/posts/tcp/">
           <span class="button__icon">←</span>
           <span class="button__text">TCP 札记</span>
         </a>
@@ -237,7 +237,7 @@ if (!doNotTrack) {
       
       
       <span class="button next">
-        <a href="/posts/vector-clock/">
+        <a href="https://when.run/posts/vector-clock/">
           <span class="button__text">向量时钟(Vector Clock)</span>
           <span class="button__icon">→</span>
         </a>
@@ -271,8 +271,8 @@ if (!doNotTrack) {
   </div>
 </footer>
 
-<script src="/assets/main.js"></script>
-<script src="/assets/prism.js"></script>
+<script src="https://when.run/assets/main.js"></script>
+<script src="https://when.run/assets/prism.js"></script>
 
 
 

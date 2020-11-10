@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on 重案组之虎</title>
-    <link>/posts/</link>
+    <link>https://when.run/posts/</link>
     <description>Recent content in Posts on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Wed, 04 Nov 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/posts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://when.run/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Elasticsearch terminology: Index &amp; Shard &amp; Segment</title>
-      <link>/posts/es-terminology/</link>
+      <link>https://when.run/posts/es-terminology/</link>
       <pubDate>Wed, 04 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/posts/es-terminology/</guid>
+      <guid>https://when.run/posts/es-terminology/</guid>
       <description>References from https://stackoverflow.com/a/15429578
 To explain:
 Index An &amp;ldquo;index&amp;rdquo; in Elasticsearch is a bit like a database in a relational DB. It&amp;rsquo;s where you store/index your data. But actually, that&amp;rsquo;s just what your application sees. Internally, an index is a logical namespace that points to one or more shards.
@@ -26,19 +26,19 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
     
     <item>
       <title>长连接聊天室 Demo</title>
-      <link>/posts/keep-alive-chat/</link>
+      <link>https://when.run/posts/keep-alive-chat/</link>
       <pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/posts/keep-alive-chat/</guid>
+      <guid>https://when.run/posts/keep-alive-chat/</guid>
       <description>Server package main import ( &amp;#34;bufio&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;net&amp;#34; ) // 用来记录所有的客户端连接 var ConnMap map[string]*net.TCPConn func main() { var tcpAddr *net.TCPAddr ConnMap = make(map[string]*net.TCPConn) tcpAddr, _ = net.ResolveTCPAddr(&amp;#34;tcp&amp;#34;, &amp;#34;127.0.0.1:9999&amp;#34;) tcpListener, _ := net.ListenTCP(&amp;#34;tcp&amp;#34;, tcpAddr) defer tcpListener.Close() for { tcpConn, err := tcpListener.AcceptTCP() if err != nil { continue } fmt.Println(&amp;#34;A client connected : &amp;#34; + tcpConn.RemoteAddr().String()) // 新连接加入map  ConnMap[tcpConn.RemoteAddr().String()] = tcpConn go tcpPipe(tcpConn) } } func tcpPipe(conn *net.TCPConn) { ipStr := conn.</description>
     </item>
     
     <item>
       <title>TCP 札记</title>
-      <link>/posts/tcp/</link>
+      <link>https://when.run/posts/tcp/</link>
       <pubDate>Mon, 10 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/posts/tcp/</guid>
+      <guid>https://when.run/posts/tcp/</guid>
       <description>TCP 处于七层网络模型（应表会传网数物）中的传输层。
  特点 面向连接 和 UDP 不一样，TCP 传输数据前需要先建立 TCP 连接（此处引出三次握手、四次挥手）。而 UDP 传输数据前不需要建立连接，也不保证可靠传输。
 可靠传输 TCP 保证传输的数据：无差错、不丢失、不重复、 按序到达 。
@@ -52,10 +52,10 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
     
     <item>
       <title>Python2 迁移到 Python3 规划和实施</title>
-      <link>/posts/python2-to-python3/</link>
+      <link>https://when.run/posts/python2-to-python3/</link>
       <pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/posts/python2-to-python3/</guid>
+      <guid>https://when.run/posts/python2-to-python3/</guid>
       <description>前期规划 在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：
  主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖    在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
  排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。  在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
@@ -64,10 +64,10 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
     
     <item>
       <title>向量时钟(Vector Clock)</title>
-      <link>/posts/vector-clock/</link>
+      <link>https://when.run/posts/vector-clock/</link>
       <pubDate>Fri, 08 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/posts/vector-clock/</guid>
+      <guid>https://when.run/posts/vector-clock/</guid>
       <description>向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
  初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值  每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
 +----+ |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | +----+ 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。</description>
@@ -75,10 +75,10 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
     
     <item>
       <title>如何设计一个秒杀系统</title>
-      <link>/posts/miao-sha/</link>
+      <link>https://when.run/posts/miao-sha/</link>
       <pubDate>Wed, 02 Oct 2019 00:00:00 +0000</pubDate>
       
-      <guid>/posts/miao-sha/</guid>
+      <guid>https://when.run/posts/miao-sha/</guid>
       <description>如何设计一个秒杀系统  总结极客时间专栏《如何设计一个秒杀系统》
  极客时间
 问题 其实这类高并发问题，总结起来就是两点，并发读、 并发写。并且在这种情况下，系统还需要做到：
@@ -90,10 +90,10 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
     
     <item>
       <title> 如何开发 Flask 扩展</title>
-      <link>/posts/flask-extensions/</link>
+      <link>https://when.run/posts/flask-extensions/</link>
       <pubDate>Sat, 28 Oct 2017 00:00:00 +0000</pubDate>
       
-      <guid>/posts/flask-extensions/</guid>
+      <guid>https://when.run/posts/flask-extensions/</guid>
       <description>假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python + Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。
  先假装有一个存数据的客户端，👇
 class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
@@ -102,10 +102,10 @@ import time from flask import Flask, request, current_app try: from flask import
     
     <item>
       <title>Python 面试题整理[实习]</title>
-      <link>/posts/python-interview/</link>
+      <link>https://when.run/posts/python-interview/</link>
       <pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>/posts/python-interview/</guid>
+      <guid>https://when.run/posts/python-interview/</guid>
       <description>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
  Python 语法   说说你平时 Python 都用哪些库
   == 和 is 区别。
@@ -115,10 +115,10 @@ import time from flask import Flask, request, current_app try: from flask import
     
     <item>
       <title>[转]如何编写无法维护的代码</title>
-      <link>/posts/unmain/</link>
+      <link>https://when.run/posts/unmain/</link>
       <pubDate>Sat, 01 Oct 2016 00:00:00 +0000</pubDate>
       
-      <guid>/posts/unmain/</guid>
+      <guid>https://when.run/posts/unmain/</guid>
       <description>永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &amp;ndash; 拿破仑
  为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！
 你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！

@@ -12,19 +12,19 @@ class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各�
 import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self."/>
 <meta name="keywords" content="Flask"/>
 <meta name="robots" content="noodp"/>
-<link rel="canonical" href="/posts/flask-extensions/" />
+<link rel="canonical" href="https://when.run/posts/flask-extensions/" />
 
 
-<link rel="stylesheet" href="/assets/style.css">
-
-
-
+<link rel="stylesheet" href="https://when.run/assets/style.css">
 
 
 
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
 
-<link rel="shortcut icon" href="/avator.jpeg">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://when.run/img/apple-touch-icon-144-precomposed.png">
+
+<link rel="shortcut icon" href="https://when.run/avator.jpeg">
 
 
 
@@ -34,7 +34,7 @@ import time from flask import Flask, request, current_app try: from flask import
  先假装有一个存数据的客户端，👇
 class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
 import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self." />
-<meta name="twitter:site" content="/" />
+<meta name="twitter:site" content="https://when.run" />
 <meta name="twitter:creator" content="x1ah" />
 <meta name="twitter:image" content="">
 
@@ -46,7 +46,7 @@ import time from flask import Flask, request, current_app try: from flask import
  先假装有一个存数据的客户端，👇
 class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
 import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self." />
-<meta property="og:url" content="/posts/flask-extensions/" />
+<meta property="og:url" content="https://when.run/posts/flask-extensions/" />
 <meta property="og:site_name" content=" 如何开发 Flask 扩展" />
 <meta property="og:image" content="">
 <meta property="og:image:width" content="2048">
@@ -135,7 +135,7 @@ if (!doNotTrack) {
     
 <div class="post">
   <h1 class="post-title">
-    <a href="/posts/flask-extensions/">如何开发 Flask 扩展</a></h1>
+    <a href="https://when.run/posts/flask-extensions/">如何开发 Flask 扩展</a></h1>
   <div class="post-meta">
       
     <span class="post-date">
@@ -152,7 +152,7 @@ if (!doNotTrack) {
   
   <span class="post-tags">
     
-    #<a href="/tags/flask/">Flask</a>&nbsp;
+    #<a href="https://when.run/tags/flask/">Flask</a>&nbsp;
     
   </span>
   
@@ -249,7 +249,7 @@ api_dog<span style="color:#f92672">.</span>init_app(app)
     <div class="pagination__buttons">
       
       <span class="button previous">
-        <a href="/posts/miao-sha/">
+        <a href="https://when.run/posts/miao-sha/">
           <span class="button__icon">←</span>
           <span class="button__text">如何设计一个秒杀系统</span>
         </a>
@@ -257,7 +257,7 @@ api_dog<span style="color:#f92672">.</span>init_app(app)
       
       
       <span class="button next">
-        <a href="/posts/python-interview/">
+        <a href="https://when.run/posts/python-interview/">
           <span class="button__text">Python 面试题整理[实习]</span>
           <span class="button__icon">→</span>
         </a>
@@ -291,8 +291,8 @@ api_dog<span style="color:#f92672">.</span>init_app(app)
   </div>
 </footer>
 
-<script src="/assets/main.js"></script>
-<script src="/assets/prism.js"></script>
+<script src="https://when.run/assets/main.js"></script>
+<script src="https://when.run/assets/prism.js"></script>
 
 
 

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Python on 重案组之虎</title>
-    <link>/tags/python/</link>
+    <link>https://when.run/tags/python/</link>
     <description>Recent content in Python on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Tue, 12 Nov 2019 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/python/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://when.run/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Python2 迁移到 Python3 规划和实施</title>
-      <link>/posts/python2-to-python3/</link>
+      <link>https://when.run/posts/python2-to-python3/</link>
       <pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate>
       
-      <guid>/posts/python2-to-python3/</guid>
+      <guid>https://when.run/posts/python2-to-python3/</guid>
       <description>前期规划 在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：
  主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖    在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
  排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。  在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
@@ -25,10 +25,10 @@
     
     <item>
       <title>Python 面试题整理[实习]</title>
-      <link>/posts/python-interview/</link>
+      <link>https://when.run/posts/python-interview/</link>
       <pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate>
       
-      <guid>/posts/python-interview/</guid>
+      <guid>https://when.run/posts/python-interview/</guid>
       <description>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
  Python 语法   说说你平时 Python 都用哪些库
   == 和 is 区别。

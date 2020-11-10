@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>计算机网络 on 重案组之虎</title>
-    <link>/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
+    <link>https://when.run/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</link>
     <description>Recent content in 计算机网络 on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Mon, 10 Feb 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://when.run/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>TCP 札记</title>
-      <link>/posts/tcp/</link>
+      <link>https://when.run/posts/tcp/</link>
       <pubDate>Mon, 10 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/posts/tcp/</guid>
+      <guid>https://when.run/posts/tcp/</guid>
       <description>TCP 处于七层网络模型（应表会传网数物）中的传输层。
  特点 面向连接 和 UDP 不一样，TCP 传输数据前需要先建立 TCP 连接（此处引出三次握手、四次挥手）。而 UDP 传输数据前不需要建立连接，也不保证可靠传输。
 可靠传输 TCP 保证传输的数据：无差错、不丢失、不重复、 按序到达 。

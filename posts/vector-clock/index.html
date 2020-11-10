@@ -11,19 +11,19 @@
 &#43;----&#43; |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | &#43;----&#43; 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。"/>
 <meta name="keywords" content="Distributed"/>
 <meta name="robots" content="noodp"/>
-<link rel="canonical" href="/posts/vector-clock/" />
+<link rel="canonical" href="https://when.run/posts/vector-clock/" />
 
 
-<link rel="stylesheet" href="/assets/style.css">
-
-
-
+<link rel="stylesheet" href="https://when.run/assets/style.css">
 
 
 
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
 
-<link rel="shortcut icon" href="/avator.jpeg">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://when.run/img/apple-touch-icon-144-precomposed.png">
+
+<link rel="shortcut icon" href="https://when.run/avator.jpeg">
 
 
 
@@ -32,7 +32,7 @@
 <meta name="twitter:description" content="向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
  初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值  每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
 &#43;----&#43; |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | &#43;----&#43; 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。" />
-<meta name="twitter:site" content="/" />
+<meta name="twitter:site" content="https://when.run" />
 <meta name="twitter:creator" content="x1ah" />
 <meta name="twitter:image" content="">
 
@@ -43,7 +43,7 @@
 <meta property="og:description" content="向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
  初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值  每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
 &#43;----&#43; |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | &#43;----&#43; 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。" />
-<meta property="og:url" content="/posts/vector-clock/" />
+<meta property="og:url" content="https://when.run/posts/vector-clock/" />
 <meta property="og:site_name" content="向量时钟(Vector Clock)" />
 <meta property="og:image" content="">
 <meta property="og:image:width" content="2048">
@@ -132,7 +132,7 @@ if (!doNotTrack) {
     
 <div class="post">
   <h1 class="post-title">
-    <a href="/posts/vector-clock/">向量时钟(Vector Clock)</a></h1>
+    <a href="https://when.run/posts/vector-clock/">向量时钟(Vector Clock)</a></h1>
   <div class="post-meta">
       
     <span class="post-date">
@@ -149,7 +149,7 @@ if (!doNotTrack) {
   
   <span class="post-tags">
     
-    #<a href="/tags/distributed/">Distributed</a>&nbsp;
+    #<a href="https://when.run/tags/distributed/">Distributed</a>&nbsp;
     
   </span>
   
@@ -191,7 +191,7 @@ if (!doNotTrack) {
     <div class="pagination__buttons">
       
       <span class="button previous">
-        <a href="/posts/python2-to-python3/">
+        <a href="https://when.run/posts/python2-to-python3/">
           <span class="button__icon">←</span>
           <span class="button__text">Python2 迁移到 Python3 规划和实施</span>
         </a>
@@ -199,7 +199,7 @@ if (!doNotTrack) {
       
       
       <span class="button next">
-        <a href="/posts/miao-sha/">
+        <a href="https://when.run/posts/miao-sha/">
           <span class="button__text">如何设计一个秒杀系统</span>
           <span class="button__icon">→</span>
         </a>
@@ -233,8 +233,8 @@ if (!doNotTrack) {
   </div>
 </footer>
 
-<script src="/assets/main.js"></script>
-<script src="/assets/prism.js"></script>
+<script src="https://when.run/assets/main.js"></script>
+<script src="https://when.run/assets/prism.js"></script>
 
 
 

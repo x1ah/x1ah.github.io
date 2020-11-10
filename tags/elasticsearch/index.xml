@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Elasticsearch on 重案组之虎</title>
-    <link>/tags/elasticsearch/</link>
+    <link>https://when.run/tags/elasticsearch/</link>
     <description>Recent content in Elasticsearch on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
     <lastBuildDate>Wed, 04 Nov 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/elasticsearch/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://when.run/tags/elasticsearch/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Elasticsearch terminology: Index &amp; Shard &amp; Segment</title>
-      <link>/posts/es-terminology/</link>
+      <link>https://when.run/posts/es-terminology/</link>
       <pubDate>Wed, 04 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>/posts/es-terminology/</guid>
+      <guid>https://when.run/posts/es-terminology/</guid>
       <description>References from https://stackoverflow.com/a/15429578
 To explain:
 Index An &amp;ldquo;index&amp;rdquo; in Elasticsearch is a bit like a database in a relational DB. It&amp;rsquo;s where you store/index your data. But actually, that&amp;rsquo;s just what your application sees. Internally, an index is a logical namespace that points to one or more shards.

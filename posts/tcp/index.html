@@ -17,19 +17,19 @@
 可靠传输（滑动窗口） TCP 使用 滑动窗口 来实现可靠传输。TCP 的滑动窗口是以字节为单位的，并对窗口内的字节进行编号，如果窗口内某个低序号的字节未收到确认消息，那么滑动窗口将不会往后移，而会在确认超时之后，重新传送，即 超时重传。这时候，就有可能出现，一条 TCP 链接，某个时刻发生了超时重传，其他数据必须等这个重传恢复之后，才能继续发送。而 HTTP/3 使用的 QUIC 协议使用了多路流复用，同一个传输通道可以同时传输多路流，而不同流也使用不同的流量控制、滑动窗口等，这样即使某一路的流阻塞了，也不会影响其他路的流。"/>
 <meta name="keywords" content="TCP"/>
 <meta name="robots" content="noodp"/>
-<link rel="canonical" href="/posts/tcp/" />
+<link rel="canonical" href="https://when.run/posts/tcp/" />
 
 
-<link rel="stylesheet" href="/assets/style.css">
-
-
-
+<link rel="stylesheet" href="https://when.run/assets/style.css">
 
 
 
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
 
-<link rel="shortcut icon" href="/avator.jpeg">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://when.run/img/apple-touch-icon-144-precomposed.png">
+
+<link rel="shortcut icon" href="https://when.run/avator.jpeg">
 
 
 
@@ -44,7 +44,7 @@
 基于这个字节流传输概念，对于偶尔能听到的 “黏包” 概念也能较为直接的解释。因为 TCP 并没有包的概念，因此自然也就不存在 “黏包” 为什么 TCP 协议有粘包问题。&amp;ldquo;黏包&amp;rdquo; 误解的原因是：&amp;ldquo;应用层协议没有使用基于长度或者基于终结符的消息边界，导致多个消息的粘连&amp;rdquo;
 报文段、字节流 TCP 存在一个 “报文段” 的概念，这个指的是：在 TCP 接收到应用层写入的数据之后，会暂存到发送缓存。而 TCP 在发送数据之前，会从发送缓存中取出一部分数据，并且加上 TCP 层的特定头部数据，再往下传输给 IP 层，加上了 TCP 头部的这部分数据，叫做 TCP 的 “报文段”，这个报文段的最大长度叫做 MSS（最大报文段长度）。而在传输时，报文段会被以字节流的形式进行传输，接收方收到字节流之后，再解析字节流还原成报文段，交付使用。
 可靠传输（滑动窗口） TCP 使用 滑动窗口 来实现可靠传输。TCP 的滑动窗口是以字节为单位的，并对窗口内的字节进行编号，如果窗口内某个低序号的字节未收到确认消息，那么滑动窗口将不会往后移，而会在确认超时之后，重新传送，即 超时重传。这时候，就有可能出现，一条 TCP 链接，某个时刻发生了超时重传，其他数据必须等这个重传恢复之后，才能继续发送。而 HTTP/3 使用的 QUIC 协议使用了多路流复用，同一个传输通道可以同时传输多路流，而不同流也使用不同的流量控制、滑动窗口等，这样即使某一路的流阻塞了，也不会影响其他路的流。" />
-<meta name="twitter:site" content="/" />
+<meta name="twitter:site" content="https://when.run" />
 <meta name="twitter:creator" content="x1ah" />
 <meta name="twitter:image" content="">
 
@@ -61,7 +61,7 @@
 基于这个字节流传输概念，对于偶尔能听到的 “黏包” 概念也能较为直接的解释。因为 TCP 并没有包的概念，因此自然也就不存在 “黏包” 为什么 TCP 协议有粘包问题。&amp;ldquo;黏包&amp;rdquo; 误解的原因是：&amp;ldquo;应用层协议没有使用基于长度或者基于终结符的消息边界，导致多个消息的粘连&amp;rdquo;
 报文段、字节流 TCP 存在一个 “报文段” 的概念，这个指的是：在 TCP 接收到应用层写入的数据之后，会暂存到发送缓存。而 TCP 在发送数据之前，会从发送缓存中取出一部分数据，并且加上 TCP 层的特定头部数据，再往下传输给 IP 层，加上了 TCP 头部的这部分数据，叫做 TCP 的 “报文段”，这个报文段的最大长度叫做 MSS（最大报文段长度）。而在传输时，报文段会被以字节流的形式进行传输，接收方收到字节流之后，再解析字节流还原成报文段，交付使用。
 可靠传输（滑动窗口） TCP 使用 滑动窗口 来实现可靠传输。TCP 的滑动窗口是以字节为单位的，并对窗口内的字节进行编号，如果窗口内某个低序号的字节未收到确认消息，那么滑动窗口将不会往后移，而会在确认超时之后，重新传送，即 超时重传。这时候，就有可能出现，一条 TCP 链接，某个时刻发生了超时重传，其他数据必须等这个重传恢复之后，才能继续发送。而 HTTP/3 使用的 QUIC 协议使用了多路流复用，同一个传输通道可以同时传输多路流，而不同流也使用不同的流量控制、滑动窗口等，这样即使某一路的流阻塞了，也不会影响其他路的流。" />
-<meta property="og:url" content="/posts/tcp/" />
+<meta property="og:url" content="https://when.run/posts/tcp/" />
 <meta property="og:site_name" content="TCP 札记" />
 <meta property="og:image" content="">
 <meta property="og:image:width" content="2048">
@@ -150,7 +150,7 @@ if (!doNotTrack) {
     
 <div class="post">
   <h1 class="post-title">
-    <a href="/posts/tcp/">TCP 札记</a></h1>
+    <a href="https://when.run/posts/tcp/">TCP 札记</a></h1>
   <div class="post-meta">
       
     <span class="post-date">
@@ -167,7 +167,7 @@ if (!doNotTrack) {
   
   <span class="post-tags">
     
-    #<a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>&nbsp;
+    #<a href="https://when.run/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>&nbsp;
     
   </span>
   
@@ -224,7 +224,7 @@ if (!doNotTrack) {
     <div class="pagination__buttons">
       
       <span class="button previous">
-        <a href="/posts/keep-alive-chat/">
+        <a href="https://when.run/posts/keep-alive-chat/">
           <span class="button__icon">←</span>
           <span class="button__text">长连接聊天室 Demo</span>
         </a>
@@ -232,7 +232,7 @@ if (!doNotTrack) {
       
       
       <span class="button next">
-        <a href="/posts/python2-to-python3/">
+        <a href="https://when.run/posts/python2-to-python3/">
           <span class="button__text">Python2 迁移到 Python3 规划和实施</span>
           <span class="button__icon">→</span>
         </a>
@@ -266,8 +266,8 @@ if (!doNotTrack) {
   </div>
 </footer>
 
-<script src="/assets/main.js"></script>
-<script src="/assets/prism.js"></script>
+<script src="https://when.run/assets/main.js"></script>
+<script src="https://when.run/assets/prism.js"></script>
 
 
 

@@ -15,19 +15,19 @@
  降级：如系统容量到达一点程度之后，关闭一些非核心功能，把有限的资源让给核心功能 限流：在事先进行压力测试时，预估一个最高 QPS，并将其设为阈值，到达这个阈值之后，其他请求扔队列或者直接丢弃 拒绝服务：最坏的情况，达到某个临界点（CPU 90%）直接拒绝服务，保护服务，等负载下降之后恢复，避免被直接长时间拖垮。  "/>
 <meta name="keywords" content="秒杀, 系统设计"/>
 <meta name="robots" content="noodp"/>
-<link rel="canonical" href="/posts/miao-sha/" />
+<link rel="canonical" href="https://when.run/posts/miao-sha/" />
 
 
-<link rel="stylesheet" href="/assets/style.css">
-
-
-
+<link rel="stylesheet" href="https://when.run/assets/style.css">
 
 
 
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
 
-<link rel="shortcut icon" href="/avator.jpeg">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://when.run/img/apple-touch-icon-144-precomposed.png">
+
+<link rel="shortcut icon" href="https://when.run/avator.jpeg">
 
 
 
@@ -40,7 +40,7 @@
  答题、验证码等，在客户端直接过滤，将流量摊平，而不是瞬时洪峰流量 服务端请求排队，请求到达了不即时返回，而是塞进队列里，FIFO 方式进行处理，然后异步通知客户端（体验不好，用户无法实时收到反馈） 分层校验，保证落到数据库的请求都是有效请求   减库存 减库存是最关键的一个逻辑，需要保证高并发的情况下，不会发生超售。常用的有三种减库存方案：
  下单减库存：下单就减库存，会产生非常多无效订单，体验不好。 付款减库存：可能会有用户在付款完成之后，结果提示没库存了。 预扣库存：用户下单后减库存，但是库存只有几分钟有效期，过了有效期就回收库存，体验较好。   PlanB 高可用系统的 PlanB，针对秒杀系统，可以做一些事，比如：
  降级：如系统容量到达一点程度之后，关闭一些非核心功能，把有限的资源让给核心功能 限流：在事先进行压力测试时，预估一个最高 QPS，并将其设为阈值，到达这个阈值之后，其他请求扔队列或者直接丢弃 拒绝服务：最坏的情况，达到某个临界点（CPU 90%）直接拒绝服务，保护服务，等负载下降之后恢复，避免被直接长时间拖垮。  " />
-<meta name="twitter:site" content="/" />
+<meta name="twitter:site" content="https://when.run" />
 <meta name="twitter:creator" content="x1ah" />
 <meta name="twitter:image" content="">
 
@@ -55,7 +55,7 @@
  答题、验证码等，在客户端直接过滤，将流量摊平，而不是瞬时洪峰流量 服务端请求排队，请求到达了不即时返回，而是塞进队列里，FIFO 方式进行处理，然后异步通知客户端（体验不好，用户无法实时收到反馈） 分层校验，保证落到数据库的请求都是有效请求   减库存 减库存是最关键的一个逻辑，需要保证高并发的情况下，不会发生超售。常用的有三种减库存方案：
  下单减库存：下单就减库存，会产生非常多无效订单，体验不好。 付款减库存：可能会有用户在付款完成之后，结果提示没库存了。 预扣库存：用户下单后减库存，但是库存只有几分钟有效期，过了有效期就回收库存，体验较好。   PlanB 高可用系统的 PlanB，针对秒杀系统，可以做一些事，比如：
  降级：如系统容量到达一点程度之后，关闭一些非核心功能，把有限的资源让给核心功能 限流：在事先进行压力测试时，预估一个最高 QPS，并将其设为阈值，到达这个阈值之后，其他请求扔队列或者直接丢弃 拒绝服务：最坏的情况，达到某个临界点（CPU 90%）直接拒绝服务，保护服务，等负载下降之后恢复，避免被直接长时间拖垮。  " />
-<meta property="og:url" content="/posts/miao-sha/" />
+<meta property="og:url" content="https://when.run/posts/miao-sha/" />
 <meta property="og:site_name" content="如何设计一个秒杀系统" />
 <meta property="og:image" content="">
 <meta property="og:image:width" content="2048">
@@ -144,7 +144,7 @@ if (!doNotTrack) {
     
 <div class="post">
   <h1 class="post-title">
-    <a href="/posts/miao-sha/">如何设计一个秒杀系统</a></h1>
+    <a href="https://when.run/posts/miao-sha/">如何设计一个秒杀系统</a></h1>
   <div class="post-meta">
       
     <span class="post-date">
@@ -161,7 +161,7 @@ if (!doNotTrack) {
   
   <span class="post-tags">
     
-    #<a href="/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">系统设计</a>&nbsp;
+    #<a href="https://when.run/tags/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">系统设计</a>&nbsp;
     
   </span>
   
@@ -242,7 +242,7 @@ if (!doNotTrack) {
     <div class="pagination__buttons">
       
       <span class="button previous">
-        <a href="/posts/vector-clock/">
+        <a href="https://when.run/posts/vector-clock/">
           <span class="button__icon">←</span>
           <span class="button__text">向量时钟(Vector Clock)</span>
         </a>
@@ -250,7 +250,7 @@ if (!doNotTrack) {
       
       
       <span class="button next">
-        <a href="/posts/flask-extensions/">
+        <a href="https://when.run/posts/flask-extensions/">
           <span class="button__text"> 如何开发 Flask 扩展</span>
           <span class="button__icon">→</span>
         </a>
@@ -284,8 +284,8 @@ if (!doNotTrack) {
   </div>
 </footer>
 
-<script src="/assets/main.js"></script>
-<script src="/assets/prism.js"></script>
+<script src="https://when.run/assets/main.js"></script>
+<script src="https://when.run/assets/prism.js"></script>
 
 
 
