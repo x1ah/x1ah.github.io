@@ -3,27 +3,37 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://when.run/tags/github/</loc>
+    <lastmod>2020-11-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://when.run/posts/</loc>
+    <lastmod>2020-11-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://when.run/tags/</loc>
+    <lastmod>2020-11-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://when.run/posts/latest-repo/</loc>
+    <lastmod>2020-11-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://when.run/</loc>
+    <lastmod>2020-11-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://when.run/tags/elasticsearch/</loc>
     <lastmod>2020-11-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://when.run/posts/es-terminology/</loc>
-    <lastmod>2020-11-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://when.run/posts/</loc>
-    <lastmod>2020-11-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://when.run/tags/</loc>
-    <lastmod>2020-11-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://when.run/</loc>
     <lastmod>2020-11-04T00:00:00+00:00</lastmod>
   </url>
   

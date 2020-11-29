@@ -6,10 +6,22 @@
     <description>Recent content in Posts on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Wed, 04 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 29 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://when.run/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>最近做的一些小工具</title>
+      <link>https://when.run/posts/latest-repo/</link>
+      <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://when.run/posts/latest-repo/</guid>
+      <description>fds GitHub 地址
+这个是命令行查看基金行情的一个小工具，支持按基金名搜索，添加自选，数据源来自于天天基金。
+alfred-cron GitHub 地址
+这个是 Alfred 的一个 workflow，用于解析 crontab 表达式，并列出几个下次调度时间的工具。</description>
+    </item>
     
     <item>
       <title>Elasticsearch terminology: Index &amp; Shard &amp; Segment</title>
