@@ -6,10 +6,24 @@
     <description>Recent content in Elasticsearch on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Wed, 04 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 02 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://when.run/tags/elasticsearch/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x</title>
+      <link>https://when.run/posts/elasticsearch-upgrade/</link>
+      <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://when.run/posts/elasticsearch-upgrade/</guid>
+      <description>背景 公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。
+需要升级到新版本 es 的主要原因有以下几个：
+ 前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升  升级方案调研 Rolling upgrades  官方文档：rolling upgrades
+ 由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 rolling upgrade 步骤，中间需要两次 rolling upgrade，分别为：
+ From 5.x to 5.6 From 5.6 to 6.8 (rolling upgrade) From 6.8 to 7.x (rolling upgrade)  升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。
+新集群 &amp;amp; 新索引 除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：</description>
+    </item>
     
     <item>
       <title>Elasticsearch terminology: Index &amp; Shard &amp; Segment</title>

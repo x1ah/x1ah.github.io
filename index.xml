@@ -6,10 +6,24 @@
     <description>Recent content on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Sun, 29 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 02 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://when.run/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x</title>
+      <link>https://when.run/posts/elasticsearch-upgrade/</link>
+      <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://when.run/posts/elasticsearch-upgrade/</guid>
+      <description>背景 公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。
+需要升级到新版本 es 的主要原因有以下几个：
+ 前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升  升级方案调研 Rolling upgrades  官方文档：rolling upgrades
+ 由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 rolling upgrade 步骤，中间需要两次 rolling upgrade，分别为：
+ From 5.x to 5.6 From 5.6 to 6.8 (rolling upgrade) From 6.8 to 7.x (rolling upgrade)  升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。
+新集群 &amp;amp; 新索引 除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：</description>
+    </item>
     
     <item>
       <title>最近做的一些小工具</title>
@@ -120,19 +134,6 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
  先假装有一个存数据的客户端，👇
 class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
 import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self.</description>
-    </item>
-    
-    <item>
-      <title>Python 面试题整理[实习]</title>
-      <link>https://when.run/posts/python-interview/</link>
-      <pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate>
-      
-      <guid>https://when.run/posts/python-interview/</guid>
-      <description>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
- Python 语法   说说你平时 Python 都用哪些库
-  == 和 is 区别。
- == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。    深拷贝和浅拷贝。
-   # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。</description>
     </item>
     
   </channel>

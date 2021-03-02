@@ -6,10 +6,24 @@
     <description>Recent content in Posts on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Sun, 29 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 02 Mar 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://when.run/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x</title>
+      <link>https://when.run/posts/elasticsearch-upgrade/</link>
+      <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://when.run/posts/elasticsearch-upgrade/</guid>
+      <description>背景 公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。
+需要升级到新版本 es 的主要原因有以下几个：
+ 前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升  升级方案调研 Rolling upgrades  官方文档：rolling upgrades
+ 由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 rolling upgrade 步骤，中间需要两次 rolling upgrade，分别为：
+ From 5.x to 5.6 From 5.6 to 6.8 (rolling upgrade) From 6.8 to 7.x (rolling upgrade)  升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。
+新集群 &amp;amp; 新索引 除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：</description>
+    </item>
     
     <item>
       <title>最近做的一些小工具</title>
@@ -123,18 +137,6 @@ import time from flask import Flask, request, current_app try: from flask import
   == 和 is 区别。
  == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。    深拷贝和浅拷贝。
    # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。</description>
-    </item>
-    
-    <item>
-      <title>[转]如何编写无法维护的代码</title>
-      <link>https://when.run/posts/unmain/</link>
-      <pubDate>Sat, 01 Oct 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://when.run/posts/unmain/</guid>
-      <description>永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &amp;ndash; 拿破仑
- 为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！
-你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！
-阅读全文</description>
     </item>
     
   </channel>
