@@ -26,18 +26,6 @@
     </item>
     
     <item>
-      <title>最近做的一些小工具</title>
-      <link>https://when.run/posts/latest-repo/</link>
-      <pubDate>Sun, 29 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://when.run/posts/latest-repo/</guid>
-      <description>fds GitHub 地址
-这个是命令行查看基金行情的一个小工具，支持按基金名搜索，添加自选，数据源来自于天天基金。
-alfred-cron GitHub 地址
-这个是 Alfred 的一个 workflow，用于解析 crontab 表达式，并列出几个下次调度时间的工具。</description>
-    </item>
-    
-    <item>
       <title>Elasticsearch terminology: Index &amp; Shard &amp; Segment</title>
       <link>https://when.run/posts/es-terminology/</link>
       <pubDate>Wed, 04 Nov 2020 00:00:00 +0000</pubDate>
@@ -134,6 +122,19 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
  先假装有一个存数据的客户端，👇
 class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
 import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self.</description>
+    </item>
+    
+    <item>
+      <title>Python 面试题整理[实习]</title>
+      <link>https://when.run/posts/python-interview/</link>
+      <pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://when.run/posts/python-interview/</guid>
+      <description>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
+ Python 语法   说说你平时 Python 都用哪些库
+  == 和 is 区别。
+ == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。    深拷贝和浅拷贝。
+   # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。</description>
     </item>
     
   </channel>
