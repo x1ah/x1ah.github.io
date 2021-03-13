@@ -6,11 +6,7 @@
     <description>Recent content in Go on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 03 Nov 2020 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://when.run/tags/go/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 03 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://when.run/tags/go/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>长连接聊天室 Demo</title>
       <link>https://when.run/posts/keep-alive-chat/</link>

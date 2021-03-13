@@ -6,11 +6,7 @@
     <description>Recent content in Flask on 重案组之虎</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Sat, 28 Oct 2017 00:00:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://when.run/tags/flask/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Sat, 28 Oct 2017 00:00:00 +0000</lastBuildDate><atom:link href="https://when.run/tags/flask/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title> 如何开发 Flask 扩展</title>
       <link>https://when.run/posts/flask-extensions/</link>
