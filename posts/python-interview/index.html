@@ -5,15 +5,30 @@
     <title>Python 面试题整理[实习] :: 重案组之虎</title>
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
  Python 语法   说说你平时 Python 都用哪些库
   == 和 is 区别。
  == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。    深拷贝和浅拷贝。
-   # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。"/>
-<meta name="keywords" content="Python"/>
-<meta name="robots" content="noodp"/>
+   # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。" />
+<meta name="keywords" content="Python" />
+<meta name="robots" content="noodp" />
 <link rel="canonical" href="https://when.run/posts/python-interview/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'G-W1HPKKSBLB', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
 
 
 <link rel="stylesheet" href="https://when.run/assets/style.css">
@@ -23,39 +38,31 @@
 
 
 
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://when.run/img/apple-touch-icon-144-precomposed.png">
+<link rel="apple-touch-icon" href="https://when.run/img/apple-touch-icon-192x192.png">
 
-<link rel="shortcut icon" href="https://when.run/avator.jpeg">
+  <link rel="shortcut icon" href="https://when.run/avator.jpeg">
 
 
 
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="Python 面试题整理[实习] :: 重案组之虎 — " />
-<meta name="twitter:description" content="下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
- Python 语法   说说你平时 Python 都用哪些库
-  == 和 is 区别。
- == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。    深拷贝和浅拷贝。
-   # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。" />
-<meta name="twitter:site" content="https://when.run" />
-<meta name="twitter:creator" content="x1ah" />
-<meta name="twitter:image" content="">
+
 
 
 <meta property="og:locale" content="cn" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="Python 面试题整理[实习] :: 重案组之虎 — ">
-<meta property="og:description" content="下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
- Python 语法   说说你平时 Python 都用哪些库
-  == 和 is 区别。
- == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。    深拷贝和浅拷贝。
-   # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。" />
+<meta property="og:title" content="Python 面试题整理[实习]">
+<meta property="og:description" content="内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。（斜体的为遇见两次以上的。）" />
 <meta property="og:url" content="https://when.run/posts/python-interview/" />
-<meta property="og:site_name" content="Python 面试题整理[实习]" />
-<meta property="og:image" content="">
+<meta property="og:site_name" content="重案组之虎" />
+
+  <meta property="og:image" content="https://when.run">
+
 <meta property="og:image:width" content="2048">
 <meta property="og:image:height" content="1024">
 
-<meta property="article:published_time" content="2017-04-28 00:00:00 &#43;0000 UTC" />
+
+  <meta property="article:published_time" content="2017-04-28 00:00:00 &#43;0000 UTC" />
+
 
 
 
@@ -80,10 +87,10 @@ if (!doNotTrack) {
 
 
 </head>
-<body class="">
+<body class="orange">
 
 
-<div class="container center">
+<div class="container center headings--one-size">
 
   <header class="header">
   <div class="header__inner">
@@ -95,7 +102,9 @@ if (!doNotTrack) {
 </a>
 
     </div>
-    <div class="menu-trigger">menu</div>
+    
+      <div class="menu-trigger">menu</div>
+    
   </div>
   
     <nav class="menu">
@@ -140,15 +149,13 @@ if (!doNotTrack) {
   <h1 class="post-title">
     <a href="https://when.run/posts/python-interview/">Python 面试题整理[实习]</a></h1>
   <div class="post-meta">
-      
-    <span class="post-date">
-      2017-04-28
-    </span>
+    
+      <span class="post-date">
+        2017-04-28 
+      </span>
     
     
-    <span class="post-author">::
-      x1ah
-    </span>
+    <span class="post-author">:: x1ah</span>
     
   </div>
 
@@ -162,11 +169,13 @@ if (!doNotTrack) {
 
   
 
-  <div class="post-content">
-    <blockquote>
+  
+
+  <div class="post-content"><div>
+        <blockquote>
 <p>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）</p>
 </blockquote>
-<h1 id="python-语法">Python 语法</h1>
+<h1 id="python-语法">Python 语法<a href="#python-语法" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 <ul>
 <li>
 <p><em>说说你平时 Python 都用哪些库</em></p>
@@ -374,7 +383,7 @@ if (!doNotTrack) {
 </ul>
 </li>
 </ul>
-<h1 id="数据结构算法">数据结构，算法</h1>
+<h1 id="数据结构算法">数据结构，算法<a href="#数据结构算法" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 <ul>
 <li>层次遍历二叉树用什么方法？</li>
 </ul>
@@ -555,7 +564,7 @@ point(ra, rb)
 </ul>
 </li>
 </ul>
-<h1 id="数据库">数据库</h1>
+<h1 id="数据库">数据库<a href="#数据库" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 <ul>
 <li>
 <p>索引是什么原理？有什么优缺点？</p>
@@ -582,7 +591,7 @@ point(ra, rb)
 </ul>
 </li>
 </ul>
-<h1 id="网络">网络</h1>
+<h1 id="网络">网络<a href="#网络" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 <ul>
 <li>
 <p>从浏览器输入网址到网页渲染完毕这过程发生了什么？</p>
@@ -702,7 +711,7 @@ point(ra, rb)
 </ul>
 </li>
 </ul>
-<h1 id="操作系统">操作系统</h1>
+<h1 id="操作系统">操作系统<a href="#操作系统" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 <ul>
 <li><em>进程和线程以及协程的区别？</em></li>
 <li><em>多线程和多进程的区别？</em></li>
@@ -712,7 +721,7 @@ point(ra, rb)
 <li>如何让某个程序在后台运行？（Linux）</li>
 <li>sed, awk 用法（Linux）</li>
 </ul>
-<h1 id="编程题">编程题</h1>
+<h1 id="编程题">编程题<a href="#编程题" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 <ul>
 <li>手写二分查找，<em>快速排序</em>。</li>
 <li>~还有一个 SQL 语句的，一条 SQL 语句打印某张表某个 group count  TOP 5。~</li>
@@ -752,7 +761,7 @@ point(ra, rb)
 <li>实现一个函数，检验一个字符串是否符合 <code>xxxx-xx-xx</code> 这样的日期格式，注意润年，大小月，不允许用库函数，尽量越底层实现越好。（手写）</li>
 <li>我们是做地图相关工作的，现在给你提供一个三维的数据，数据描述的是不同时间一些地图上的一些地点坐标，分别有时间，x轴坐标，y轴坐标，请你设计一个算法，能够得到一天内地图上的 TOP 10 热点地区，地区大小也相应的自己作合适调整，开放性题目。</li>
 </ul>
-<h1 id="概率论">概率论</h1>
+<h1 id="概率论">概率论<a href="#概率论" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 <ul>
 <li>一副扑克除去大小王，共 52 张排，随机取三张扑克，求同花（三张扑克同一种花色）和顺子的概率。</li>
 <li>其他忘了 Orz</li>
@@ -762,33 +771,35 @@ point(ra, rb)
 <p>原文：https://github.com/x1ah/Blog/issues/9</p>
 </blockquote>
 
-  </div>
+      </div></div>
+
   
-  <div class="pagination">
+  
+<div class="pagination">
     <div class="pagination__title">
-      <span
-        class="pagination__title-h">其他文章</span>
-      <hr />
+        <span class="pagination__title-h">其他文章</span>
+        <hr />
     </div>
     <div class="pagination__buttons">
-      
-      <span class="button previous">
-        <a href="https://when.run/posts/flask-extensions/">
-          <span class="button__icon">←</span>
-          <span class="button__text"> 如何开发 Flask 扩展</span>
-        </a>
-      </span>
-      
-      
-      <span class="button next">
-        <a href="https://when.run/posts/unmain/">
-          <span class="button__text">[转]如何编写无法维护的代码</span>
-          <span class="button__icon">→</span>
-        </a>
-      </span>
-      
+        
+        <span class="button previous">
+            <a href="https://when.run/posts/flask-extensions/">
+                <span class="button__icon">←</span>
+                <span class="button__text"> 如何开发 Flask 扩展</span>
+            </a>
+        </span>
+        
+        
+        <span class="button next">
+            <a href="https://when.run/posts/unmain/">
+                <span class="button__text">[转]如何编写无法维护的代码</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
     </div>
-  </div>
+</div>
+
   
 
   <script src="https://utteranc.es/client.js"
@@ -817,6 +828,8 @@ point(ra, rb)
 
 <script src="https://when.run/assets/main.js"></script>
 <script src="https://when.run/assets/prism.js"></script>
+
+
 
 
 

@@ -5,14 +5,29 @@
     <title>[转]如何编写无法维护的代码 :: 重案组之虎</title>
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &amp;ndash; 拿破仑
  为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！
 你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！
-阅读全文"/>
-<meta name="keywords" content="铁饭碗, 代码质量"/>
-<meta name="robots" content="noodp"/>
+阅读全文" />
+<meta name="keywords" content="铁饭碗, 代码质量" />
+<meta name="robots" content="noodp" />
 <link rel="canonical" href="https://when.run/posts/unmain/" />
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'G-W1HPKKSBLB', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
 
 
 <link rel="stylesheet" href="https://when.run/assets/style.css">
@@ -22,37 +37,31 @@
 
 
 
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://when.run/img/apple-touch-icon-144-precomposed.png">
+<link rel="apple-touch-icon" href="https://when.run/img/apple-touch-icon-192x192.png">
 
-<link rel="shortcut icon" href="https://when.run/avator.jpeg">
+  <link rel="shortcut icon" href="https://when.run/avator.jpeg">
 
 
 
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="[转]如何编写无法维护的代码 :: 重案组之虎 — " />
-<meta name="twitter:description" content="永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &amp;ndash; 拿破仑
- 为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！
-你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！
-阅读全文" />
-<meta name="twitter:site" content="https://when.run" />
-<meta name="twitter:creator" content="x1ah" />
-<meta name="twitter:image" content="">
+
 
 
 <meta property="og:locale" content="cn" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="[转]如何编写无法维护的代码 :: 重案组之虎 — ">
-<meta property="og:description" content="永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &amp;ndash; 拿破仑
- 为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！
-你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！
-阅读全文" />
+<meta property="og:title" content="[转]如何编写无法维护的代码">
+<meta property="og:description" content=" 如何编写无法维护的代码，让自己稳拿铁饭碗 ;-)" />
 <meta property="og:url" content="https://when.run/posts/unmain/" />
-<meta property="og:site_name" content="[转]如何编写无法维护的代码" />
-<meta property="og:image" content="">
+<meta property="og:site_name" content="重案组之虎" />
+
+  <meta property="og:image" content="https://when.run">
+
 <meta property="og:image:width" content="2048">
 <meta property="og:image:height" content="1024">
 
-<meta property="article:published_time" content="2016-10-01 00:00:00 &#43;0000 UTC" />
+
+  <meta property="article:published_time" content="2016-10-01 00:00:00 &#43;0000 UTC" />
+
 
 
 
@@ -77,10 +86,10 @@ if (!doNotTrack) {
 
 
 </head>
-<body class="">
+<body class="orange">
 
 
-<div class="container center">
+<div class="container center headings--one-size">
 
   <header class="header">
   <div class="header__inner">
@@ -92,7 +101,9 @@ if (!doNotTrack) {
 </a>
 
     </div>
-    <div class="menu-trigger">menu</div>
+    
+      <div class="menu-trigger">menu</div>
+    
   </div>
   
     <nav class="menu">
@@ -137,15 +148,13 @@ if (!doNotTrack) {
   <h1 class="post-title">
     <a href="https://when.run/posts/unmain/">[转]如何编写无法维护的代码</a></h1>
   <div class="post-meta">
-      
-    <span class="post-date">
-      2016-10-01
-    </span>
+    
+      <span class="post-date">
+        2016-10-01 
+      </span>
     
     
-    <span class="post-author">::
-      x1ah
-    </span>
+    <span class="post-author">:: x1ah</span>
     
   </div>
 
@@ -161,34 +170,38 @@ if (!doNotTrack) {
 
   
 
-  <div class="post-content">
-    <blockquote>
+  
+
+  <div class="post-content"><div>
+        <blockquote>
 <p>永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &ndash; 拿破仑</p>
 </blockquote>
 <p>为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！</p>
 <p>你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！</p>
 <p><a href="/unmain.html">阅读全文</a></p>
 
-  </div>
+      </div></div>
+
   
-  <div class="pagination">
+  
+<div class="pagination">
     <div class="pagination__title">
-      <span
-        class="pagination__title-h">其他文章</span>
-      <hr />
+        <span class="pagination__title-h">其他文章</span>
+        <hr />
     </div>
     <div class="pagination__buttons">
-      
-      <span class="button previous">
-        <a href="https://when.run/posts/python-interview/">
-          <span class="button__icon">←</span>
-          <span class="button__text">Python 面试题整理[实习]</span>
-        </a>
-      </span>
-      
-      
+        
+        <span class="button previous">
+            <a href="https://when.run/posts/python-interview/">
+                <span class="button__icon">←</span>
+                <span class="button__text">Python 面试题整理[实习]</span>
+            </a>
+        </span>
+        
+        
     </div>
-  </div>
+</div>
+
   
 
   <script src="https://utteranc.es/client.js"
@@ -217,6 +230,8 @@ if (!doNotTrack) {
 
 <script src="https://when.run/assets/main.js"></script>
 <script src="https://when.run/assets/prism.js"></script>
+
+
 
 
 
