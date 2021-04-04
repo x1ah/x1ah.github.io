@@ -2,7 +2,7 @@
 <html lang="cn">
 <head>
   
-    <title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x :: 重案组之虎</title>
+    <title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x :: x1ah</title>
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,7 +39,7 @@ if (!doNotTrack) {
 
 
 
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://when.run/img/apple-touch-icon-144-precomposed.png">
+<link rel="apple-touch-icon" href="https://when.run/img/apple-touch-icon-192x192.png">
 
   <link rel="shortcut icon" href="https://when.run/avator.jpeg">
 
@@ -51,10 +51,10 @@ if (!doNotTrack) {
 
 <meta property="og:locale" content="cn" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x :: 重案组之虎">
+<meta property="og:title" content="如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x">
 <meta property="og:description" content="这篇博客记录了我将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x 的过程，以及迁移流程和步骤" />
 <meta property="og:url" content="https://when.run/posts/elasticsearch-upgrade/" />
-<meta property="og:site_name" content="如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x" />
+<meta property="og:site_name" content="x1ah" />
 
   <meta property="og:image" content="https://when.run">
 
@@ -98,12 +98,14 @@ if (!doNotTrack) {
     <div class="header__logo">
       <a href="/">
   <div class="logo">
-    重案组之虎罢了
+    x1ah
   </div>
 </a>
 
     </div>
-    <div class="menu-trigger">menu</div>
+    
+      <div class="menu-trigger">menu</div>
+    
   </div>
   
     <nav class="menu">
@@ -232,6 +234,8 @@ Transfer/sec:    388.64MB
 <h4 id="数据比对">数据比对<a href="#数据比对" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
 <p>与性能压测类似，找一些业务常用的查询语句，分别对两个集群查询结果采样，比对搜出来的结果是否有差异，依次判断索引是否有差异。</p>
 <p>业务数据测试的同时，还需要测试插件加载是否与老集群一致，比如 ik 的词典文件是否正常加载，通常可以使用 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html"><code>/index/_analyze</code></a> 接口来进行测试，并比对结果是否一致</p>
+<h4 id="诡异的毛刺">诡异的毛刺<a href="#诡异的毛刺" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
+<p>在将索引迁移到新集群后，性能监控发现， 搜索请求经常性的出现毛刺，而且看起来是有规律的毛刺</p>
 <h4 id="兼容性测试">兼容性测试<a href="#兼容性测试" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
 <p>由于两个集群版本跨度比较大，容易出乌龙。比如下面这个 DSL，在 es 5.x 和 es7.x 两个版本的搜索结果迥然不同。</p>
 <pre><code>{
@@ -304,6 +308,8 @@ Transfer/sec:    388.64MB
 
 <script src="https://when.run/assets/main.js"></script>
 <script src="https://when.run/assets/prism.js"></script>
+
+
 
 
 
