@@ -235,7 +235,27 @@ Transfer/sec:    388.64MB
 <p>与性能压测类似，找一些业务常用的查询语句，分别对两个集群查询结果采样，比对搜出来的结果是否有差异，依次判断索引是否有差异。</p>
 <p>业务数据测试的同时，还需要测试插件加载是否与老集群一致，比如 ik 的词典文件是否正常加载，通常可以使用 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html"><code>/index/_analyze</code></a> 接口来进行测试，并比对结果是否一致</p>
 <h4 id="诡异的毛刺">诡异的毛刺<a href="#诡异的毛刺" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
-<p>在将索引迁移到新集群后，性能监控发现， 搜索请求经常性的出现毛刺，而且看起来是有规律的毛刺</p>
+<p>在将索引迁移到新集群后，性能监控发现， 搜索请求经常性的出现毛刺，而且看起来是有规律的毛刺，如果 30s 内没有 search 请求，那么下一次必然会出现一根毛刺
+<img src="/image/es_latency.png" alt="es-latency"></p>
+<p>这个问题困扰了很久，排查思路如下：</p>
+<ol>
+<li>
+<p>首先查看是否为 SDK 的问题，是不是客户端到 es server 的长连接断了，导致 30s 后需要重新建立长连接，调长链接时间后发现并未改善</p>
+</li>
+<li>
+<p>接下来看索引的 <code>_stats</code> 信息，发现 <code>docs.deleted</code> 特别多。产生这么多 deleted 的原因可以解释，因为一个 update 操作等于一个 create + 一个 delete，创建新 doc，标记老 doc 为 deleted。但是在经过一段时间之后，merge 会把老的 segment 给合并掉，deleted 的 doc 也一并被清理了，但是这个指标却没有见变少，一直在增加，此时怀疑是 merge 流程的问题。是否 merge 未正常工作。
+<img src="/image/docs_deleted.png" alt="docs.deleted"></p>
+</li>
+<li>
+<p>继续看索引的 <code>_stats</code> 信息，发现 <code>refresh</code> 数非常奇怪，默认 <code>refresh_interval</code> 是 1s，也就是正常情况下是每秒刷新一次，refresh.total 也就是索引创建到当前时间的秒数，而几天前创建的索引，现在却只 refresh 了800+次，那么是否跟这个没有 refresh 有关系呢？为了验证这个问题，手动跑个脚本，在后台不间断的发送 search 请求，发现开始 refresh 了，毛刺也消失了，说明问题出在了 refresh 上面，出于某些原因没有正常的执行 refresh
+<img src="/image/refresh_total.png" alt="refresh.total"></p>
+</li>
+<li>
+<p>在一番查找之后，在 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-refresh-interval-setting">es 文档</a> 的 <code>refresh_interval</code> 字段解释里发现这么一句话，如果没有显示的指定 <code>refresh_interval</code>，那么如果 30s 内没有 search 请求来，会跳过 refresh 步骤，直到有 search 请求来时，才会触发 refresh，并等 refresh 完之后才开始处理 search 请求。这也就能解释为什么 30s 没有搜索流量就会出现一根毛刺了。当手动给索引指定 <code>refresh_interval</code> 之后，默认行为就变得和老版本一样，不再跳过 refresh，毛刺也就消失了。在 elasticsearch 7.0 的 <a href="https://www.elastic.co/cn/blog/elasticsearch-7-0-0-released">release note</a> 里也提到了：
+<img src="/image/refresh_interval_doc.png" alt="refresh.doc">
+<img src="/image/es7_release.png" alt="release"></p>
+</li>
+</ol>
 <h4 id="兼容性测试">兼容性测试<a href="#兼容性测试" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
 <p>由于两个集群版本跨度比较大，容易出乌龙。比如下面这个 DSL，在 es 5.x 和 es7.x 两个版本的搜索结果迥然不同。</p>
 <pre><code>{
