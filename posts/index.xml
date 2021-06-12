@@ -19,6 +19,113 @@
  由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 rolling upgrade 步骤，中间需要两次 rolling upgrade，分别为：
  From 5.x to 5.6 From 5.6 to 6.8 (rolling upgrade) From 6.8 to 7.x (rolling upgrade)  升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。
 新集群 &amp;amp; 新索引 除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：</description>
+      <content>&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
+&lt;p&gt;公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。&lt;/p&gt;
+&lt;p&gt;需要升级到新版本 es 的主要原因有以下几个：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug&lt;/li&gt;
+&lt;li&gt;Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;升级方案调研&#34;&gt;升级方案调研&lt;/h2&gt;
+&lt;h4 id=&#34;rolling-upgrades&#34;&gt;Rolling upgrades&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;官方文档：&lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html&#34;&gt;rolling upgrades&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html&#34;&gt;rolling upgrade&lt;/a&gt; 步骤，中间需要两次 rolling upgrade，分别为：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;From 5.x to 5.6&lt;/li&gt;
+&lt;li&gt;From 5.6 to 6.8 (&lt;strong&gt;rolling upgrade&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;From 6.8 to 7.x (&lt;strong&gt;rolling upgrade&lt;/strong&gt;)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。&lt;/p&gt;
+&lt;h4 id=&#34;新集群--新索引&#34;&gt;新集群 &amp;amp; 新索引&lt;/h4&gt;
+&lt;p&gt;除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;搭建新集群，尽量保持配置与老集群一致。比如如果有 ik 插件，那么需要保证 ik 的词典文件与老集群一致&lt;/li&gt;
+&lt;li&gt;新建索引。这一步的目的是方便后面的索引能够同步双写到新老两个集群。同时建索引时需要注意，es7 已经废弃了 mapping 里的 document type，mapping 不再需要指定 type 了&lt;/li&gt;
+&lt;li&gt;索引双写。第二步已经将索引在新集群中建好了，这里在业务代码中开始双写，保证新增的 document 能够与老集群的索引一致&lt;/li&gt;
+&lt;li&gt;全量索引。新增索引一致后，存量的 document 也需要一致，因此需要把存量的 doc 重新全部导入到新集群内。这一步官方提供了一个 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html#reindex-from-remote&#34;&gt;reindex from remote&lt;/a&gt;，但是实际操作后发现，reindex 后，mapping 和 settings 会有出入，并且不确定这个操作对老集群的压力大不大，因此还是决定跑下脚本人工重建&lt;/li&gt;
+&lt;li&gt;线上测试，包括性能测试、稳定性观察、数据比对等&lt;/li&gt;
+&lt;li&gt;停掉索引双写&lt;/li&gt;
+&lt;li&gt;下线老集群，全面覆盖新集群&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;测试新集群&#34;&gt;测试新集群&lt;/h2&gt;
+&lt;p&gt;新集群准备好之后，需要进行一些必要的测试，比如：性能测试、数据比对、老的查询语句兼容性测试。&lt;/p&gt;
+&lt;h4 id=&#34;性能测试&#34;&gt;性能测试&lt;/h4&gt;
+&lt;p&gt;性能测试可以挑拣一个业务代码里最常用的查询语句，然后进行压测。比如我这里使用 wrk 压测一个最简单的全文搜索&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// dsl.lua 文件内容
+
+wrk.method = &amp;quot;GET&amp;quot;
+wrk.body = [[{
+    &amp;quot;query&amp;quot;:{
+        &amp;quot;match&amp;quot;:{
+            &amp;quot;name&amp;quot;:{
+                &amp;quot;query&amp;quot;:&amp;quot;烘焙&amp;quot;
+            }
+        }
+    },
+    &amp;quot;size&amp;quot;:100
+}]]
+wrk.headers[&amp;quot;Content-Type&amp;quot;] = &amp;quot;application/json&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;压测命令：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;wrk -t10 -c10 -d10s --script=dsl.lua http://elasticsearch-address:9200/you_index/_search
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;结果示例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Running 10s test @ http://elasticsearch-address:9200/you_index/_search
+  10 threads and 10 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     8.31ms    2.12ms  35.71ms   75.93%
+    Req/Sec   121.09     12.97   151.00     78.10%
+  12068 requests in 10.01s, 3.80GB read
+Requests/sec:   1205.70
+Transfer/sec:    388.64MB
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;可以适当调整压测参数，以及查询语句，通过比对 wrk 输出的 Avg latency 得出性能差异的结论。&lt;/p&gt;
+&lt;h4 id=&#34;数据比对&#34;&gt;数据比对&lt;/h4&gt;
+&lt;p&gt;与性能压测类似，找一些业务常用的查询语句，分别对两个集群查询结果采样，比对搜出来的结果是否有差异，依次判断索引是否有差异。&lt;/p&gt;
+&lt;p&gt;业务数据测试的同时，还需要测试插件加载是否与老集群一致，比如 ik 的词典文件是否正常加载，通常可以使用 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html&#34;&gt;&lt;code&gt;/index/_analyze&lt;/code&gt;&lt;/a&gt; 接口来进行测试，并比对结果是否一致&lt;/p&gt;
+&lt;h4 id=&#34;诡异的毛刺&#34;&gt;诡异的毛刺&lt;/h4&gt;
+&lt;p&gt;在将索引迁移到新集群后，性能监控发现， 搜索请求经常性的出现毛刺，而且看起来是有规律的毛刺，如果 30s 内没有 search 请求，那么下一次必然会出现一根毛刺
+&lt;img src=&#34;https://when.run/image/es_latency.png&#34; alt=&#34;es-latency&#34;&gt;&lt;/p&gt;
+&lt;p&gt;这个问题困扰了很久，排查思路如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;首先查看是否为 SDK 的问题，是不是客户端到 es server 的长连接断了，导致 30s 后需要重新建立长连接，调长链接时间后发现并未改善&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;接下来看索引的 &lt;code&gt;_stats&lt;/code&gt; 信息，发现 &lt;code&gt;docs.deleted&lt;/code&gt; 特别多。产生这么多 deleted 的原因可以解释，因为一个 update 操作等于一个 create + 一个 delete，创建新 doc，标记老 doc 为 deleted。但是在经过一段时间之后，merge 会把老的 segment 给合并掉，deleted 的 doc 也一并被清理了，但是这个指标却没有见变少，一直在增加，此时怀疑是 merge 流程的问题。是否 merge 未正常工作。
+&lt;img src=&#34;https://when.run/image/docs_deleted.png&#34; alt=&#34;docs.deleted&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;继续看索引的 &lt;code&gt;_stats&lt;/code&gt; 信息，发现 &lt;code&gt;refresh&lt;/code&gt; 数非常奇怪，默认 &lt;code&gt;refresh_interval&lt;/code&gt; 是 1s，也就是正常情况下是每秒刷新一次，refresh.total 也就是索引创建到当前时间的秒数，而几天前创建的索引，现在却只 refresh 了800+次，那么是否跟这个没有 refresh 有关系呢？为了验证这个问题，手动跑个脚本，在后台不间断的发送 search 请求，发现开始 refresh 了，毛刺也消失了，说明问题出在了 refresh 上面，出于某些原因没有正常的执行 refresh
+&lt;img src=&#34;https://when.run/image/refresh_total.png&#34; alt=&#34;refresh.total&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在一番查找之后，在 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-refresh-interval-setting&#34;&gt;es 文档&lt;/a&gt; 的 &lt;code&gt;refresh_interval&lt;/code&gt; 字段解释里发现这么一句话，如果没有显示的指定 &lt;code&gt;refresh_interval&lt;/code&gt;，那么如果 30s 内没有 search 请求来，会跳过 refresh 步骤，直到有 search 请求来时，才会触发 refresh，并等 refresh 完之后才开始处理 search 请求。这也就能解释为什么 30s 没有搜索流量就会出现一根毛刺了。当手动给索引指定 &lt;code&gt;refresh_interval&lt;/code&gt; 之后，默认行为就变得和老版本一样，不再跳过 refresh，毛刺也就消失了。在 elasticsearch 7.0 的 &lt;a href=&#34;https://www.elastic.co/cn/blog/elasticsearch-7-0-0-released&#34;&gt;release note&lt;/a&gt; 里也提到了：
+&lt;img src=&#34;https://when.run/image/refresh_interval_doc.png&#34; alt=&#34;refresh.doc&#34;&gt;
+&lt;img src=&#34;https://when.run/image/es7_release.png&#34; alt=&#34;release&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;兼容性测试&#34;&gt;兼容性测试&lt;/h4&gt;
+&lt;p&gt;由于两个集群版本跨度比较大，容易出乌龙。比如下面这个 DSL，在 es 5.x 和 es7.x 两个版本的搜索结果迥然不同。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;bool&amp;quot; : {
+      &amp;quot;should&amp;quot; : [
+        { &amp;quot;term&amp;quot; : { &amp;quot;tags&amp;quot; : &amp;quot;env1&amp;quot; } },
+        { &amp;quot;term&amp;quot; : { &amp;quot;tags&amp;quot; : &amp;quot;deployed&amp;quot; } }
+      ]
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;原因为：es5 bool query 只有 should 条件时，默认 &lt;code&gt;minimum_should_match = 1&lt;/code&gt;，而到了 es7 里，默认值为 0 了，导致 es7 里搜出来的是全部 doc，而 es5 只会搜出符合条件的结果(&lt;a href=&#34;https://stackoverflow.com/questions/48984706/default-value-of-minimum-should-match/49012705#49012705&#34;&gt;default value of minimum should match&lt;/a&gt;。对于这些差异，可以事先阅读 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-7.0.html&#34;&gt;breaking changes 7.0&lt;/a&gt;，并进行相应修改。对于有不兼容或者有差异的语句，在 &lt;em&gt;数据比对&lt;/em&gt; 步骤也能够测出来。&lt;/p&gt;
+&lt;h2 id=&#34;后记&#34;&gt;后记&lt;/h2&gt;
+&lt;p&gt;在测试通过之后，就可以下线老集群，全面切换到新集群了🎉。&lt;/p&gt;
+&lt;p&gt;迁移过程中，有几个踩过的坑需要注意：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;es 7 已经废弃了 mapping type: &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html&#34;&gt;Removal of mapping types&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;切词插件(ik) 结果比对，保证插件加载正常&lt;/li&gt;
+&lt;li&gt;关注新版本的一些默认值改动，一些 breaking changes&lt;/li&gt;
+&lt;/ul&gt;
+</content>
     </item>
     
     <item>
@@ -32,6 +139,25 @@ To explain:
 Index An &amp;ldquo;index&amp;rdquo; in Elasticsearch is a bit like a database in a relational DB. It&amp;rsquo;s where you store/index your data. But actually, that&amp;rsquo;s just what your application sees. Internally, an index is a logical namespace that points to one or more shards.
 Also, &amp;ldquo;to index&amp;rdquo; means to &amp;ldquo;put&amp;rdquo; your data into Elasticsearch. Your data is both stored (for retrieval) and &amp;ldquo;indexed&amp;rdquo; for search.
 Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure that Lucene uses to make data searchable.</description>
+      <content>&lt;p&gt;&lt;em&gt;&lt;strong&gt;References from &lt;a href=&#34;https://stackoverflow.com/a/15429578&#34;&gt;https://stackoverflow.com/a/15429578&lt;/a&gt;&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;To explain:&lt;/p&gt;
+&lt;h2 id=&#34;index&#34;&gt;Index&lt;/h2&gt;
+&lt;p&gt;An &amp;ldquo;index&amp;rdquo; in Elasticsearch is a bit like a database in a relational DB. It&amp;rsquo;s where you store/index your data. But actually, that&amp;rsquo;s just what your application sees. Internally, an index is a logical namespace that points to one or more shards.&lt;/p&gt;
+&lt;p&gt;Also, &amp;ldquo;to index&amp;rdquo; means to &amp;ldquo;put&amp;rdquo; your data into Elasticsearch. Your data is both stored (for retrieval) and &amp;ldquo;indexed&amp;rdquo; for search.&lt;/p&gt;
+&lt;h2 id=&#34;inverted-index&#34;&gt;Inverted Index&lt;/h2&gt;
+&lt;p&gt;An &amp;ldquo;inverted index&amp;rdquo; is the data structure that Lucene uses to make data searchable. It processes the data, pulls out unique terms or tokens, then records which documents contain those tokens. See &lt;a href=&#34;http://en.wikipedia.org/wiki/Inverted_index&#34;&gt;http://en.wikipedia.org/wiki/Inverted_index&lt;/a&gt; for more.&lt;/p&gt;
+&lt;h2 id=&#34;shard&#34;&gt;Shard&lt;/h2&gt;
+&lt;p&gt;A &amp;ldquo;shard&amp;rdquo; is an instance of Lucene. It is a fully functional search engine in its own right. An &amp;ldquo;index&amp;rdquo; could consist of a single shard, but generally consists of several shards, to allow the index to grow and to be split over several machines.&lt;/p&gt;
+&lt;p&gt;A &amp;ldquo;primary shard&amp;rdquo; is the main home for a document. A &amp;ldquo;replica shard&amp;rdquo; is a copy of the primary shard that provides (1) failover in case the primary dies and (2) increased read throughput&lt;/p&gt;
+&lt;h2 id=&#34;segment&#34;&gt;Segment&lt;/h2&gt;
+&lt;p&gt;Each shard contains multiple &amp;ldquo;segments&amp;rdquo;, where a segment is an inverted index. A search in a shard will search each segment in turn, then combine their results into the final results for that shard.&lt;/p&gt;
+&lt;p&gt;While you are indexing documents, Elasticsearch collects them in memory (and in the transaction log, for safety) then every second or so, writes a new small segment to disk, and &amp;ldquo;refreshes&amp;rdquo; the search.&lt;/p&gt;
+&lt;p&gt;This makes the data in the new segment visible to search (ie they are &amp;ldquo;searchable&amp;rdquo;), but the segment has not been fsync&amp;rsquo;ed to disk, so is still at risk of data loss.&lt;/p&gt;
+&lt;p&gt;Every so often, Elasticsearch will &amp;ldquo;flush&amp;rdquo;, which means fsync&amp;rsquo;ing the segments, (they are now &amp;ldquo;committed&amp;rdquo;) and clearing out the transaction log, which is no longer needed because we know that the new data has been written to disk.&lt;/p&gt;
+&lt;p&gt;The more segments there are, the longer each search takes. So Elasticsearch will merge a number of segments of a similar size (&amp;ldquo;tier&amp;rdquo;) into a single bigger segment, through a background merge process. Once the new bigger segment is written, the old segments are dropped. This process is repeated on the bigger segments when there are too many of the same size.&lt;/p&gt;
+&lt;p&gt;Segments are immutable. When a document is updated, it actually just marks the old document as deleted, and indexes a new document. The merge process also expunges these old deleted documents.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;References from &lt;a href=&#34;https://stackoverflow.com/a/15429578&#34;&gt;https://stackoverflow.com/a/15429578&lt;/a&gt;&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -41,6 +167,113 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
       
       <guid>https://when.run/posts/keep-alive-chat/</guid>
       <description>Server package main import ( &amp;#34;bufio&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;net&amp;#34; ) // 用来记录所有的客户端连接 var ConnMap map[string]*net.TCPConn func main() { var tcpAddr *net.TCPAddr ConnMap = make(map[string]*net.TCPConn) tcpAddr, _ = net.ResolveTCPAddr(&amp;#34;tcp&amp;#34;, &amp;#34;127.0.0.1:9999&amp;#34;) tcpListener, _ := net.ListenTCP(&amp;#34;tcp&amp;#34;, tcpAddr) defer tcpListener.Close() for { tcpConn, err := tcpListener.AcceptTCP() if err != nil { continue } fmt.Println(&amp;#34;A client connected : &amp;#34; + tcpConn.RemoteAddr().String()) // 新连接加入map  ConnMap[tcpConn.RemoteAddr().String()] = tcpConn go tcpPipe(tcpConn) } } func tcpPipe(conn *net.TCPConn) { ipStr := conn.</description>
+      <content>&lt;h4 id=&#34;server&#34;&gt;Server&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; (
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;bufio&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;net&amp;#34;&lt;/span&gt;
+)
+
+&lt;span style=&#34;color:#75715e&#34;&gt;// 用来记录所有的客户端连接
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ConnMap&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPConn&lt;/span&gt;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPAddr&lt;/span&gt;
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;ConnMap&lt;/span&gt; = make(&lt;span style=&#34;color:#66d9ef&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPConn&lt;/span&gt;)
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ResolveTCPAddr&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tcp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;127.0.0.1:9999&amp;#34;&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpListener&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ListenTCP&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tcp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpListener&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Close&lt;/span&gt;()
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpListener&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;AcceptTCP&lt;/span&gt;()
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;continue&lt;/span&gt;
+        }
+
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;A client connected : &amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;())
+        &lt;span style=&#34;color:#75715e&#34;&gt;// 新连接加入map
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#a6e22e&#34;&gt;ConnMap&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;()] = &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;go&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpPipe&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;)
+    }
+
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpPipe&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPConn&lt;/span&gt;) {
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;ipStr&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;()
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt;() {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;disconnected :&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ipStr&lt;/span&gt;)
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Close&lt;/span&gt;()
+    }()
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;reader&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;bufio&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;NewReader&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;reader&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ReadString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+        }
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; string(&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;))
+        &lt;span style=&#34;color:#75715e&#34;&gt;// 这里返回消息改为了广播
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#a6e22e&#34;&gt;boradcastMessage&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; string(&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;))
+    }
+}
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;boradcastMessage&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;) {
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;b&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; []byte(&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;)
+    &lt;span style=&#34;color:#75715e&#34;&gt;// 遍历所有客户端并发送消息
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;range&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ConnMap&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Write&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;b&lt;/span&gt;)
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;client&#34;&gt;Client&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; (
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;bufio&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;net&amp;#34;&lt;/span&gt;
+)
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPAddr&lt;/span&gt;
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ResolveTCPAddr&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tcp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;127.0.0.1:9999&amp;#34;&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;DialTCP&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tcp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt;)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Close&lt;/span&gt;()
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;connected!&amp;#34;&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;go&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;onMessageRecived&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;)
+
+    &lt;span style=&#34;color:#75715e&#34;&gt;// 控制台聊天功能加入
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Scanln&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt;)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;quit&amp;#34;&lt;/span&gt; {
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;break&lt;/span&gt;
+        }
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;b&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; []byte(&lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;\n&amp;#34;&lt;/span&gt;)
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Write&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;b&lt;/span&gt;)
+    }
+}
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;onMessageRecived&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPConn&lt;/span&gt;) {
+    &lt;span style=&#34;color:#a6e22e&#34;&gt;reader&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;bufio&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;NewReader&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; {
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;reader&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ReadString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;)
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt;)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;break&lt;/span&gt;
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;run&#34;&gt;Run&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&amp;gt; go run server.go
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&amp;gt; go run client.go
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
     </item>
     
     <item>
@@ -58,6 +291,44 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
 基于这个字节流传输概念，对于偶尔能听到的 “黏包” 概念也能较为直接的解释。因为 TCP 并没有包的概念，因此自然也就不存在 “黏包” 为什么 TCP 协议有粘包问题。&amp;ldquo;黏包&amp;rdquo; 误解的原因是：&amp;ldquo;应用层协议没有使用基于长度或者基于终结符的消息边界，导致多个消息的粘连&amp;rdquo;
 报文段、字节流 TCP 存在一个 “报文段” 的概念，这个指的是：在 TCP 接收到应用层写入的数据之后，会暂存到发送缓存。而 TCP 在发送数据之前，会从发送缓存中取出一部分数据，并且加上 TCP 层的特定头部数据，再往下传输给 IP 层，加上了 TCP 头部的这部分数据，叫做 TCP 的 “报文段”，这个报文段的最大长度叫做 MSS（最大报文段长度）。而在传输时，报文段会被以字节流的形式进行传输，接收方收到字节流之后，再解析字节流还原成报文段，交付使用。
 可靠传输（滑动窗口） TCP 使用 滑动窗口 来实现可靠传输。TCP 的滑动窗口是以字节为单位的，并对窗口内的字节进行编号，如果窗口内某个低序号的字节未收到确认消息，那么滑动窗口将不会往后移，而会在确认超时之后，重新传送，即 超时重传。这时候，就有可能出现，一条 TCP 链接，某个时刻发生了超时重传，其他数据必须等这个重传恢复之后，才能继续发送。而 HTTP/3 使用的 QUIC 协议使用了多路流复用，同一个传输通道可以同时传输多路流，而不同流也使用不同的流量控制、滑动窗口等，这样即使某一路的流阻塞了，也不会影响其他路的流。</description>
+      <content>&lt;blockquote&gt;
+&lt;p&gt;TCP 处于七层网络模型（应表会传网数物）中的传输层。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;特点&#34;&gt;特点&lt;/h2&gt;
+&lt;h3 id=&#34;面向连接&#34;&gt;面向连接&lt;/h3&gt;
+&lt;p&gt;和 UDP 不一样，TCP 传输数据前需要先建立 TCP 连接（此处引出三次握手、四次挥手）。而 UDP 传输数据前不需要建立连接，也不保证可靠传输。&lt;/p&gt;
+&lt;h3 id=&#34;可靠传输&#34;&gt;可靠传输&lt;/h3&gt;
+&lt;p&gt;TCP 保证传输的数据：无差错、不丢失、不重复、 &lt;strong&gt;按序到达&lt;/strong&gt; 。&lt;/p&gt;
+&lt;h3 id=&#34;全双工&#34;&gt;全双工&lt;/h3&gt;
+&lt;p&gt;通信双方任何时候都能相互通信。并且都有发送缓存、接受缓存。&lt;/p&gt;
+&lt;h3 id=&#34;面向字节流&#34;&gt;面向字节流&lt;/h3&gt;
+&lt;p&gt;虽然应用层和 TCP 的交互是一次一个数据块（大小不等），但是 TCP 把这些数据看成仅仅是一连串的无结构字节流。TCP 并不知道所传送的字节流的含义。传输过程如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://when.run/image/tcp_stream.jpg&#34; alt=&#34;tcp 面向流的概念&#34;&gt;&lt;/p&gt;
+&lt;p&gt;这里看到，应用层发送其实不是同步发送的，而只是把数据拷到 TCP 发送缓存里，而下一步如何发送，如何把数据切成报文段，都与应用层无关了。&lt;/p&gt;
+&lt;p&gt;基于这个字节流传输概念，对于偶尔能听到的 “黏包” 概念也能较为直接的解释。因为 TCP 并没有包的概念，因此自然也就不存在 “黏包” &lt;a href=&#34;https://draveness.me/whys-the-design-tcp-message-frame/&#34;&gt;为什么 TCP 协议有粘包问题&lt;/a&gt;。&amp;ldquo;黏包&amp;rdquo; 误解的原因是：&amp;ldquo;应用层协议没有使用基于长度或者基于终结符的消息边界，导致多个消息的粘连&amp;rdquo;&lt;/p&gt;
+&lt;h2 id=&#34;报文段字节流&#34;&gt;报文段、字节流&lt;/h2&gt;
+&lt;p&gt;TCP 存在一个 “报文段” 的概念，这个指的是：在 TCP 接收到应用层写入的数据之后，会暂存到发送缓存。而 TCP 在发送数据之前，会从发送缓存中取出一部分数据，并且加上 TCP 层的特定头部数据，再往下传输给 IP 层，加上了 TCP 头部的这部分数据，叫做 TCP 的 “报文段”，这个报文段的最大长度叫做 &lt;em&gt;&lt;strong&gt;MSS（最大报文段长度）&lt;/strong&gt;&lt;/em&gt;。而在传输时，报文段会被以字节流的形式进行传输，接收方收到字节流之后，再解析字节流还原成报文段，交付使用。&lt;/p&gt;
+&lt;h2 id=&#34;可靠传输滑动窗口&#34;&gt;可靠传输（滑动窗口）&lt;/h2&gt;
+&lt;p&gt;TCP 使用 &lt;strong&gt;滑动窗口&lt;/strong&gt; 来实现可靠传输。TCP 的滑动窗口是以字节为单位的，并对窗口内的字节进行编号，如果窗口内某个低序号的字节未收到确认消息，那么滑动窗口将不会往后移，而会在确认超时之后，重新传送，即 &lt;strong&gt;超时重传&lt;/strong&gt;。这时候，就有可能出现，一条 TCP 链接，某个时刻发生了超时重传，其他数据必须等这个重传恢复之后，才能继续发送。而 HTTP/3 使用的 QUIC 协议使用了多路流复用，同一个传输通道可以同时传输多路流，而不同流也使用不同的流量控制、滑动窗口等，这样即使某一路的流阻塞了，也不会影响其他路的流。&lt;/p&gt;
+&lt;h2 id=&#34;流量控制&#34;&gt;流量控制&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;流量控制（flow control）&lt;/strong&gt; 的作用是让发送方的发送速率不要太快，要让接收方来得及接受。&lt;/p&gt;
+&lt;p&gt;当 TCP 端点 A 向 TCP 端点 B 发送数据时，整个过程会出现两个滑动窗口，A 的发送窗口和 B 的接收窗口。当 B 感受到压力过大，或者其他原因需要进行流控时，会给发送方发送消息，告知发送方 &lt;strong&gt;接收窗口(rwnd)&lt;/strong&gt; 的大小，发送方根据这个数值，调整发送窗口的大小。利用滑动窗口机制可以方便的在 TCP 连接上实现对发送方的流量控制。&lt;/p&gt;
+&lt;h2 id=&#34;拥塞控制&#34;&gt;拥塞控制&lt;/h2&gt;
+&lt;p&gt;当网络阻塞，例如：链路传输速率只有 10Gb/s ，但是有 100 台计算机，同时以 1Gb/s 的速率传输，这时候就会发生拥塞，导致网络性能变坏，因此需要拥塞控制，防止过多的数据注入到网络中，避免网络中的路由器或者链路过载。拥塞控制有四种算法：&lt;strong&gt;慢开始（slow-start）&lt;/strong&gt;、&lt;strong&gt;拥塞避免（congestion avoidance）&lt;/strong&gt;、&lt;strong&gt;快重传（fast retransmit）&lt;/strong&gt;、&lt;strong&gt;快恢复（fast recovery）&lt;/strong&gt;。 这里网络出现拥塞表现一般为：数据丢失，时延增加，吞吐量下降&lt;/p&gt;
+&lt;h3 id=&#34;慢开始指数增大&#34;&gt;慢开始（指数增大）&lt;/h3&gt;
+&lt;p&gt;发送方维护一个拥塞窗口，让发送窗口等于拥塞窗口。最开始把拥塞窗口设为 MSS 大小，每收到一个 ACK，就增加一个 MSS（这里可以看出来，没经过一个传输轮次，拥塞窗口就会加倍）。当拥塞窗口增加到 &lt;strong&gt;慢开始门限&lt;/strong&gt; 之后，改用 &lt;strong&gt;拥塞避免算法&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&#34;拥塞避免加法增大&#34;&gt;拥塞避免（加法增大）&lt;/h3&gt;
+&lt;p&gt;不再每收到一个 ACK 就增加一个 MSS，而是每经过一个 RTT（把发送窗口都发送出去并收到 ACK），增加一个 MSS。当发送方判断网络出现拥塞时，把慢开始门限减为发送窗口的一半，并把拥塞窗口设为 1，重新开始慢开始流程&lt;/p&gt;
+&lt;h3 id=&#34;快重传&#34;&gt;快重传&lt;/h3&gt;
+&lt;p&gt;首先要求接收方每接收到一个报文段，就发出重复确认，让发送方能尽快重传。接收方收到 3 个重复确认就应该开始重传对方未收到的报文段，而不是等待计时器过期。&lt;/p&gt;
+&lt;h3 id=&#34;快恢复&#34;&gt;快恢复&lt;/h3&gt;
+&lt;p&gt;当发送方收到 3 个重复确认之后，把拥塞控制设置为慢开始门限的一半，然后开始执行拥塞控制算法（加法增大）&lt;/p&gt;
+&lt;p&gt;结合拥塞控制和流量控制，发送方的发送窗口值为 &lt;code&gt;min(拥塞窗口, 接收窗口)&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;计算机网络（第六版 谢希仁著）&lt;/li&gt;
+&lt;/ul&gt;
+</content>
     </item>
     
     <item>
@@ -70,6 +341,64 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
  主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括：  公司内部基础组件 第三方依赖    在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
  排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。  在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
 # .pre-commit-config.yaml - repo: https://github.com/xiachufang/mirrors-pylint rev: v1.9.2 hooks: - id: pylint args: - --py3k - --score=n 迁移中 迁移办法一般是先排查关键字，如 iteritems/itervalues/xrange 等，这些可以全部使用 six 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 futurize 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 Cheat Sheet: Writing Python 2-3 compatible code 来做对照，进行修改代码。</description>
+      <content>&lt;h2 id=&#34;前期规划&#34;&gt;前期规划&lt;/h2&gt;
+&lt;p&gt;在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主项目（主要的项目，承担了主要的日常开发任务以及业务需求）&lt;/li&gt;
+&lt;li&gt;其他服务（为主项目服务的各个服务，如支付、IM、广告等）&lt;/li&gt;
+&lt;li&gt;依赖库，依赖又包括：
+&lt;ul&gt;
+&lt;li&gt;公司内部基础组件&lt;/li&gt;
+&lt;li&gt;第三方依赖&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，&lt;strong&gt;其他服务&lt;/strong&gt; 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本&lt;/li&gt;
+&lt;li&gt;排查公司内部基础组件库，测试，兼容适配 Python2/Python3&lt;/li&gt;
+&lt;li&gt;进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 &lt;a href=&#34;https://pre-commit.com/&#34;&gt;pre-commit&lt;/a&gt; 对每个 commit 进行检查，使用 &lt;a href=&#34;https://github.com/pycqa/pylint&#34;&gt;pylint&lt;/a&gt; 进行兼容性检查，配置如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# .pre-commit-config.yaml&lt;/span&gt;
+
+-   repo: https://github.com/xiachufang/mirrors-pylint
+    rev: v1.9.2
+    hooks:
+    -   id: pylint
+        args:
+          - --py3k
+          - --score&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;n
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;迁移中&#34;&gt;迁移中&lt;/h2&gt;
+&lt;p&gt;迁移办法一般是先排查关键字，如 &lt;code&gt;iteritems&lt;/code&gt;/&lt;code&gt;itervalues&lt;/code&gt;/&lt;code&gt;xrange&lt;/code&gt; 等，这些可以全部使用 &lt;a href=&#34;https://six.readthedocs.io/&#34;&gt;six&lt;/a&gt; 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 &lt;a href=&#34;http://python-future.org/index.html&#34;&gt;futurize&lt;/a&gt; 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 &lt;a href=&#34;http://python-future.org/compatible_idioms.html&#34;&gt;Cheat Sheet: Writing Python 2-3 compatible code&lt;/a&gt; 来做对照，进行修改代码。&lt;/p&gt;
+&lt;h3 id=&#34;会遇到的问题&#34;&gt;会遇到的问题&lt;/h3&gt;
+&lt;h4 id=&#34;关键字方法&#34;&gt;关键字/方法&lt;/h4&gt;
+&lt;p&gt;上面有提到，某些关键字或者方法，到了 Python3 里面已经没有了，比如 &lt;code&gt;xrange&lt;/code&gt;/&lt;code&gt;dict.iteritems&lt;/code&gt;/&lt;code&gt;dict.itervalues&lt;/code&gt;，这个一般全局搜索就能排除掉。&lt;/p&gt;
+&lt;h4 id=&#34;内置函数返回类型&#34;&gt;内置函数返回类型&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;在 Python2 中，&lt;code&gt;dict.keys&lt;/code&gt; 返回的是一个 list，而到了 Python3 中，返回的是一个 &lt;code&gt;dict_keys&lt;/code&gt;，如果存在使用下标取，那么是会有问题的。如 &lt;code&gt;{&amp;quot;K&amp;quot;: &amp;quot;V&amp;quot;}.keys()[0]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Python2 中，map/reduce/filter 之类的关键字返回的是个 list，到了 3 中，返回的是 generator，如果需要下标访问是需要转成 list/tuple 的&lt;/li&gt;
+&lt;li&gt;etc&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;strbytesunicode&#34;&gt;str/bytes/unicode&lt;/h3&gt;
+&lt;p&gt;这个应当属迁移的最繁琐的地方。&lt;/p&gt;
+&lt;p&gt;中间遇到一次问题，排查了很久。代码库中有一个 &lt;code&gt;@cache&lt;/code&gt; 装饰器，用来缓存函数返回值，在 py2 中有如下一段代码:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;@cache&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;cache_key&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;foo&lt;/span&gt;():
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;py2 返回结构&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;cache 拿到函数返回值后，原样放进 Memcached，因为 Python2 中，str/bytes 实际上是不敏感的，甚至可以等同。该 &lt;code&gt;foo&lt;/code&gt; 函数在 py2 下返回的是一个带 encoding 的 str，可以看做是 bytes 类型，这时候，如果在 py3 下把缓存结果取出来，那么将会是拿到一个 bytes 类型: &lt;code&gt;b&amp;quot;py2 返回结构&amp;quot;&lt;/code&gt;，这里就很容易出错了，在 Python2 下时，这个和 str 一样，可以当做 str 处理，但是 Python3 必须正视类型，该用 str(text type) 就不能用 bytes。&lt;/p&gt;
+&lt;h2 id=&#34;代码库迁移完成&#34;&gt;代码库迁移完成&lt;/h2&gt;
+&lt;p&gt;把代码库全部兼容 Python2 和 Python3 之后，这时候代码库是可以同时在 Python2 和 Python3 上跑的，因此可以逐步开始切分流量，大概可以分成这么几个步骤：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;把 staging 流量复制到 Python3 的环境&lt;/li&gt;
+&lt;li&gt;部署 production 的 Python3 环境，并切分办公室流量至 Python3 环境&lt;/li&gt;
+&lt;li&gt;切分线上小部分流量到 Python3 环境，并逐步增加，直至全部覆盖&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;迁移后工作&#34;&gt;迁移后工作&lt;/h2&gt;
+&lt;p&gt;全部迁移完成后，自然会给代码加上 type hint，前期可以使用 pre-commit 增加 mypy 类型检查，并且只检查改动到的文件。与此同时，使用 &lt;a href=&#34;https://github.com/Instagram/MonkeyType&#34;&gt;MonkeyType&lt;/a&gt; 收集类型，自动添加一部分，减少工作量。&lt;/p&gt;
+&lt;p&gt;至此，迁移工作已经全部完成。&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -81,6 +410,29 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
       <description>向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
  初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值  每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
 +----+ |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | +----+ 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。</description>
+      <content>&lt;h2 id=&#34;向量时钟vector-clock&#34;&gt;向量时钟(Vector Clock)&lt;/h2&gt;
+&lt;p&gt;向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：&lt;img src=&#34;https://i.imgur.com/0XRtT9o.png&#34; alt=&#34;Imgur&#34;&gt;&lt;/p&gt;
+&lt;p&gt;系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;初始时，所有进程的时钟都为 0&lt;/li&gt;
+&lt;li&gt;进程每次处理一个内部事件，其逻辑时钟加 1&lt;/li&gt;
+&lt;li&gt;每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送&lt;/li&gt;
+&lt;li&gt;每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;+----+&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;A:&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;B:&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;===&amp;gt;&lt;/span&gt;  &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;这个整体称为&lt;/span&gt; A &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;的&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;向量时钟&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;，其中，&lt;/span&gt;A:&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;为&lt;/span&gt; A &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;的逻辑时钟&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;C:&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;+----+&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;因果关系判断规则&#34;&gt;因果关系判断规则&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;如果时钟 V1 的每个逻辑时钟值都比时钟 V2  大，那么称 V1 比 V2 先发生。如： &lt;code&gt;V1: [A:2,B:4,C:2]&lt;/code&gt; 与 &lt;code&gt;V2: [A:1,B:2,C:1]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;应用&#34;&gt;应用&lt;/h2&gt;
+&lt;p&gt;向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: &lt;a href=&#34;https://cloudacademy.com/blog/data-versioning-with-dynamodb-an-inside-look-into-nosql-part-5/&#34;&gt;Data Versioning With DynamoDB&lt;/a&gt;。&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -96,6 +448,68 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
  答题、验证码等，在客户端直接过滤，将流量摊平，而不是瞬时洪峰流量 服务端请求排队，请求到达了不即时返回，而是塞进队列里，FIFO 方式进行处理，然后异步通知客户端（体验不好，用户无法实时收到反馈） 分层校验，保证落到数据库的请求都是有效请求   减库存 减库存是最关键的一个逻辑，需要保证高并发的情况下，不会发生超售。常用的有三种减库存方案：
  下单减库存：下单就减库存，会产生非常多无效订单，体验不好。 付款减库存：可能会有用户在付款完成之后，结果提示没库存了。 预扣库存：用户下单后减库存，但是库存只有几分钟有效期，过了有效期就回收库存，体验较好。   PlanB 高可用系统的 PlanB，针对秒杀系统，可以做一些事，比如：
  降级：如系统容量到达一点程度之后，关闭一些非核心功能，把有限的资源让给核心功能 限流：在事先进行压力测试时，预估一个最高 QPS，并将其设为阈值，到达这个阈值之后，其他请求扔队列或者直接丢弃 拒绝服务：最坏的情况，达到某个临界点（CPU 90%）直接拒绝服务，保护服务，等负载下降之后恢复，避免被直接长时间拖垮。  </description>
+      <content>&lt;h1 id=&#34;如何设计一个秒杀系统&#34;&gt;如何设计一个秒杀系统&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;总结极客时间专栏《如何设计一个秒杀系统》&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://time.geekbang.org/column/127&#34;&gt;极客时间&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;问题&#34;&gt;问题&lt;/h1&gt;
+&lt;p&gt;其实这类高并发问题，总结起来就是两点，&lt;code&gt;并发读&lt;/code&gt;、 &lt;code&gt;并发写&lt;/code&gt;。并且在这种情况下，系统还需要做到：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;高性能：支持并发读并发写&lt;/li&gt;
+&lt;li&gt;一致性：保证系统正确，如不发生超卖等&lt;/li&gt;
+&lt;li&gt;高可用：保证系统在极端条件下的可用性，PlanB 等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;原则&#34;&gt;原则&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;数据尽量少：c-s 传输过程中，数据尽量少，减少传输时间&lt;/li&gt;
+&lt;li&gt;请求数尽量少：减少资源消耗&lt;/li&gt;
+&lt;li&gt;路径尽量短：请求会经过若干个中间件，经过的中间件应该尽量少，每个节点都可能会挂，最后整体可用性(&amp;lt;1)就是经过的所有节点可用性的乘积&lt;/li&gt;
+&lt;li&gt;依赖尽量少：指的是业务依赖（优惠券、用户信息等），防止主要服务被其他附属依赖给拖垮掉&lt;/li&gt;
+&lt;li&gt;不要有单点：单点就是整个系统中最弱的地方，很容易被击垮&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;动静分离&#34;&gt;动静分离&lt;/h1&gt;
+&lt;h2 id=&#34;静态数据&#34;&gt;静态数据&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;统一 cache 层&lt;/li&gt;
+&lt;li&gt;CDN&lt;/li&gt;
+&lt;li&gt;代理服务器缓存&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;动态数据&#34;&gt;动态数据&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;业务隔离：必须参加活动需要提前报名，服务器对这些热点进行预热&lt;/li&gt;
+&lt;li&gt;系统隔离：秒杀系统单独部署，落到不同集群当中，避免拖垮其他服务&lt;/li&gt;
+&lt;li&gt;数据隔离：针对这些热点数据，比如启用单独的 cache 或 MySQL 实例&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;流量削峰&#34;&gt;流量削峰&lt;/h1&gt;
+&lt;p&gt;面对秒杀系统需要承受的海量流量，如果全部落到数据库上，那么数据库将不堪重负，因此可以进行分层的流量削峰：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;答题、验证码等，在客户端直接过滤，将流量摊平，而不是瞬时洪峰流量&lt;/li&gt;
+&lt;li&gt;服务端请求排队，请求到达了不即时返回，而是塞进队列里，FIFO 方式进行处理，然后异步通知客户端（体验不好，用户无法实时收到反馈）&lt;/li&gt;
+&lt;li&gt;分层校验，保证落到数据库的请求都是有效请求&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://i.imgur.com/fb7F5UO.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;减库存&#34;&gt;减库存&lt;/h1&gt;
+&lt;p&gt;减库存是最关键的一个逻辑，需要保证高并发的情况下，不会发生超售。常用的有三种减库存方案：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;下单减库存：下单就减库存，会产生非常多无效订单，体验不好。&lt;/li&gt;
+&lt;li&gt;付款减库存：可能会有用户在付款完成之后，结果提示没库存了。&lt;/li&gt;
+&lt;li&gt;预扣库存：用户下单后减库存，但是库存只有几分钟有效期，过了有效期就回收库存，体验较好。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h1 id=&#34;planb&#34;&gt;PlanB&lt;/h1&gt;
+&lt;p&gt;高可用系统的 PlanB，针对秒杀系统，可以做一些事，比如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;降级：如系统容量到达一点程度之后，关闭一些非核心功能，把有限的资源让给核心功能&lt;/li&gt;
+&lt;li&gt;限流：在事先进行压力测试时，预估一个最高 QPS，并将其设为阈值，到达这个阈值之后，其他请求扔队列或者直接丢弃&lt;/li&gt;
+&lt;li&gt;拒绝服务：最坏的情况，达到某个临界点（CPU 90%）直接拒绝服务，保护服务，等负载下降之后恢复，避免被直接长时间拖垮。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://i.imgur.com/vRlVzqW.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -108,6 +522,84 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
  先假装有一个存数据的客户端，👇
 class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
 import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self.</description>
+      <content>&lt;blockquote&gt;
+&lt;p&gt;假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python + Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;先假装有一个存数据的客户端，👇&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;APIDogClient&lt;/span&gt;:
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, secret_key):
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;host &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;x.x.x.x&amp;#39;&lt;/span&gt;   &lt;span style=&#34;color:#75715e&#34;&gt;# 假装我有一些配置需要初始化&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;port &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;xxx&amp;#39;&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;secret_key &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; secret_key
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;secret_id &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;xxx&amp;#39;&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bucket &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;storge&lt;/span&gt;(self, data):
+        &lt;span style=&#34;color:#75715e&#34;&gt;# clean data&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bucket&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(data)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;现在可以开始着手插件了，给插件取名为 &lt;code&gt;flask-APIDog&lt;/code&gt;，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; time
+
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Flask, request, current_app
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; _app_ctx_stack &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; stack
+&lt;span style=&#34;color:#66d9ef&#34;&gt;except&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ImportError&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; _request_ctx_stack &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; stack
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;APIDog&lt;/span&gt;:
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, app&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; app
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; app:
+            self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
+            self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;api_dog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; APIDogClient(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;api_dog_secret_key&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;))
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;init_app&lt;/span&gt;(self, app&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; app
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;api_dog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; APIDogClient(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;api_dog_secret_key&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;))
+        app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;before_request(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_before_request)
+        app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;after_request(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_after_request)
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_before_request&lt;/span&gt;(self):
+        ctx &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;top
+        ctx&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_api_dog_data &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_begin_time&amp;#39;&lt;/span&gt;: time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time()
+        }
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_after_request&lt;/span&gt;(self, response):
+        ctx &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;top
+        api_request_begin_time &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; ctx&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_api_dog_data&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_path&amp;#39;&lt;/span&gt;, time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time())
+        request_time &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time() &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; api_request_begin_time
+        api_data &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_time&amp;#39;&lt;/span&gt;: request_time,
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_path&amp;#39;&lt;/span&gt;: request&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;path,
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_location&amp;#39;&lt;/span&gt;: request&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;args&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;location&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;),
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;remote_address&amp;#39;&lt;/span&gt;: request&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;remote_addr
+        }
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;storge(api_data)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;👆 是第一版的 &lt;code&gt;flask-APIDog&lt;/code&gt; 的代码，很简单的一些处理， Flask 扩展一般（官方建议）提供一个 &lt;code&gt;init_app&lt;/code&gt; 方法，用于在实例化插件类后初始化 Flask APP，实际上这里只是简单的给 Flask APP 的 &lt;code&gt;before_request&lt;/code&gt;，&lt;code&gt;after_request&lt;/code&gt; 两个钩子函数提供两个具体流程，&lt;code&gt;_app_ctx_stack.top&lt;/code&gt; 是 Flask
+里面上下文的概念，意思是取当前应用。更甚至完全可以直接用 &lt;code&gt;before_request&lt;/code&gt;，&lt;code&gt;after_request&lt;/code&gt; 装饰两个函数来实现上面那些功能，但是后面迭代版本会越来越复杂，直接写在项目里很容易污染现有代码，抽象成插件不仅提高了鲁棒性，还符合 Flask 的插件系统理念。&lt;/p&gt;
+&lt;p&gt;使用方法也与一般的 Flask 插件一致，👇&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Flask
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask_apidog &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; APIDog
+
+
+app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Flask(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test_flask_extend&amp;#39;&lt;/span&gt;)
+api_dog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; ApiDog()
+api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
+
+&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.route&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;index&lt;/span&gt;():
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;hello api dog&amp;#34;&lt;/span&gt;
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;__main__&amp;#34;&lt;/span&gt;:
+    app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这样之后，APP 的每个请求都会记录请求耗时，请求 IP，请求路径并转发到 APIDog 后端服务，这样一个简单的 Flask 插件大致就完成了。&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -121,6 +613,605 @@ import time from flask import Flask, request, current_app try: from flask import
   == 和 is 区别。
  == 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。    深拷贝和浅拷贝。
    # 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]]   __init__ 和 __new__。</description>
+      <content>&lt;blockquote&gt;
+&lt;p&gt;下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&#34;python-语法&#34;&gt;Python 语法&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;说说你平时 Python 都用哪些库&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;==&lt;/code&gt; 和 &lt;code&gt;is&lt;/code&gt; 区别。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;==&lt;/code&gt; 是比较两对象的值，&lt;code&gt;is&lt;/code&gt; 是比较在内存中的地址(id)， &lt;code&gt;is&lt;/code&gt; 相当于 &lt;code&gt;id(objx) == id(objy)&lt;/code&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;深拷贝和浅拷贝。&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 贝对象的所有层级对象，也就是一个真正意义上的拷贝。&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; copy &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; copy, deepcopy
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; lst &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, [&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;]]
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; a, b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; copy(lst), deepcopy(lst)
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; a, b
+([&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, [&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;]], [&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, [&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;]])
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; id(lst[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;]), id(a[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;]), id(b[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;])
+(&lt;span style=&#34;color:#ae81ff&#34;&gt;139842737414224&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;139842737414224&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;139842737414584&lt;/span&gt;)
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; lst[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; a
+[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, [&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;]]
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; b
+[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, [&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;]]
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; lst[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;][&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; lst
+[&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;]]
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; a
+[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;]]
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; b
+[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, [&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;]]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;__init__&lt;/code&gt; 和 &lt;code&gt;__new__&lt;/code&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;__init__&lt;/code&gt; 只是单纯的对实例进行某些属性的初始化，以及执行一些需要在新建对象时的必要自定义操作，无返回值。而 &lt;code&gt;__new__&lt;/code&gt; 返回的是用户创建的实例，这个才是真正用来创建实例的，所以 &lt;code&gt;__new__&lt;/code&gt; 是在 &lt;code&gt;__init__&lt;/code&gt; 之前执行的，先创建再初始化。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;Python 2 和 Python 3 有哪些区别？&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html&#34;&gt;http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;连接字符串都有哪些方式？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;格式化字符连接（&lt;code&gt;%s&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;format&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;join&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;+&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;fstring&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如何判断某个对象是什么类型？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;type(obj)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;isinstance(obj, x)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;生成器是什么？&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一言难尽，推荐看这个 &lt;a href=&#34;https://taizilongxu.gitbooks.io/stackoverflow-about-python/content/1/README.html&#34;&gt;stackoverflow 答案的翻译&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Python 中的 GIL 是什么？全称？举个例子说说其具体体现。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;GIL 全称 Global Interpreter Lock（全局解释器锁），任何 Python 线程执行前，必须先获得 GIL 锁，然后，每执行100条字节码，解释器就自动释放GIL锁，让别的线程有机会执行。要避免这种“现象”利用操作系统的多核优势可以有下面几种方法：
+&lt;ul&gt;
+&lt;li&gt;使用 C 语言编写扩展，创建原生线程，摆脱 GIL，但是即使是扩展，在 Python 代码内，任意一条Python 代码还是会有 GIL 限制&lt;/li&gt;
+&lt;li&gt;使用多进程代替多线程，使用多进程时，每个进程都有自己的 GIL。故不存在进程与进程之间的 GIL 限制。但是多进程不能共享内存。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;s = &#39;abcd&#39;, s[2] = &#39;e&#39;&lt;/code&gt; 运行结果是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;报错，字符串是不可变对象&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Python 中，&lt;code&gt;sorted&lt;/code&gt; 函数内部是什么算法？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在 &lt;a href=&#34;https://docs.python.org/3/howto/sorting.html?highlight=Timsort&#34;&gt;官方文档&lt;/a&gt; 里面有提到，用的是 &lt;a href=&#34;https://en.wikipedia.org/wiki/Timsort&#34;&gt;Timsort&lt;/a&gt; 算法&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;编码是一个什么样的过程？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;编码是二进制到字符的过程&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;Python 里面怎么实现协程？&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://mp.weixin.qq.com/s/TKrb0i5fF0pJdRIgGC9qQQ&#34;&gt;说清道明：协程是什么&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;requests&lt;/code&gt; 包新建一个 &lt;code&gt;session&lt;/code&gt; 再 &lt;code&gt;get&lt;/code&gt; 和普通的 &lt;code&gt;requests.get&lt;/code&gt; 有什么区别？（tcp长连接）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;维持一个会话，** 建立一个tcp长连接** ，cookie 自动保存，下次请求还是一个会话。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;Python 都有哪些数据结构？可变对象，不可变对象分别有哪些？&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;可变对象：列表，字典&lt;/li&gt;
+&lt;li&gt;不可变对象：字符串，数字，元组，集合&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;在 Python 内，函数传参是引用传递还是值传递？&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;引用传递。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;你会对你的项目写测试么？用哪些方法哪些库？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;doctest&lt;/li&gt;
+&lt;li&gt;pytest&lt;/li&gt;
+&lt;li&gt;unitest&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;请新建一个只有一个元素 &lt;code&gt;1&lt;/code&gt; 的列表和元组。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;lst = [1]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tup = (1,)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;函数默认参数是可变对象情况。&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;foo&lt;/span&gt;(a, b&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;]):
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(b)
+        b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(a)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(b)
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; val &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; foo(val)
+&lt;span style=&#34;color:#75715e&#34;&gt;# [1, 2]&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# [1, 2, 4]&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; foo(val)
+&lt;span style=&#34;color:#75715e&#34;&gt;# [1, 2, 4]&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# [1, 2, 4, 4]&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 这里可以看到，第二次执行函数时，默认参数 b 的值已经变成 `[1, 2, 4]` 了，原因是，默认参数只在第&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 一次执行时会进行初始化，后面就默认使用 **初始化后的这个对象(引用)**，但是这里 b 是可变对象，&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;#添加了一个元素还是之前的对象，所以，引用没变，不过是值变了而已。&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;Flask 的 Route 是怎么实现的？&lt;/em&gt; 你认为 Flask 框架有什么优缺点？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;实际上在 Flask 类里面，&lt;code&gt;route&lt;/code&gt; 可以简单理解为不过是把对应的路由规则作为键，装饰的视图函数作为值，存到 &lt;code&gt;werkzeug.routing.Map&lt;/code&gt; 对象（可以看成是和字典类似的数据结构）里。这里是 &lt;a href=&#34;https://github.com/pallets/flask/blob/master/flask/app.py#L1076-L1120&#34;&gt;源码&lt;/a&gt;，好理解些。这是之前写的一篇 &lt;a href=&#34;https://github.com/x1ah/Blog/issues/4&#34;&gt;笔记&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Flask 优点是轻量，灵活，可高度定制，插件化。缺点也是过于轻量，功能必须通过第三方插件实现，插件质量参差不齐，也不能完全保证后期维护。&lt;/li&gt;
+&lt;li&gt;这几点都只是个人之见，更详细标准的还需自行寻找答案。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;WSGI 是什么？uWSGI， nginx 这些都是什么用途？&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;这里有&lt;a href=&#34;https://zh.wikipedia.org/wiki/Web%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BD%91%E5%85%B3%E6%8E%A5%E5%8F%A3&#34;&gt;维基百科&lt;/a&gt; 的解释，WSGI 就是一个通用的标准，遵守这个标准，我们能让我们的 Web 框架更加通用，编写更加简单。&lt;/li&gt;
+&lt;li&gt;uwsgi 和 Nginx 都是 Web Server，不同的是 Nginx 负责 外网请求 &amp;mdash;(转换)&amp;ndash;&amp;gt; 内网请求，uwsgi 负责的是 内网请求 -&amp;gt; Python Web 程序。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;nginx 和 Apache 的区别？(参考 &lt;a href=&#34;https://github.com/taizilongxu/interview_python#7-apache%E5%92%8Cnginx%E7%9A%84%E5%8C%BA%E5%88%AB&#34;&gt;interview_python&lt;/a&gt;)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;nginx 相对 apache 的优点：
+&lt;ul&gt;
+&lt;li&gt;轻量级，同样起web 服务，比apache 占用更少的内存及资源&lt;/li&gt;
+&lt;li&gt;抗并发，nginx 处理请求是异步非阻塞的，支持更多的并发连接，而apache 则是阻塞型的，在高并发下nginx 能保持低资源低消耗高性能&lt;/li&gt;
+&lt;li&gt;配置简洁&lt;/li&gt;
+&lt;li&gt;高度模块化的设计，编写模块相对简单&lt;/li&gt;
+&lt;li&gt;社区活跃&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;apache 相对nginx 的优点：
+&lt;ul&gt;
+&lt;li&gt;rewrite ，比nginx 的rewrite 强大&lt;/li&gt;
+&lt;li&gt;模块超多，基本想到的都可以找到&lt;/li&gt;
+&lt;li&gt;少bug ，nginx 的bug 相对较多&lt;/li&gt;
+&lt;li&gt;超稳定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;你部署 Python 项目时用的是 uWSGI 的哪个模式？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;默认模式&lt;/li&gt;
+&lt;li&gt;这个应该问的可能性极小了，可翻阅 &lt;a href=&#34;http://uwsgi-docs-cn.readthedocs.io/zh_CN/latest/WSGIquickstart.html&#34;&gt;uwsgi 文档&lt;/a&gt; 查找更详细的资料&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;数据结构算法&#34;&gt;数据结构，算法&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;层次遍历二叉树用什么方法？&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# coding: utf-8&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; collections &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; deque
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;BNode&lt;/span&gt;:
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34; 二叉树节点 &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, left&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None, right&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;value &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; value
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;left &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; left
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;right &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; right
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;level_traverse&lt;/span&gt;(binary_tree):
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34; 层次遍历二叉树 &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+    stack &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; deque([binary_tree])
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; stack:
+        top &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;popleft()
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;value)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;left:
+            stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;left)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;right:
+            stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;right)
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;__main__&amp;#34;&lt;/span&gt;:
+    b_tree &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; BNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, BNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, BNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, BNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, BNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;)))), BNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;, BNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;6&lt;/span&gt;, right&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;BNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;8&lt;/span&gt;))))
+    level_traverse(b_tree)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;非平衡二叉数如何变成平衡二叉数？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;参考 &lt;a href=&#34;https://segmentfault.com/a/1190000006123188&#34;&gt;AVL平衡二叉树详解与实现&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;先，中，后序遍历二叉数。完全二叉数是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;完全二叉树：深度为k有n个节点的二叉树，当且仅当其中的每一节点，都可以和同样深度k的满二叉树，序号为1到n的节点一对一对应时，称为“完全二叉树”。（摘自维基百科）&lt;/li&gt;
+&lt;li&gt;先序：先根后左再右&lt;/li&gt;
+&lt;li&gt;中序：先左后中再右&lt;/li&gt;
+&lt;li&gt;后序：先左后右再根&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如何判断两个单链表是否相交于某个节点，包括 X 型，Y 型，V 型。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;X 型不可能存在，一个单链表节点不存在两个不同的后继。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 反转单链表&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;reverse_single_link_lst&lt;/span&gt;(link_lst):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; link_lst:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; link_lst
+    pre &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; link_lst
+    cur &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; link_lst&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
+    pre&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; None
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; cur:
+        tmp &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cur&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
+        cur&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pre
+        pre &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cur
+        cur &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; tmp
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; pre
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# 寻找交叉点&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;point&lt;/span&gt;(node_a, node_b):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; node_a &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; None &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; node_b &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; None:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; None
+    next_a, next_b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; node_a, node_b
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; next_a &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; next_b:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; next_b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val:
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; next_b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; (next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; next_b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val):
+                next_a, next_b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next, next_b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
+                &lt;span style=&#34;color:#66d9ef&#34;&gt;continue&lt;/span&gt;
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val
+        next_a, next_b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next, next_b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; None
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# 构造单链表&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Node&lt;/span&gt;(object):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, next&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; value
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; next
+
+a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; ListNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, ListNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, ListNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;, ListNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, ListNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)))))
+b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; ListNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;, ListNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt;, ListNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, ListNode(&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;))))
+
+ra &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; reverse_single_link_lst(a)
+rb &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; reverse_single_link_lst(b)
+point(ra, rb)
+&lt;span style=&#34;color:#75715e&#34;&gt;# output:&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# 4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;如何判断两个单链表是否是同一个链表。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;直接判断第一个节点即可。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;单链表逆转。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;见上面判断交叉链表内的 &lt;code&gt;reverse_single_link_lst()&lt;/code&gt; 函数。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;堆，栈，队列。&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E5%A0%86_(%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84)&#34;&gt;堆&lt;/a&gt;， &lt;a href=&#34;https://zh.wikipedia.org/zh-hans/%E5%A0%86%E6%A0%88&#34;&gt;栈&lt;/a&gt;， &lt;a href=&#34;https://zh.wikipedia.org/wiki/%E9%98%9F%E5%88%97&#34;&gt;队列&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;说说你知道的排序算法以及其时间复杂度。&lt;/em&gt;
+&lt;img src=&#34;http://ww1.sinaimg.cn/large/005NaGmtly1fenoomcn03j30iz07874f.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;手写快速排序。画画堆排序的原理及过程。&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;quick_sort&lt;/span&gt;(lst, start, stop):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; start &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; stop:
+        i, j, x &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; start, stop, lst[start]
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; j:
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; (i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; j) &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; (lst[j] &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; x):
+                j &lt;span style=&#34;color:#f92672&#34;&gt;-=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; j):
+                lst[i] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; lst[j]
+                i &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; (i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; j) &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; (lst[i] &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; x):
+                i &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; j):
+                lst[j] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; lst[i]
+                j &lt;span style=&#34;color:#f92672&#34;&gt;-=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+        lst[i] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; x
+        quick_sort(lst, start, i&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+        quick_sort(lst, i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, stop)
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; lst
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;之后面试官 &lt;a href=&#34;https://github.com/akun&#34;&gt;akun&lt;/a&gt; 大哥给了个特别简洁的写法，三路复用，地址在 &lt;a href=&#34;https://gist.github.com/akun/d90998068f4e1f3eb169&#34;&gt;Gist&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;qsort&lt;/span&gt;(alist):
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    quick sort(easy way, but more memory)
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    test: python -m doctest qsort.py
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    &amp;gt;&amp;gt;&amp;gt; import math
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    &amp;gt;&amp;gt;&amp;gt; import random
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    &amp;gt;&amp;gt;&amp;gt; size = 100
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    &amp;gt;&amp;gt;&amp;gt; alist = [random.randint(0, size * 10) for i in range(size)]
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    &amp;gt;&amp;gt;&amp;gt; qlist = qsort(alist)
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    &amp;gt;&amp;gt;&amp;gt; alist.sort()
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    &amp;gt;&amp;gt;&amp;gt; assert qlist == alist
+&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; len(alist) &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; alist
+
+    key &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; alist[&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;]
+    left_list, middle_list, right_list &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [], [], []
+
+    [{i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; key: left_list, i &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; key: middle_list, i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; key: right_list}[
+        True
+    ]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(i) &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; alist]
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; qsort(left_list) &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; middle_list &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; qsort(right_list)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;说说你所了解的加密算法，编码算法，以及压缩算法。了解 base64 的原理么？
+&lt;ul&gt;
+&lt;li&gt;只说了听过 base64, md5 这几种编码。。。。。自行搜索吧，考的概率极小。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;数据库&#34;&gt;数据库&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;索引是什么原理？有什么优缺点？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;参考 &lt;a href=&#34;http://blog.csdn.net/kennyrose/article/details/7532032&#34;&gt;数据库索引的实现原理&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;乐观锁和悲观锁是什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.hollischuang.com/archives/934&#34;&gt;深入理解乐观锁与悲观锁&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;你为什么选择 Redis 而不是 MongoDB 或者其他的？（有个项目用了 Redis）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://segmentfault.com/q/1010000002588088/a-1020000002589415&#34;&gt;redis、memcache、mongoDB有哪些区别？&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;SQL 和 NoSQL 区别？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.jianshu.com/p/b32fe4fe45a3&#34;&gt;SQL 和 NoSQL 的区别&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;网络&#34;&gt;网络&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;从浏览器输入网址到网页渲染完毕这过程发生了什么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/skyline75489/what-happens-when-zh_CN&#34;&gt;这里&lt;/a&gt; 说的非常详细，看面的岗位不同，回答的侧重点不一样。如面的 Web ，可以侧重说说 nginx -&amp;gt; uwsgi -&amp;gt; Python -&amp;gt; uwsgi -&amp;gt; nginx 这个过程，（WSGI 标准）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;TCP 三次握手四次挥手详细说下。&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/whuslei/article/details/6667471&#34;&gt;TCP协议中的三次握手和四次挥手(图解)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;为什么是三次握手？两次不行么？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/techzi/archive/2011/10/18/2216751.html&#34;&gt;TCP连接建立过程中为什么需要“三次握手”&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;说说 TCP 和 UDP 的区别。&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TCP（传输层）
+&lt;ul&gt;
+&lt;li&gt;优点：TCP 面向连接，可靠，稳定，传输数据前需要建立连接，故有三次握手四次挥手，还有拥塞控制，重传等&lt;/li&gt;
+&lt;li&gt;缺点：慢，占用系统资源，有确认机制，三次握手，所以容易被攻击，DDos&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;UDP
+&lt;ul&gt;
+&lt;li&gt;优点：快，无状态传输协议&lt;/li&gt;
+&lt;li&gt;缺点：不稳定，不可靠，容易丢包&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;谈谈你对 SQL 注入、 XSS 、 CSRF 的理解。以及如何防范。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://cnodejs.org/topic/50463565329c5139760c34a1&#34;&gt;关于XSS（跨站脚本攻击）和CSRF（跨站请求伪造)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://zh.m.wikipedia.org/zh-hans/SQL%E8%B3%87%E6%96%99%E9%9A%B1%E7%A2%BC%E6%94%BB%E6%93%8A&#34;&gt;SQL 注入&lt;/a&gt;，现在多数采用 ORM，以及参数化查询，很少再出现。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;说说 DNS 是什么东西。&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;根据域名寻找 主机 IP 的协议。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;HTTP 是工作在七层模型的哪一层？DNS 又是哪一层？TCP 和 IP 呢？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;HTTP，DNS 应用层，TCP 传输层，IP 网络层。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;说说你知道的 HTTP 方法和 状态码。&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://zh.wikipedia.org/wiki/HTTP%E7%8A%B6%E6%80%81%E7%A0%81&#34;&gt;状态码&lt;/a&gt;，这里只需要大概说说，以 1××，2××，3×× 这样的层面说，没有必要细到每一个状态码。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE#.E8.AF.B7.E6.B1.82.E6.96.B9.E6.B3.95&#34;&gt;HTTP 请求方法&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;HTTP 的 GET 和 POST 有什么区别？&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;本质上，GET 和 POST 只不过是 &lt;strong&gt;发送机制不同&lt;/strong&gt; 。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;HTTP 和 HTTPS 的区别？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;HTTPS = HTTP + SSL&lt;/li&gt;
+&lt;li&gt;HTTP 默认使用 80 端口，HTTPS 使用 443 端口。&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%AE%89%E5%85%A8%E5%8D%8F%E8%AE%AE#.E4.B8.8EHTTP.E7.9A.84.E5.B7.AE.E5.BC.82&#34;&gt;更详细&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;说说你知道的 HTTP 包头部信息里都有哪些字段。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;这个随便抓下包就知道了，就不说了～&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;em&gt;HTTP 包头部信息里面的 &lt;code&gt;Host&lt;/code&gt; 字段是什么作用？&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;表示当前请求服务器的主机名&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;说说 cookie 里面你都知道哪些字段。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://javascript.ruanyifeng.com/bom/cookie.html&#34;&gt;Cookie&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Session 是什么东西？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://harttle.com/2015/08/10/cookie-session.html&#34;&gt;Cookie/Session的机制与安全&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在写爬虫过程中，如果遇见需要加载 js 的情况你是如何处理的。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Selenium，PhantomJS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;普通匿名代理和高匿代理有什么区别？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;来自普通匿名代理的请求在服务端能看见真实 IP， 而高匿代理在服务端看不见真实 IP，只能看见代理服务器 IP。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;你知道哪些反爬措施？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;加代理，加头部，爬取速度控制，随机 UA，模拟真实用户的点击习惯去请求。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;操作系统&#34;&gt;操作系统&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;进程和线程以及协程的区别？&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;多线程和多进程的区别？&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;信号量和互斥量的区别？&lt;/li&gt;
+&lt;li&gt;堆内存是干嘛的？&lt;/li&gt;
+&lt;li&gt;如何检验当前机器是大端模式还是小端模式？&lt;/li&gt;
+&lt;li&gt;如何让某个程序在后台运行？（Linux）&lt;/li&gt;
+&lt;li&gt;sed, awk 用法（Linux）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;编程题&#34;&gt;编程题&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;手写二分查找，&lt;em&gt;快速排序&lt;/em&gt;。&lt;/li&gt;
+&lt;li&gt;~还有一个 SQL 语句的，一条 SQL 语句打印某张表某个 group count  TOP 5。~&lt;/li&gt;
+&lt;li&gt;Python 中正则模块 &lt;code&gt;re&lt;/code&gt; 里 &lt;code&gt;match&lt;/code&gt; 函数 和 &lt;code&gt;search&lt;/code&gt; 函数有什么区别？举例说明。&lt;/li&gt;
+&lt;li&gt;一条语句求 0 - 999999 内能被 7 整除的所有数的和。&lt;/li&gt;
+&lt;li&gt;实现一个链表结构，要求其插入第一个节点，删除最后一个节点的复杂度为 O(1)。&lt;/li&gt;
+&lt;li&gt;实现一个 &lt;code&gt;retry&lt;/code&gt; 装饰器，使用如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 可以指定重试次数，直到函数返回正确结果。&lt;/span&gt;
+&lt;span style=&#34;color:#a6e22e&#34;&gt;@retry&lt;/span&gt;(retries&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kw):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt;:
+        &lt;span style=&#34;color:#75715e&#34;&gt;# some action&lt;/span&gt;
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; True
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;except&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; False
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;大概可以像下面这样写，&lt;/p&gt;
+&lt;hr&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; functools &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; wraps
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;retry&lt;/span&gt;(retries&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;timesf&lt;/span&gt;(func):
+        &lt;span style=&#34;color:#a6e22e&#34;&gt;@wraps&lt;/span&gt;(func)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;wrap&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kw):
+            i &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+            status &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; True
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; status &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; times:
+                status &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; func(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kw)
+                i &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; status
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; wrap
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; timesf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;有一个4G 的文本文件，存储的是酒店信息，每行存的是一个酒店ID，可以重复。请编写程序输出一个新文件，新文件内容为每行一条数据，每行的数据格式如下：&lt;code&gt;酒店ID + 出现次数&lt;/code&gt;（最后提到了其他想法，如文件切片，bitmap 之类）&lt;/li&gt;
+&lt;li&gt;实现一个函数，根据字典序比较两字符串大小，不允许用库函数，尽量越底层实现越好。（手写）&lt;/li&gt;
+&lt;li&gt;实现一个函数，检验一个字符串是否符合 &lt;code&gt;xxxx-xx-xx&lt;/code&gt; 这样的日期格式，注意润年，大小月，不允许用库函数，尽量越底层实现越好。（手写）&lt;/li&gt;
+&lt;li&gt;我们是做地图相关工作的，现在给你提供一个三维的数据，数据描述的是不同时间一些地图上的一些地点坐标，分别有时间，x轴坐标，y轴坐标，请你设计一个算法，能够得到一天内地图上的 TOP 10 热点地区，地区大小也相应的自己作合适调整，开放性题目。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;概率论&#34;&gt;概率论&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;一副扑克除去大小王，共 52 张排，随机取三张扑克，求同花（三张扑克同一种花色）和顺子的概率。&lt;/li&gt;
+&lt;li&gt;其他忘了 Orz&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;blockquote&gt;
+&lt;p&gt;原文：https://github.com/x1ah/Blog/issues/9&lt;/p&gt;
+&lt;/blockquote&gt;
+</content>
     </item>
     
     <item>
@@ -133,6 +1224,13 @@ import time from flask import Flask, request, current_app try: from flask import
  为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！
 你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！
 阅读全文</description>
+      <content>&lt;blockquote&gt;
+&lt;p&gt;永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &amp;ndash; 拿破仑&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！&lt;/p&gt;
+&lt;p&gt;你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://when.run/unmain.html&#34;&gt;阅读全文&lt;/a&gt;&lt;/p&gt;
+</content>
     </item>
     
   </channel>

@@ -16,6 +16,29 @@
       <description>向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
  初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值  每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
 +----+ |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | +----+ 因果关系判断规则  如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生  应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。</description>
+      <content>&lt;h2 id=&#34;向量时钟vector-clock&#34;&gt;向量时钟(Vector Clock)&lt;/h2&gt;
+&lt;p&gt;向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：&lt;img src=&#34;https://i.imgur.com/0XRtT9o.png&#34; alt=&#34;Imgur&#34;&gt;&lt;/p&gt;
+&lt;p&gt;系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;初始时，所有进程的时钟都为 0&lt;/li&gt;
+&lt;li&gt;进程每次处理一个内部事件，其逻辑时钟加 1&lt;/li&gt;
+&lt;li&gt;每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送&lt;/li&gt;
+&lt;li&gt;每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;+----+&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;A:&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;B:&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;===&amp;gt;&lt;/span&gt;  &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;这个整体称为&lt;/span&gt; A &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;的&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;向量时钟&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;，其中，&lt;/span&gt;A:&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;为&lt;/span&gt; A &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;的逻辑时钟&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;C:&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;+----+&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;因果关系判断规则&#34;&gt;因果关系判断规则&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;如果时钟 V1 的每个逻辑时钟值都比时钟 V2  大，那么称 V1 比 V2 先发生。如： &lt;code&gt;V1: [A:2,B:4,C:2]&lt;/code&gt; 与 &lt;code&gt;V2: [A:1,B:2,C:1]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;应用&#34;&gt;应用&lt;/h2&gt;
+&lt;p&gt;向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: &lt;a href=&#34;https://cloudacademy.com/blog/data-versioning-with-dynamodb-an-inside-look-into-nosql-part-5/&#34;&gt;Data Versioning With DynamoDB&lt;/a&gt;。&lt;/p&gt;
+</content>
     </item>
     
   </channel>

@@ -17,6 +17,84 @@
  先假装有一个存数据的客户端，👇
 class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
 import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self.</description>
+      <content>&lt;blockquote&gt;
+&lt;p&gt;假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python + Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;先假装有一个存数据的客户端，👇&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;APIDogClient&lt;/span&gt;:
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, secret_key):
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;host &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;x.x.x.x&amp;#39;&lt;/span&gt;   &lt;span style=&#34;color:#75715e&#34;&gt;# 假装我有一些配置需要初始化&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;port &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;xxx&amp;#39;&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;secret_key &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; secret_key
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;secret_id &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;xxx&amp;#39;&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bucket &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;storge&lt;/span&gt;(self, data):
+        &lt;span style=&#34;color:#75715e&#34;&gt;# clean data&lt;/span&gt;
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bucket&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(data)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;现在可以开始着手插件了，给插件取名为 &lt;code&gt;flask-APIDog&lt;/code&gt;，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; time
+
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Flask, request, current_app
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; _app_ctx_stack &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; stack
+&lt;span style=&#34;color:#66d9ef&#34;&gt;except&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ImportError&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; _request_ctx_stack &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; stack
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;APIDog&lt;/span&gt;:
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, app&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; app
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; app:
+            self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
+            self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;api_dog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; APIDogClient(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;api_dog_secret_key&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;))
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;init_app&lt;/span&gt;(self, app&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; app
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;api_dog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; APIDogClient(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;api_dog_secret_key&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;))
+        app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;before_request(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_before_request)
+        app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;after_request(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_after_request)
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_before_request&lt;/span&gt;(self):
+        ctx &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;top
+        ctx&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_api_dog_data &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_begin_time&amp;#39;&lt;/span&gt;: time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time()
+        }
+
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_after_request&lt;/span&gt;(self, response):
+        ctx &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;top
+        api_request_begin_time &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; ctx&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_api_dog_data&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_path&amp;#39;&lt;/span&gt;, time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time())
+        request_time &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;time() &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; api_request_begin_time
+        api_data &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_time&amp;#39;&lt;/span&gt;: request_time,
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_path&amp;#39;&lt;/span&gt;: request&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;path,
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;request_location&amp;#39;&lt;/span&gt;: request&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;args&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;location&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;),
+            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;remote_address&amp;#39;&lt;/span&gt;: request&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;remote_addr
+        }
+        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;storge(api_data)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;👆 是第一版的 &lt;code&gt;flask-APIDog&lt;/code&gt; 的代码，很简单的一些处理， Flask 扩展一般（官方建议）提供一个 &lt;code&gt;init_app&lt;/code&gt; 方法，用于在实例化插件类后初始化 Flask APP，实际上这里只是简单的给 Flask APP 的 &lt;code&gt;before_request&lt;/code&gt;，&lt;code&gt;after_request&lt;/code&gt; 两个钩子函数提供两个具体流程，&lt;code&gt;_app_ctx_stack.top&lt;/code&gt; 是 Flask
+里面上下文的概念，意思是取当前应用。更甚至完全可以直接用 &lt;code&gt;before_request&lt;/code&gt;，&lt;code&gt;after_request&lt;/code&gt; 装饰两个函数来实现上面那些功能，但是后面迭代版本会越来越复杂，直接写在项目里很容易污染现有代码，抽象成插件不仅提高了鲁棒性，还符合 Flask 的插件系统理念。&lt;/p&gt;
+&lt;p&gt;使用方法也与一般的 Flask 插件一致，👇&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Flask
+&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask_apidog &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; APIDog
+
+
+app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Flask(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;test_flask_extend&amp;#39;&lt;/span&gt;)
+api_dog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; ApiDog()
+api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
+
+&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.route&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;index&lt;/span&gt;():
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;hello api dog&amp;#34;&lt;/span&gt;
+
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;__main__&amp;#34;&lt;/span&gt;:
+    app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这样之后，APP 的每个请求都会记录请求耗时，请求 IP，请求路径并转发到 APIDog 后端服务，这样一个简单的 Flask 插件大致就完成了。&lt;/p&gt;
+</content>
     </item>
     
   </channel>
