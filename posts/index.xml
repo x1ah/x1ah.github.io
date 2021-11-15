@@ -6,7 +6,17 @@
     <description>Recent content in Posts on x1ah</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh</language>
-    <lastBuildDate>Tue, 02 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://when.run/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 16 Nov 2021 00:33:51 +0800</lastBuildDate><atom:link href="https://when.run/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>面试 Checklist</title>
+      <link>https://when.run/posts/interview/</link>
+      <pubDate>Tue, 16 Nov 2021 00:33:51 +0800</pubDate>
+      
+      <guid>https://when.run/posts/interview/</guid>
+      <description></description>
+      <content></content>
+    </item>
+    
     <item>
       <title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x</title>
       <link>https://when.run/posts/elasticsearch-upgrade/</link>
@@ -53,7 +63,7 @@
 &lt;p&gt;新集群准备好之后，需要进行一些必要的测试，比如：性能测试、数据比对、老的查询语句兼容性测试。&lt;/p&gt;
 &lt;h4 id=&#34;性能测试&#34;&gt;性能测试&lt;/h4&gt;
 &lt;p&gt;性能测试可以挑拣一个业务代码里最常用的查询语句，然后进行压测。比如我这里使用 wrk 压测一个最简单的全文搜索&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;// dsl.lua 文件内容
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// dsl.lua 文件内容
 
 wrk.method = &amp;quot;GET&amp;quot;
 wrk.body = [[{
@@ -68,9 +78,9 @@ wrk.body = [[{
 }]]
 wrk.headers[&amp;quot;Content-Type&amp;quot;] = &amp;quot;application/json&amp;quot;
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;压测命令：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;wrk -t10 -c10 -d10s --script=dsl.lua http://elasticsearch-address:9200/you_index/_search
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;wrk -t10 -c10 -d10s --script=dsl.lua http://elasticsearch-address:9200/you_index/_search
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;结果示例：&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Running 10s test @ http://elasticsearch-address:9200/you_index/_search
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Running 10s test @ http://elasticsearch-address:9200/you_index/_search
   10 threads and 10 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
     Latency     8.31ms    2.12ms  35.71ms   75.93%
@@ -106,7 +116,7 @@ Transfer/sec:    388.64MB
 &lt;/ol&gt;
 &lt;h4 id=&#34;兼容性测试&#34;&gt;兼容性测试&lt;/h4&gt;
 &lt;p&gt;由于两个集群版本跨度比较大，容易出乌龙。比如下面这个 DSL，在 es 5.x 和 es7.x 两个版本的搜索结果迥然不同。&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;{
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
   &amp;quot;query&amp;quot;: {
     &amp;quot;bool&amp;quot; : {
       &amp;quot;should&amp;quot; : [
@@ -168,7 +178,7 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
       <guid>https://when.run/posts/keep-alive-chat/</guid>
       <description>Server package main import ( &amp;#34;bufio&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;net&amp;#34; ) // 用来记录所有的客户端连接 var ConnMap map[string]*net.TCPConn func main() { var tcpAddr *net.TCPAddr ConnMap = make(map[string]*net.TCPConn) tcpAddr, _ = net.ResolveTCPAddr(&amp;#34;tcp&amp;#34;, &amp;#34;127.0.0.1:9999&amp;#34;) tcpListener, _ := net.ListenTCP(&amp;#34;tcp&amp;#34;, tcpAddr) defer tcpListener.Close() for { tcpConn, err := tcpListener.AcceptTCP() if err != nil { continue } fmt.Println(&amp;#34;A client connected : &amp;#34; + tcpConn.RemoteAddr().String()) // 新连接加入map  ConnMap[tcpConn.RemoteAddr().String()] = tcpConn go tcpPipe(tcpConn) } } func tcpPipe(conn *net.TCPConn) { ipStr := conn.</description>
       <content>&lt;h4 id=&#34;server&#34;&gt;Server&lt;/h4&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
 
 &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; (
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;bufio&amp;#34;&lt;/span&gt;
@@ -230,7 +240,7 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
     }
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;client&#34;&gt;Client&lt;/h4&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
 
 &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; (
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;bufio&amp;#34;&lt;/span&gt;
@@ -271,8 +281,8 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
     }
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;run&#34;&gt;Run&lt;/h4&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&amp;gt; go run server.go
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&amp;gt; go run client.go
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&amp;gt; go run server.go
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&amp;gt; go run client.go
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
     </item>
     
@@ -360,7 +370,7 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
 &lt;li&gt;进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 &lt;a href=&#34;https://pre-commit.com/&#34;&gt;pre-commit&lt;/a&gt; 对每个 commit 进行检查，使用 &lt;a href=&#34;https://github.com/pycqa/pylint&#34;&gt;pylint&lt;/a&gt; 进行兼容性检查，配置如下：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# .pre-commit-config.yaml&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# .pre-commit-config.yaml&lt;/span&gt;
 
 -   repo: https://github.com/xiachufang/mirrors-pylint
     rev: v1.9.2
@@ -383,7 +393,7 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
 &lt;h3 id=&#34;strbytesunicode&#34;&gt;str/bytes/unicode&lt;/h3&gt;
 &lt;p&gt;这个应当属迁移的最繁琐的地方。&lt;/p&gt;
 &lt;p&gt;中间遇到一次问题，排查了很久。代码库中有一个 &lt;code&gt;@cache&lt;/code&gt; 装饰器，用来缓存函数返回值，在 py2 中有如下一段代码:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;
 &lt;span style=&#34;color:#a6e22e&#34;&gt;@cache&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;cache_key&amp;#39;&lt;/span&gt;)
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;foo&lt;/span&gt;():
     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;py2 返回结构&amp;#34;&lt;/span&gt;
@@ -420,9 +430,9 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
 &lt;li&gt;每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;+----+&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;+----+&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;A:&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;B:&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;===&amp;gt;&lt;/span&gt;  &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;这个整体称为&lt;/span&gt; A &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;的&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;向量时钟&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;，其中，&lt;/span&gt;A:&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;为&lt;/span&gt; A &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;的逻辑时钟&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;B:&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;===&amp;gt;&lt;/span&gt;  这个整体称为 A 的 &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;向量时钟&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;，&lt;/span&gt;其中&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;，&lt;/span&gt;A:&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; 为 A 的逻辑时钟
 &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;C:&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;+----+&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;因果关系判断规则&#34;&gt;因果关系判断规则&lt;/h3&gt;
@@ -526,7 +536,7 @@ import time from flask import Flask, request, current_app try: from flask import
 &lt;p&gt;假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python + Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;先假装有一个存数据的客户端，👇&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;APIDogClient&lt;/span&gt;:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;APIDogClient&lt;/span&gt;:
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
     &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, secret_key):
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;host &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;x.x.x.x&amp;#39;&lt;/span&gt;   &lt;span style=&#34;color:#75715e&#34;&gt;# 假装我有一些配置需要初始化&lt;/span&gt;
@@ -539,7 +549,7 @@ import time from flask import Flask, request, current_app try: from flask import
         &lt;span style=&#34;color:#75715e&#34;&gt;# clean data&lt;/span&gt;
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;bucket&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(data)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;现在可以开始着手插件了，给插件取名为 &lt;code&gt;flask-APIDog&lt;/code&gt;，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; time
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; time
 
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Flask, request, current_app
 
@@ -551,13 +561,13 @@ import time from flask import Flask, request, current_app try: from flask import
 
 &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;APIDog&lt;/span&gt;:
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, app&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, app&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;):
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; app
         &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; app:
             self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
             self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;api_dog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; APIDogClient(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;api_dog_secret_key&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;))
 
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;init_app&lt;/span&gt;(self, app&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;init_app&lt;/span&gt;(self, app&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;):
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; app
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;api_dog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; APIDogClient(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;api_dog_secret_key&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt;))
         app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;before_request(self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_before_request)
@@ -583,7 +593,7 @@ import time from flask import Flask, request, current_app try: from flask import
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;👆 是第一版的 &lt;code&gt;flask-APIDog&lt;/code&gt; 的代码，很简单的一些处理， Flask 扩展一般（官方建议）提供一个 &lt;code&gt;init_app&lt;/code&gt; 方法，用于在实例化插件类后初始化 Flask APP，实际上这里只是简单的给 Flask APP 的 &lt;code&gt;before_request&lt;/code&gt;，&lt;code&gt;after_request&lt;/code&gt; 两个钩子函数提供两个具体流程，&lt;code&gt;_app_ctx_stack.top&lt;/code&gt; 是 Flask
 里面上下文的概念，意思是取当前应用。更甚至完全可以直接用 &lt;code&gt;before_request&lt;/code&gt;，&lt;code&gt;after_request&lt;/code&gt; 装饰两个函数来实现上面那些功能，但是后面迭代版本会越来越复杂，直接写在项目里很容易污染现有代码，抽象成插件不仅提高了鲁棒性，还符合 Flask 的插件系统理念。&lt;/p&gt;
 &lt;p&gt;使用方法也与一般的 Flask 插件一致，👇&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Flask
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Flask
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; flask_apidog &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; APIDog
 
 
@@ -591,7 +601,7 @@ app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Flask(&lt;span styl
 api_dog &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; ApiDog()
 api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
 
-&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.route&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;color:#a6e22e&#34;&gt;@app&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;route(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/&amp;#34;&lt;/span&gt;)
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;index&lt;/span&gt;():
     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;hello api dog&amp;#34;&lt;/span&gt;
 
@@ -632,7 +642,7 @@ api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`&lt;/span&gt;
 &lt;span style=&#34;color:#75715e&#34;&gt;# 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷&lt;/span&gt;
 &lt;span style=&#34;color:#75715e&#34;&gt;# 贝对象的所有层级对象，也就是一个真正意义上的拷贝。&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; copy &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; copy, deepcopy
@@ -764,10 +774,10 @@ api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;foo&lt;/span&gt;(a, b&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;]):
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(b)
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;foo&lt;/span&gt;(a, b&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;]):
+        print(b)
         b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(a)
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(b)
+        print(b)
 &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; val &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; foo(val)
 &lt;span style=&#34;color:#75715e&#34;&gt;# [1, 2]&lt;/span&gt;
@@ -829,7 +839,7 @@ api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
 &lt;li&gt;层次遍历二叉树用什么方法？&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# coding: utf-8&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# coding: utf-8&lt;/span&gt;
 
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; collections &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; deque
 
@@ -837,7 +847,7 @@ api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
 &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;BNode&lt;/span&gt;:
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34; 二叉树节点 &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
 
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, left&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None, right&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, left&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;, right&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;):
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;value &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; value
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;left &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; left
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;right &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; right
@@ -848,7 +858,7 @@ api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
     stack &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; deque([binary_tree])
     &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; stack:
         top &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;popleft()
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;value)
+        print(top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;value)
         &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;left:
             stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;left)
         &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;right:
@@ -882,14 +892,14 @@ api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。&lt;/span&gt;
 &lt;span style=&#34;color:#75715e&#34;&gt;# 反转单链表&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;reverse_single_link_lst&lt;/span&gt;(link_lst):
     &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; link_lst:
         &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; link_lst
     pre &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; link_lst
     cur &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; link_lst&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
-    pre&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; None
+    pre&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;
     &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; cur:
         tmp &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cur&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
         cur&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pre
@@ -899,8 +909,8 @@ api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# 寻找交叉点&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;point&lt;/span&gt;(node_a, node_b):
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; node_a &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; None &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; node_b &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; None:
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; None
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; node_a &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; node_b &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;
     next_a, next_b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; node_a, node_b
     &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; next_a &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; next_b:
         &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; next_b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val:
@@ -909,11 +919,11 @@ api_dog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;init_app(app)
                 &lt;span style=&#34;color:#66d9ef&#34;&gt;continue&lt;/span&gt;
             &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val
         next_a, next_b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next, next_b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; None
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# 构造单链表&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Node&lt;/span&gt;(object):
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, next&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, next&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;):
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; value
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; next
 
@@ -953,7 +963,7 @@ point(ra, rb)
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;quick_sort&lt;/span&gt;(lst, start, stop):
     &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; start &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; stop:
         i, j, x &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; start, stop, lst[start]
@@ -974,7 +984,7 @@ point(ra, rb)
     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; lst
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;之后面试官 &lt;a href=&#34;https://github.com/akun&#34;&gt;akun&lt;/a&gt; 大哥给了个特别简洁的写法，三路复用，地址在 &lt;a href=&#34;https://gist.github.com/akun/d90998068f4e1f3eb169&#34;&gt;Gist&lt;/a&gt;&lt;/p&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;qsort&lt;/span&gt;(alist):
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;qsort&lt;/span&gt;(alist):
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    quick sort(easy way, but more memory)
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    test: python -m doctest qsort.py
@@ -994,7 +1004,7 @@ point(ra, rb)
     left_list, middle_list, right_list &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [], [], []
 
     [{i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; key: left_list, i &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; key: middle_list, i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; key: right_list}[
-        True
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
     ]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(i) &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; alist]
 
     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; qsort(left_list) &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; middle_list &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; qsort(right_list)
@@ -1172,24 +1182,24 @@ point(ra, rb)
 &lt;li&gt;实现一个 &lt;code&gt;retry&lt;/code&gt; 装饰器，使用如下：&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 可以指定重试次数，直到函数返回正确结果。&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 可以指定重试次数，直到函数返回正确结果。&lt;/span&gt;
 &lt;span style=&#34;color:#a6e22e&#34;&gt;@retry&lt;/span&gt;(retries&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kw):
     &lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt;:
         &lt;span style=&#34;color:#75715e&#34;&gt;# some action&lt;/span&gt;
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; True
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
     &lt;span style=&#34;color:#66d9ef&#34;&gt;except&lt;/span&gt;:
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; False
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;False&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;大概可以像下面这样写，&lt;/p&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; functools &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; wraps
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; functools &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; wraps
 
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;retry&lt;/span&gt;(retries&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;):
     &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;timesf&lt;/span&gt;(func):
         &lt;span style=&#34;color:#a6e22e&#34;&gt;@wraps&lt;/span&gt;(func)
         &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;wrap&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kw):
             i &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
-            status &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; True
+            status &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
             &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; status &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; times:
                 status &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; func(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kw)
                 i &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
@@ -1211,25 +1221,6 @@ point(ra, rb)
 &lt;blockquote&gt;
 &lt;p&gt;原文：https://github.com/x1ah/Blog/issues/9&lt;/p&gt;
 &lt;/blockquote&gt;
-</content>
-    </item>
-    
-    <item>
-      <title>[转]如何编写无法维护的代码</title>
-      <link>https://when.run/posts/unmain/</link>
-      <pubDate>Sat, 01 Oct 2016 00:00:00 +0000</pubDate>
-      
-      <guid>https://when.run/posts/unmain/</guid>
-      <description>永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &amp;ndash; 拿破仑
- 为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！
-你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！
-阅读全文</description>
-      <content>&lt;blockquote&gt;
-&lt;p&gt;永远不要（把自己遇到的问题）归因于（他人的）恶意，这恰恰说明了（你自己的）无能。 &amp;ndash; 拿破仑&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;为了造福大众，在Java编程领域创造就业机会，兄弟我在此传授大师们的秘籍。这些大师写的代码极其难以维护，后继者就是想对它做最简单的修改都需要花上数年时间。而且，如果你能对照秘籍潜心修炼，你甚至可以给自己弄个铁饭碗，因为除了你之外，没人能维护你写的代码。再而且，如果你能练就秘籍中的全部招式，那么连你自己都无法维护你的代码了！&lt;/p&gt;
-&lt;p&gt;你不想练功过度走火入魔吧。那就不要让你的代码一眼看去就完全无法维护，只要它实质上是那样就行了。否则，你的代码就有被重写或重构的风险！&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://when.run/unmain.html&#34;&gt;阅读全文&lt;/a&gt;&lt;/p&gt;
 </content>
     </item>
     

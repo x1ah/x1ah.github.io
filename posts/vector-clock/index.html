@@ -176,9 +176,9 @@ if (!doNotTrack) {
 <li>每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值</li>
 </ol>
 <p>每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">+----+</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">+----+</span>
 <span style="color:#f92672">|</span>A:<span style="color:#ae81ff">0</span> <span style="color:#f92672">|</span>
-<span style="color:#f92672">|</span>B:<span style="color:#ae81ff">3</span> <span style="color:#f92672">|</span>  <span style="color:#f92672">===&gt;</span>  <span style="color:#960050;background-color:#1e0010">这个整体称为</span> A <span style="color:#960050;background-color:#1e0010">的</span> <span style="color:#e6db74">&#34;向量时钟&#34;</span><span style="color:#960050;background-color:#1e0010">，其中，</span>A:<span style="color:#ae81ff">0</span> <span style="color:#960050;background-color:#1e0010">为</span> A <span style="color:#960050;background-color:#1e0010">的逻辑时钟</span>
+<span style="color:#f92672">|</span>B:<span style="color:#ae81ff">3</span> <span style="color:#f92672">|</span>  <span style="color:#f92672">===&gt;</span>  这个整体称为 A 的 <span style="color:#e6db74">&#34;向量时钟&#34;</span><span style="color:#960050;background-color:#1e0010">，</span>其中<span style="color:#960050;background-color:#1e0010">，</span>A:<span style="color:#ae81ff">0</span> 为 A 的逻辑时钟
 <span style="color:#f92672">|</span>C:<span style="color:#ae81ff">5</span> <span style="color:#f92672">|</span>
 <span style="color:#f92672">+----+</span>
 </code></pre></div><h3 id="因果关系判断规则">因果关系判断规则<a href="#因果关系判断规则" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>

@@ -36,7 +36,7 @@
 &lt;li&gt;进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 &lt;a href=&#34;https://pre-commit.com/&#34;&gt;pre-commit&lt;/a&gt; 对每个 commit 进行检查，使用 &lt;a href=&#34;https://github.com/pycqa/pylint&#34;&gt;pylint&lt;/a&gt; 进行兼容性检查，配置如下：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# .pre-commit-config.yaml&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# .pre-commit-config.yaml&lt;/span&gt;
 
 -   repo: https://github.com/xiachufang/mirrors-pylint
     rev: v1.9.2
@@ -59,7 +59,7 @@
 &lt;h3 id=&#34;strbytesunicode&#34;&gt;str/bytes/unicode&lt;/h3&gt;
 &lt;p&gt;这个应当属迁移的最繁琐的地方。&lt;/p&gt;
 &lt;p&gt;中间遇到一次问题，排查了很久。代码库中有一个 &lt;code&gt;@cache&lt;/code&gt; 装饰器，用来缓存函数返回值，在 py2 中有如下一段代码:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;
 &lt;span style=&#34;color:#a6e22e&#34;&gt;@cache&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;cache_key&amp;#39;&lt;/span&gt;)
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;foo&lt;/span&gt;():
     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;py2 返回结构&amp;#34;&lt;/span&gt;
@@ -107,7 +107,7 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`&lt;/span&gt;
 &lt;span style=&#34;color:#75715e&#34;&gt;# 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷&lt;/span&gt;
 &lt;span style=&#34;color:#75715e&#34;&gt;# 贝对象的所有层级对象，也就是一个真正意义上的拷贝。&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; copy &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; copy, deepcopy
@@ -239,10 +239,10 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;foo&lt;/span&gt;(a, b&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;]):
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(b)
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;foo&lt;/span&gt;(a, b&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;]):
+        print(b)
         b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(a)
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(b)
+        print(b)
 &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; val &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; foo(val)
 &lt;span style=&#34;color:#75715e&#34;&gt;# [1, 2]&lt;/span&gt;
@@ -304,7 +304,7 @@
 &lt;li&gt;层次遍历二叉树用什么方法？&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# coding: utf-8&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# coding: utf-8&lt;/span&gt;
 
 &lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; collections &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; deque
 
@@ -312,7 +312,7 @@
 &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;BNode&lt;/span&gt;:
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34; 二叉树节点 &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
 
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, left&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None, right&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, left&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;, right&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;):
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;value &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; value
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;left &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; left
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;right &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; right
@@ -323,7 +323,7 @@
     stack &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; deque([binary_tree])
     &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; stack:
         top &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;popleft()
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;value)
+        print(top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;value)
         &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;left:
             stack&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;left)
         &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; top&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;right:
@@ -357,14 +357,14 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。&lt;/span&gt;
 &lt;span style=&#34;color:#75715e&#34;&gt;# 反转单链表&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;reverse_single_link_lst&lt;/span&gt;(link_lst):
     &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; link_lst:
         &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; link_lst
     pre &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; link_lst
     cur &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; link_lst&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
-    pre&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; None
+    pre&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;
     &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; cur:
         tmp &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cur&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
         cur&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; pre
@@ -374,8 +374,8 @@
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# 寻找交叉点&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;point&lt;/span&gt;(node_a, node_b):
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; node_a &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; None &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; node_b &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; None:
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; None
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; node_a &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; node_b &lt;span style=&#34;color:#f92672&#34;&gt;is&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;:
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;
     next_a, next_b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; node_a, node_b
     &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; next_a &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; next_b:
         &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; next_b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val:
@@ -384,11 +384,11 @@
                 &lt;span style=&#34;color:#66d9ef&#34;&gt;continue&lt;/span&gt;
             &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val
         next_a, next_b &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; next_a&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next, next_b&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; None
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# 构造单链表&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Node&lt;/span&gt;(object):
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, next&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None):
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, value, next&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;None&lt;/span&gt;):
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;val &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; value
         self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;next &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; next
 
@@ -428,7 +428,7 @@ point(ra, rb)
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;quick_sort&lt;/span&gt;(lst, start, stop):
     &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; start &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; stop:
         i, j, x &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; start, stop, lst[start]
@@ -449,7 +449,7 @@ point(ra, rb)
     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; lst
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;之后面试官 &lt;a href=&#34;https://github.com/akun&#34;&gt;akun&lt;/a&gt; 大哥给了个特别简洁的写法，三路复用，地址在 &lt;a href=&#34;https://gist.github.com/akun/d90998068f4e1f3eb169&#34;&gt;Gist&lt;/a&gt;&lt;/p&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;qsort&lt;/span&gt;(alist):
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;qsort&lt;/span&gt;(alist):
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    quick sort(easy way, but more memory)
 &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    test: python -m doctest qsort.py
@@ -469,7 +469,7 @@ point(ra, rb)
     left_list, middle_list, right_list &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [], [], []
 
     [{i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; key: left_list, i &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; key: middle_list, i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; key: right_list}[
-        True
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
     ]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(i) &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; alist]
 
     &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; qsort(left_list) &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; middle_list &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; qsort(right_list)
@@ -647,24 +647,24 @@ point(ra, rb)
 &lt;li&gt;实现一个 &lt;code&gt;retry&lt;/code&gt; 装饰器，使用如下：&lt;/li&gt;
 &lt;/ul&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 可以指定重试次数，直到函数返回正确结果。&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# 可以指定重试次数，直到函数返回正确结果。&lt;/span&gt;
 &lt;span style=&#34;color:#a6e22e&#34;&gt;@retry&lt;/span&gt;(retries&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;func&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kw):
     &lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt;:
         &lt;span style=&#34;color:#75715e&#34;&gt;# some action&lt;/span&gt;
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; True
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
     &lt;span style=&#34;color:#66d9ef&#34;&gt;except&lt;/span&gt;:
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; False
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;False&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;大概可以像下面这样写，&lt;/p&gt;
 &lt;hr&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; functools &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; wraps
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; functools &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; wraps
 
 &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;retry&lt;/span&gt;(retries&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;):
     &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;timesf&lt;/span&gt;(func):
         &lt;span style=&#34;color:#a6e22e&#34;&gt;@wraps&lt;/span&gt;(func)
         &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;wrap&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kw):
             i &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
-            status &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; True
+            status &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
             &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; status &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; times:
                 status &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; func(&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kw)
                 i &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;

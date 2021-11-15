@@ -200,7 +200,7 @@ if (!doNotTrack) {
 <p>新集群准备好之后，需要进行一些必要的测试，比如：性能测试、数据比对、老的查询语句兼容性测试。</p>
 <h4 id="性能测试">性能测试<a href="#性能测试" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
 <p>性能测试可以挑拣一个业务代码里最常用的查询语句，然后进行压测。比如我这里使用 wrk 压测一个最简单的全文搜索</p>
-<pre><code>// dsl.lua 文件内容
+<pre tabindex="0"><code>// dsl.lua 文件内容
 
 wrk.method = &quot;GET&quot;
 wrk.body = [[{
@@ -215,9 +215,9 @@ wrk.body = [[{
 }]]
 wrk.headers[&quot;Content-Type&quot;] = &quot;application/json&quot;
 </code></pre><p>压测命令：</p>
-<pre><code>wrk -t10 -c10 -d10s --script=dsl.lua http://elasticsearch-address:9200/you_index/_search
+<pre tabindex="0"><code>wrk -t10 -c10 -d10s --script=dsl.lua http://elasticsearch-address:9200/you_index/_search
 </code></pre><p>结果示例：</p>
-<pre><code>Running 10s test @ http://elasticsearch-address:9200/you_index/_search
+<pre tabindex="0"><code>Running 10s test @ http://elasticsearch-address:9200/you_index/_search
   10 threads and 10 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
     Latency     8.31ms    2.12ms  35.71ms   75.93%
@@ -253,7 +253,7 @@ Transfer/sec:    388.64MB
 </ol>
 <h4 id="兼容性测试">兼容性测试<a href="#兼容性测试" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
 <p>由于两个集群版本跨度比较大，容易出乌龙。比如下面这个 DSL，在 es 5.x 和 es7.x 两个版本的搜索结果迥然不同。</p>
-<pre><code>{
+<pre tabindex="0"><code>{
   &quot;query&quot;: {
     &quot;bool&quot; : {
       &quot;should&quot; : [
@@ -283,6 +283,13 @@ Transfer/sec:    388.64MB
         <hr />
     </div>
     <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="https://when.run/posts/interview/">
+                <span class="button__icon">←</span>
+                <span class="button__text">面试 Checklist</span>
+            </a>
+        </span>
         
         
         <span class="button next">

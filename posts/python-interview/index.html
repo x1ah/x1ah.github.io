@@ -185,7 +185,7 @@ if (!doNotTrack) {
 </li>
 </ul>
 <hr>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`</span>
 <span style="color:#75715e"># 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷</span>
 <span style="color:#75715e"># 贝对象的所有层级对象，也就是一个真正意义上的拷贝。</span>
 <span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#f92672">from</span> copy <span style="color:#f92672">import</span> copy, deepcopy
@@ -317,10 +317,10 @@ if (!doNotTrack) {
 </li>
 </ul>
 <hr>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(a, b<span style="color:#f92672">=</span>[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>]):
-        <span style="color:#66d9ef">print</span>(b)
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(a, b<span style="color:#f92672">=</span>[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>]):
+        print(b)
         b<span style="color:#f92672">.</span>append(a)
-        <span style="color:#66d9ef">print</span>(b)
+        print(b)
 <span style="color:#f92672">&gt;&gt;&gt;</span> val <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>
 <span style="color:#f92672">&gt;&gt;&gt;</span> foo(val)
 <span style="color:#75715e"># [1, 2]</span>
@@ -382,7 +382,7 @@ if (!doNotTrack) {
 <li>层次遍历二叉树用什么方法？</li>
 </ul>
 <hr>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># coding: utf-8</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># coding: utf-8</span>
 
 <span style="color:#f92672">from</span> collections <span style="color:#f92672">import</span> deque
 
@@ -390,7 +390,7 @@ if (!doNotTrack) {
 <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BNode</span>:
     <span style="color:#e6db74">&#34;&#34;&#34; 二叉树节点 &#34;&#34;&#34;</span>
 
-    <span style="color:#66d9ef">def</span> __init__(self, value, left<span style="color:#f92672">=</span>None, right<span style="color:#f92672">=</span>None):
+    <span style="color:#66d9ef">def</span> __init__(self, value, left<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>, right<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
         self<span style="color:#f92672">.</span>value <span style="color:#f92672">=</span> value
         self<span style="color:#f92672">.</span>left <span style="color:#f92672">=</span> left
         self<span style="color:#f92672">.</span>right <span style="color:#f92672">=</span> right
@@ -401,7 +401,7 @@ if (!doNotTrack) {
     stack <span style="color:#f92672">=</span> deque([binary_tree])
     <span style="color:#66d9ef">while</span> stack:
         top <span style="color:#f92672">=</span> stack<span style="color:#f92672">.</span>popleft()
-        <span style="color:#66d9ef">print</span>(top<span style="color:#f92672">.</span>value)
+        print(top<span style="color:#f92672">.</span>value)
         <span style="color:#66d9ef">if</span> top<span style="color:#f92672">.</span>left:
             stack<span style="color:#f92672">.</span>append(top<span style="color:#f92672">.</span>left)
         <span style="color:#66d9ef">if</span> top<span style="color:#f92672">.</span>right:
@@ -435,14 +435,14 @@ if (!doNotTrack) {
 </li>
 </ul>
 <hr>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。</span>
 <span style="color:#75715e"># 反转单链表</span>
 <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">reverse_single_link_lst</span>(link_lst):
     <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> link_lst:
         <span style="color:#66d9ef">return</span> link_lst
     pre <span style="color:#f92672">=</span> link_lst
     cur <span style="color:#f92672">=</span> link_lst<span style="color:#f92672">.</span>next
-    pre<span style="color:#f92672">.</span>next <span style="color:#f92672">=</span> None
+    pre<span style="color:#f92672">.</span>next <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
     <span style="color:#66d9ef">while</span> cur:
         tmp <span style="color:#f92672">=</span> cur<span style="color:#f92672">.</span>next
         cur<span style="color:#f92672">.</span>next <span style="color:#f92672">=</span> pre
@@ -452,8 +452,8 @@ if (!doNotTrack) {
 
 <span style="color:#75715e"># 寻找交叉点</span>
 <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">point</span>(node_a, node_b):
-    <span style="color:#66d9ef">if</span> node_a <span style="color:#f92672">is</span> None <span style="color:#f92672">or</span> node_b <span style="color:#f92672">is</span> None:
-        <span style="color:#66d9ef">return</span> None
+    <span style="color:#66d9ef">if</span> node_a <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">or</span> node_b <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">None</span>
     next_a, next_b <span style="color:#f92672">=</span> node_a, node_b
     <span style="color:#66d9ef">while</span> next_a <span style="color:#f92672">or</span> next_b:
         <span style="color:#66d9ef">if</span> next_a<span style="color:#f92672">.</span>val <span style="color:#f92672">==</span> next_b<span style="color:#f92672">.</span>val:
@@ -462,11 +462,11 @@ if (!doNotTrack) {
                 <span style="color:#66d9ef">continue</span>
             <span style="color:#66d9ef">return</span> next_a<span style="color:#f92672">.</span>val
         next_a, next_b <span style="color:#f92672">=</span> next_a<span style="color:#f92672">.</span>next, next_b<span style="color:#f92672">.</span>next
-    <span style="color:#66d9ef">return</span> None
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">None</span>
 
 <span style="color:#75715e"># 构造单链表</span>
 <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Node</span>(object):
-    <span style="color:#66d9ef">def</span> __init__(self, value, next<span style="color:#f92672">=</span>None):
+    <span style="color:#66d9ef">def</span> __init__(self, value, next<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
         self<span style="color:#f92672">.</span>val <span style="color:#f92672">=</span> value
         self<span style="color:#f92672">.</span>next <span style="color:#f92672">=</span> next
 
@@ -506,7 +506,7 @@ point(ra, rb)
 </li>
 </ul>
 <hr>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下</span>
 <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">quick_sort</span>(lst, start, stop):
     <span style="color:#66d9ef">if</span> start <span style="color:#f92672">&lt;</span> stop:
         i, j, x <span style="color:#f92672">=</span> start, stop, lst[start]
@@ -527,7 +527,7 @@ point(ra, rb)
     <span style="color:#66d9ef">return</span> lst
 </code></pre></div><p>之后面试官 <a href="https://github.com/akun">akun</a> 大哥给了个特别简洁的写法，三路复用，地址在 <a href="https://gist.github.com/akun/d90998068f4e1f3eb169">Gist</a></p>
 <hr>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">qsort</span>(alist):
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">qsort</span>(alist):
     <span style="color:#e6db74">&#34;&#34;&#34;
 </span><span style="color:#e6db74">    quick sort(easy way, but more memory)
 </span><span style="color:#e6db74">    test: python -m doctest qsort.py
@@ -547,7 +547,7 @@ point(ra, rb)
     left_list, middle_list, right_list <span style="color:#f92672">=</span> [], [], []
 
     [{i <span style="color:#f92672">&lt;</span> key: left_list, i <span style="color:#f92672">==</span> key: middle_list, i <span style="color:#f92672">&gt;</span> key: right_list}[
-        True
+        <span style="color:#66d9ef">True</span>
     ]<span style="color:#f92672">.</span>append(i) <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> alist]
 
     <span style="color:#66d9ef">return</span> qsort(left_list) <span style="color:#f92672">+</span> middle_list <span style="color:#f92672">+</span> qsort(right_list)
@@ -725,24 +725,24 @@ point(ra, rb)
 <li>实现一个 <code>retry</code> 装饰器，使用如下：</li>
 </ul>
 <hr>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 可以指定重试次数，直到函数返回正确结果。</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 可以指定重试次数，直到函数返回正确结果。</span>
 <span style="color:#a6e22e">@retry</span>(retries<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>)
 <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">func</span>(<span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kw):
     <span style="color:#66d9ef">try</span>:
         <span style="color:#75715e"># some action</span>
-        <span style="color:#66d9ef">return</span> True
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">True</span>
     <span style="color:#66d9ef">except</span>:
-        <span style="color:#66d9ef">return</span> False
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">False</span>
 </code></pre></div><p>大概可以像下面这样写，</p>
 <hr>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> functools <span style="color:#f92672">import</span> wraps
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> functools <span style="color:#f92672">import</span> wraps
 
 <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">retry</span>(retries<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>):
     <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">timesf</span>(func):
         <span style="color:#a6e22e">@wraps</span>(func)
         <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">wrap</span>(<span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kw):
             i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-            status <span style="color:#f92672">=</span> True
+            status <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
             <span style="color:#66d9ef">while</span> status <span style="color:#f92672">and</span> i <span style="color:#f92672">&lt;</span> times:
                 status <span style="color:#f92672">=</span> func(<span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kw)
                 i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>

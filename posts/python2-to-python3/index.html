@@ -185,7 +185,7 @@ if (!doNotTrack) {
 <li>进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。</li>
 </ol>
 <p>在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 <a href="https://pre-commit.com/">pre-commit</a> 对每个 commit 进行检查，使用 <a href="https://github.com/pycqa/pylint">pylint</a> 进行兼容性检查，配置如下：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># .pre-commit-config.yaml</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># .pre-commit-config.yaml</span>
 
 -   repo: https://github.com/xiachufang/mirrors-pylint
     rev: v1.9.2
@@ -208,7 +208,7 @@ if (!doNotTrack) {
 <h3 id="strbytesunicode">str/bytes/unicode<a href="#strbytesunicode" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 <p>这个应当属迁移的最繁琐的地方。</p>
 <p>中间遇到一次问题，排查了很久。代码库中有一个 <code>@cache</code> 装饰器，用来缓存函数返回值，在 py2 中有如下一段代码:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">
 <span style="color:#a6e22e">@cache</span>(<span style="color:#e6db74">&#39;cache_key&#39;</span>)
 <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>():
     <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;py2 返回结构&#34;</span>
