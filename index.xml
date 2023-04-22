@@ -367,10 +367,9 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
 &lt;h2 id="迁移后工作">迁移后工作&lt;/h2>
 &lt;p>全部迁移完成后，自然会给代码加上 type hint，前期可以使用 pre-commit 增加 mypy 类型检查，并且只检查改动到的文件。与此同时，使用 &lt;a href="https://github.com/Instagram/MonkeyType">MonkeyType&lt;/a> 收集类型，自动添加一部分，减少工作量。&lt;/p>
 &lt;p>至此，迁移工作已经全部完成。&lt;/p></content></item><item><title>About</title><link>https://when.run/about/</link><pubDate>Fri, 08 Nov 2019 13:05:26 +0800</pubDate><guid>https://when.run/about/</guid><description>&amp;ldquo;奥利给!&amp;rdquo;
-GitHub: x1ah Telegram: x1ahh QQ: 二维码</description><content>&lt;p>&amp;ldquo;奥利给!&amp;rdquo;&lt;/p>
+GitHub: x1ah QQ: 二维码</description><content>&lt;p>&amp;ldquo;奥利给!&amp;rdquo;&lt;/p>
 &lt;ul>
 &lt;li>GitHub: &lt;a href="https://github.com/x1ah">x1ah&lt;/a>&lt;/li>
-&lt;li>Telegram: &lt;a href="https://telegram.me/x1ahh">x1ahh&lt;/a>&lt;/li>
 &lt;li>QQ: &lt;a href="http://i.imgur.com/s4mteP9.jpg">二维码&lt;/a>&lt;/li>
 &lt;/ul></content></item><item><title>向量时钟(Vector Clock)</title><link>https://when.run/posts/vector-clock/</link><pubDate>Fri, 08 Nov 2019 00:00:00 +0000</pubDate><guid>https://when.run/posts/vector-clock/</guid><description>向量时钟(Vector Clock) 向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：
 系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
