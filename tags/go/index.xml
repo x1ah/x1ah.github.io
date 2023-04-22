@@ -1,127 +1,107 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Go on x1ah</title>
-    <link>https://when.run/tags/go/</link>
-    <description>Recent content in Go on x1ah</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>zh</language>
-    <lastBuildDate>Tue, 03 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://when.run/tags/go/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>长连接聊天室 Demo</title>
-      <link>https://when.run/posts/keep-alive-chat/</link>
-      <pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://when.run/posts/keep-alive-chat/</guid>
-      <description>Server package main import ( &amp;#34;bufio&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;net&amp;#34; ) // 用来记录所有的客户端连接 var ConnMap map[string]*net.TCPConn func main() { var tcpAddr *net.TCPAddr ConnMap = make(map[string]*net.TCPConn) tcpAddr, _ = net.ResolveTCPAddr(&amp;#34;tcp&amp;#34;, &amp;#34;127.0.0.1:9999&amp;#34;) tcpListener, _ := net.ListenTCP(&amp;#34;tcp&amp;#34;, tcpAddr) defer tcpListener.Close() for { tcpConn, err := tcpListener.AcceptTCP() if err != nil { continue } fmt.Println(&amp;#34;A client connected : &amp;#34; + tcpConn.RemoteAddr().String()) // 新连接加入map  ConnMap[tcpConn.RemoteAddr().String()] = tcpConn go tcpPipe(tcpConn) } } func tcpPipe(conn *net.TCPConn) { ipStr := conn.</description>
-      <content>&lt;h4 id=&#34;server&#34;&gt;Server&lt;/h4&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
-
-&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; (
-    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;bufio&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;net&amp;#34;&lt;/span&gt;
-)
-
-&lt;span style=&#34;color:#75715e&#34;&gt;// 用来记录所有的客户端连接
-&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ConnMap&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPConn&lt;/span&gt;
-
-&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() {
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPAddr&lt;/span&gt;
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;ConnMap&lt;/span&gt; = make(&lt;span style=&#34;color:#66d9ef&#34;&gt;map&lt;/span&gt;[&lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPConn&lt;/span&gt;)
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ResolveTCPAddr&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tcp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;127.0.0.1:9999&amp;#34;&lt;/span&gt;)
-
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpListener&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ListenTCP&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tcp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt;)
-
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpListener&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Close&lt;/span&gt;()
-
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; {
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpListener&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;AcceptTCP&lt;/span&gt;()
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
-            &lt;span style=&#34;color:#66d9ef&#34;&gt;continue&lt;/span&gt;
-        }
-
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;A client connected : &amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;())
-        &lt;span style=&#34;color:#75715e&#34;&gt;// 新连接加入map
-&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#a6e22e&#34;&gt;ConnMap&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;()] = &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;go&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpPipe&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;tcpConn&lt;/span&gt;)
-    }
-
-}
-
-&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpPipe&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPConn&lt;/span&gt;) {
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;ipStr&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;()
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt;() {
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;disconnected :&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ipStr&lt;/span&gt;)
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Close&lt;/span&gt;()
-    }()
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;reader&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;bufio&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;NewReader&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;)
-
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; {
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;reader&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ReadString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;)
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
-            &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
-        }
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; string(&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;))
-        &lt;span style=&#34;color:#75715e&#34;&gt;// 这里返回消息改为了广播
-&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#a6e22e&#34;&gt;boradcastMessage&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;RemoteAddr&lt;/span&gt;().&lt;span style=&#34;color:#a6e22e&#34;&gt;String&lt;/span&gt;() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;:&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; string(&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;))
-    }
-}
-
-
-&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;boradcastMessage&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;) {
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;b&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; []byte(&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;)
-    &lt;span style=&#34;color:#75715e&#34;&gt;// 遍历所有客户端并发送消息
-&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;range&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;ConnMap&lt;/span&gt; {
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Write&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;b&lt;/span&gt;)
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;client&#34;&gt;Client&lt;/h4&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;
-
-&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; (
-    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;bufio&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fmt&amp;#34;&lt;/span&gt;
-    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;net&amp;#34;&lt;/span&gt;
-)
-
-&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;() {
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPAddr&lt;/span&gt;
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; = &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ResolveTCPAddr&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tcp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;127.0.0.1:9999&amp;#34;&lt;/span&gt;)
-
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;_&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;DialTCP&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;tcp&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;tcpAddr&lt;/span&gt;)
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;defer&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Close&lt;/span&gt;()
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;connected!&amp;#34;&lt;/span&gt;)
-
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;go&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;onMessageRecived&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;)
-
-    &lt;span style=&#34;color:#75715e&#34;&gt;// 控制台聊天功能加入
-&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; {
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;string&lt;/span&gt;
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Scanln&lt;/span&gt;(&lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt;)
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;quit&amp;#34;&lt;/span&gt; {
-            &lt;span style=&#34;color:#66d9ef&#34;&gt;break&lt;/span&gt;
-        }
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;b&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; []byte(&lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;\n&amp;#34;&lt;/span&gt;)
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Write&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;b&lt;/span&gt;)
-    }
-}
-
-&lt;span style=&#34;color:#66d9ef&#34;&gt;func&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;onMessageRecived&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;net&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;TCPConn&lt;/span&gt;) {
-    &lt;span style=&#34;color:#a6e22e&#34;&gt;reader&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;bufio&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;NewReader&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;conn&lt;/span&gt;)
-    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; {
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;reader&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;ReadString&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;\n&amp;#39;&lt;/span&gt;)
-        &lt;span style=&#34;color:#a6e22e&#34;&gt;fmt&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;Println&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;msg&lt;/span&gt;)
-        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;err&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;!=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;nil&lt;/span&gt; {
-            &lt;span style=&#34;color:#66d9ef&#34;&gt;break&lt;/span&gt;
-        }
-    }
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;run&#34;&gt;Run&lt;/h4&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&amp;gt; go run server.go
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&amp;gt; go run client.go
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
-    </item>
-    
-  </channel>
-</rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Go on x1ah</title><link>https://when.run/tags/go/</link><description>Recent content in Go on x1ah</description><generator>Hugo -- gohugo.io</generator><language>zh</language><lastBuildDate>Tue, 03 Nov 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://when.run/tags/go/index.xml" rel="self" type="application/rss+xml"/><item><title>长连接聊天室 Demo</title><link>https://when.run/posts/keep-alive-chat/</link><pubDate>Tue, 03 Nov 2020 00:00:00 +0000</pubDate><guid>https://when.run/posts/keep-alive-chat/</guid><description>Server package main import ( &amp;#34;bufio&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;net&amp;#34; ) // 用来记录所有的客户端连接 var ConnMap map[string]*net.TCPConn func main() { var tcpAddr *net.TCPAddr ConnMap = make(map[string]*net.TCPConn) tcpAddr, _ = net.ResolveTCPAddr(&amp;#34;tcp&amp;#34;, &amp;#34;127.0.0.1:9999&amp;#34;) tcpListener, _ := net.ListenTCP(&amp;#34;tcp&amp;#34;, tcpAddr) defer tcpListener.Close() for { tcpConn, err := tcpListener.AcceptTCP() if err != nil { continue } fmt.Println(&amp;#34;A client connected : &amp;#34; + tcpConn.RemoteAddr().String()) // 新连接加入map ConnMap[tcpConn.RemoteAddr().String()] = tcpConn go tcpPipe(tcpConn) } } func tcpPipe(conn *net.TCPConn) { ipStr := conn.</description><content>&lt;h4 id="server">Server&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">package&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> (
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;bufio&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;fmt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;net&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">// 用来记录所有的客户端连接
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>&lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">ConnMap&lt;/span> &lt;span style="color:#66d9ef">map&lt;/span>[&lt;span style="color:#66d9ef">string&lt;/span>]&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">TCPConn&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">tcpAddr&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">TCPAddr&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">ConnMap&lt;/span> = make(&lt;span style="color:#66d9ef">map&lt;/span>[&lt;span style="color:#66d9ef">string&lt;/span>]&lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">TCPConn&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcpAddr&lt;/span>, &lt;span style="color:#a6e22e">_&lt;/span> = &lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">ResolveTCPAddr&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;tcp&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;127.0.0.1:9999&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcpListener&lt;/span>, &lt;span style="color:#a6e22e">_&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">ListenTCP&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;tcp&amp;#34;&lt;/span>, &lt;span style="color:#a6e22e">tcpAddr&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">defer&lt;/span> &lt;span style="color:#a6e22e">tcpListener&lt;/span>.&lt;span style="color:#a6e22e">Close&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcpConn&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">tcpListener&lt;/span>.&lt;span style="color:#a6e22e">AcceptTCP&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">continue&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">fmt&lt;/span>.&lt;span style="color:#a6e22e">Println&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;A client connected : &amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#a6e22e">tcpConn&lt;/span>.&lt;span style="color:#a6e22e">RemoteAddr&lt;/span>().&lt;span style="color:#a6e22e">String&lt;/span>())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 新连接加入map
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#a6e22e">ConnMap&lt;/span>[&lt;span style="color:#a6e22e">tcpConn&lt;/span>.&lt;span style="color:#a6e22e">RemoteAddr&lt;/span>().&lt;span style="color:#a6e22e">String&lt;/span>()] = &lt;span style="color:#a6e22e">tcpConn&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">go&lt;/span> &lt;span style="color:#a6e22e">tcpPipe&lt;/span>(&lt;span style="color:#a6e22e">tcpConn&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">tcpPipe&lt;/span>(&lt;span style="color:#a6e22e">conn&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">TCPConn&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">ipStr&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">conn&lt;/span>.&lt;span style="color:#a6e22e">RemoteAddr&lt;/span>().&lt;span style="color:#a6e22e">String&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">defer&lt;/span> &lt;span style="color:#66d9ef">func&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">fmt&lt;/span>.&lt;span style="color:#a6e22e">Println&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;disconnected :&amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#a6e22e">ipStr&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">conn&lt;/span>.&lt;span style="color:#a6e22e">Close&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">reader&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">bufio&lt;/span>.&lt;span style="color:#a6e22e">NewReader&lt;/span>(&lt;span style="color:#a6e22e">conn&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">message&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">reader&lt;/span>.&lt;span style="color:#a6e22e">ReadString&lt;/span>(&lt;span style="color:#e6db74">&amp;#39;\n&amp;#39;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">return&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">fmt&lt;/span>.&lt;span style="color:#a6e22e">Println&lt;/span>(&lt;span style="color:#a6e22e">conn&lt;/span>.&lt;span style="color:#a6e22e">RemoteAddr&lt;/span>().&lt;span style="color:#a6e22e">String&lt;/span>() &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34;:&amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> string(&lt;span style="color:#a6e22e">message&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 这里返回消息改为了广播
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#a6e22e">boradcastMessage&lt;/span>(&lt;span style="color:#a6e22e">conn&lt;/span>.&lt;span style="color:#a6e22e">RemoteAddr&lt;/span>().&lt;span style="color:#a6e22e">String&lt;/span>() &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34;:&amp;#34;&lt;/span> &lt;span style="color:#f92672">+&lt;/span> string(&lt;span style="color:#a6e22e">message&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">boradcastMessage&lt;/span>(&lt;span style="color:#a6e22e">message&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">b&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> []byte(&lt;span style="color:#a6e22e">message&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 遍历所有客户端并发送消息
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#a6e22e">_&lt;/span>, &lt;span style="color:#a6e22e">conn&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#66d9ef">range&lt;/span> &lt;span style="color:#a6e22e">ConnMap&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">conn&lt;/span>.&lt;span style="color:#a6e22e">Write&lt;/span>(&lt;span style="color:#a6e22e">b&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="client">Client&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">package&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">import&lt;/span> (
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;bufio&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;fmt&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;net&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">main&lt;/span>() {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">tcpAddr&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">TCPAddr&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcpAddr&lt;/span>, &lt;span style="color:#a6e22e">_&lt;/span> = &lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">ResolveTCPAddr&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;tcp&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;127.0.0.1:9999&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">conn&lt;/span>, &lt;span style="color:#a6e22e">_&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">DialTCP&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;tcp&amp;#34;&lt;/span>, &lt;span style="color:#66d9ef">nil&lt;/span>, &lt;span style="color:#a6e22e">tcpAddr&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">defer&lt;/span> &lt;span style="color:#a6e22e">conn&lt;/span>.&lt;span style="color:#a6e22e">Close&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">fmt&lt;/span>.&lt;span style="color:#a6e22e">Println&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;connected!&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">go&lt;/span> &lt;span style="color:#a6e22e">onMessageRecived&lt;/span>(&lt;span style="color:#a6e22e">conn&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e">// 控制台聊天功能加入
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> &lt;span style="color:#66d9ef">for&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">var&lt;/span> &lt;span style="color:#a6e22e">msg&lt;/span> &lt;span style="color:#66d9ef">string&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">fmt&lt;/span>.&lt;span style="color:#a6e22e">Scanln&lt;/span>(&lt;span style="color:#f92672">&amp;amp;&lt;/span>&lt;span style="color:#a6e22e">msg&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">msg&lt;/span> &lt;span style="color:#f92672">==&lt;/span> &lt;span style="color:#e6db74">&amp;#34;quit&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">b&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> []byte(&lt;span style="color:#a6e22e">msg&lt;/span> &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#e6db74">&amp;#34;\n&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">conn&lt;/span>.&lt;span style="color:#a6e22e">Write&lt;/span>(&lt;span style="color:#a6e22e">b&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">func&lt;/span> &lt;span style="color:#a6e22e">onMessageRecived&lt;/span>(&lt;span style="color:#a6e22e">conn&lt;/span> &lt;span style="color:#f92672">*&lt;/span>&lt;span style="color:#a6e22e">net&lt;/span>.&lt;span style="color:#a6e22e">TCPConn&lt;/span>) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">reader&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">bufio&lt;/span>.&lt;span style="color:#a6e22e">NewReader&lt;/span>(&lt;span style="color:#a6e22e">conn&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">for&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">msg&lt;/span>, &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">:=&lt;/span> &lt;span style="color:#a6e22e">reader&lt;/span>.&lt;span style="color:#a6e22e">ReadString&lt;/span>(&lt;span style="color:#e6db74">&amp;#39;\n&amp;#39;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">fmt&lt;/span>.&lt;span style="color:#a6e22e">Println&lt;/span>(&lt;span style="color:#a6e22e">msg&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#a6e22e">err&lt;/span> &lt;span style="color:#f92672">!=&lt;/span> &lt;span style="color:#66d9ef">nil&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">break&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h4 id="run">Run&lt;/h4>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&amp;gt; go run server.go
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&amp;gt; go run client.go
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div></content></item></channel></rss>

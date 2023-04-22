@@ -1,836 +1,183 @@
-<!DOCTYPE html>
-<html lang="cn">
-<head>
-  
-    <title>Python 面试题整理[实习] :: x1ah</title>
-  
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。（斜体的为遇见两次以上的。）" />
-<meta name="keywords" content="Python" />
-<meta name="robots" content="noodp" />
-<link rel="canonical" href="https://when.run/posts/python-interview/" />
-
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-21PQZQT56W"></script>
-<script>
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-21PQZQT56W', { 'anonymize_ip': false });
-}
-</script>
-
-
-
-<link rel="stylesheet" href="https://when.run/assets/style.css">
-
-
-
-
-
-
-<link rel="apple-touch-icon" href="https://when.run/img/apple-touch-icon-192x192.png">
-
-  <link rel="shortcut icon" href="https://when.run/avator.jpeg">
-
-
-
-<meta name="twitter:card" content="summary" />
-
-
-
-<meta property="og:locale" content="cn" />
-<meta property="og:type" content="article" />
-<meta property="og:title" content="Python 面试题整理[实习]">
-<meta property="og:description" content="内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。（斜体的为遇见两次以上的。）" />
-<meta property="og:url" content="https://when.run/posts/python-interview/" />
-<meta property="og:site_name" content="x1ah" />
-
-  <meta property="og:image" content="https://when.run">
-
-<meta property="og:image:width" content="2048">
-<meta property="og:image:height" content="1024">
-
-
-  <meta property="article:published_time" content="2017-04-28 00:00:00 &#43;0000 UTC" />
-
-
-
-
-
-
-
-
-
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-21PQZQT56W"></script>
-<script>
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-21PQZQT56W', { 'anonymize_ip': false });
-}
-</script>
-
-
-
-
-</head>
-<body class="orange">
-
-
-<div class="container center headings--one-size">
-
-  <header class="header">
-  <div class="header__inner">
-    <div class="header__logo">
-      <a href="/">
-  <div class="logo">
-    x1ah
-  </div>
-</a>
-
-    </div>
-    
-      <div class="menu-trigger">menu</div>
-    
-  </div>
-  
-    <nav class="menu">
-  <ul class="menu__inner menu__inner--desktop">
-    
-      
-        
-          <li><a href="/about/">About</a></li>
-        
-      
-        
-          <li><a href="/index.xml">RSS</a></li>
-        
-      
-      
-    
-
-    
-  </ul>
-
-  <ul class="menu__inner menu__inner--mobile">
-    
-      
-        <li><a href="/about/">About</a></li>
-      
-    
-      
-        <li><a href="/index.xml">RSS</a></li>
-      
-    
-    
-  </ul>
-</nav>
-
-  
-</header>
-
-
-  <div class="content">
-    
-<div class="post">
-  <h1 class="post-title">
-    <a href="https://when.run/posts/python-interview/">Python 面试题整理[实习]</a></h1>
-  <div class="post-meta">
-    
-      <span class="post-date">
-        2017-04-28 
-      </span>
-    
-    
-    <span class="post-author">:: x1ah</span>
-    
-  </div>
-
-  
-  <span class="post-tags">
-    
-    #<a href="https://when.run/tags/python/">Python</a>&nbsp;
-    
-  </span>
-  
-
-  
-
-  
-
-  <div class="post-content"><div>
-        <blockquote>
-<p>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）</p>
-</blockquote>
-<h1 id="python-语法">Python 语法<a href="#python-语法" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-<ul>
-<li>
-<p><em>说说你平时 Python 都用哪些库</em></p>
-</li>
-<li>
-<p><code>==</code> 和 <code>is</code> 区别。</p>
-<ul>
-<li><code>==</code> 是比较两对象的值，<code>is</code> 是比较在内存中的地址(id)， <code>is</code> 相当于 <code>id(objx) == id(objy)</code>。</li>
-</ul>
-</li>
-<li>
-<p><em>深拷贝和浅拷贝。</em></p>
-</li>
-</ul>
-<hr>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`</span>
-<span style="color:#75715e"># 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷</span>
-<span style="color:#75715e"># 贝对象的所有层级对象，也就是一个真正意义上的拷贝。</span>
-<span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#f92672">from</span> copy <span style="color:#f92672">import</span> copy, deepcopy
-<span style="color:#f92672">&gt;&gt;&gt;</span> lst <span style="color:#f92672">=</span> [<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, [<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>]]
-<span style="color:#f92672">&gt;&gt;&gt;</span> a, b <span style="color:#f92672">=</span> copy(lst), deepcopy(lst)
-<span style="color:#f92672">&gt;&gt;&gt;</span> a, b
-([<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, [<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>]], [<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, [<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>]])
-<span style="color:#f92672">&gt;&gt;&gt;</span> id(lst[<span style="color:#ae81ff">2</span>]), id(a[<span style="color:#ae81ff">2</span>]), id(b[<span style="color:#ae81ff">2</span>])
-(<span style="color:#ae81ff">139842737414224</span>, <span style="color:#ae81ff">139842737414224</span>, <span style="color:#ae81ff">139842737414584</span>)
-<span style="color:#f92672">&gt;&gt;&gt;</span> lst[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>
-<span style="color:#f92672">&gt;&gt;&gt;</span> a
-[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, [<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>]]
-<span style="color:#f92672">&gt;&gt;&gt;</span> b
-[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, [<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>]]
-<span style="color:#f92672">&gt;&gt;&gt;</span> lst[<span style="color:#ae81ff">2</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;test&#39;</span>
-<span style="color:#f92672">&gt;&gt;&gt;</span> lst
-[<span style="color:#ae81ff">10</span>, <span style="color:#ae81ff">2</span>, [<span style="color:#e6db74">&#39;test&#39;</span>, <span style="color:#ae81ff">4</span>]]
-<span style="color:#f92672">&gt;&gt;&gt;</span> a
-[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, [<span style="color:#e6db74">&#39;test&#39;</span>, <span style="color:#ae81ff">4</span>]]
-<span style="color:#f92672">&gt;&gt;&gt;</span> b
-[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>, [<span style="color:#ae81ff">3</span>, <span style="color:#ae81ff">4</span>]]
-</code></pre></div><ul>
-<li>
-<p><code>__init__</code> 和 <code>__new__</code>。</p>
-<ul>
-<li><code>__init__</code> 只是单纯的对实例进行某些属性的初始化，以及执行一些需要在新建对象时的必要自定义操作，无返回值。而 <code>__new__</code> 返回的是用户创建的实例，这个才是真正用来创建实例的，所以 <code>__new__</code> 是在 <code>__init__</code> 之前执行的，先创建再初始化。</li>
-</ul>
-</li>
-<li>
-<p><em>Python 2 和 Python 3 有哪些区别？</em></p>
-<ul>
-<li><a href="http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html">http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html</a></li>
-</ul>
-</li>
-<li>
-<p>连接字符串都有哪些方式？</p>
-<ul>
-<li>格式化字符连接（<code>%s</code>)</li>
-<li><code>format</code></li>
-<li><code>join</code></li>
-<li><code>+</code></li>
-<li>fstring</li>
-</ul>
-</li>
-<li>
-<p>如何判断某个对象是什么类型？</p>
-<ul>
-<li><code>type(obj)</code></li>
-<li><code>isinstance(obj, x)</code></li>
-</ul>
-</li>
-<li>
-<p><em>生成器是什么？</em></p>
-<ul>
-<li>一言难尽，推荐看这个 <a href="https://taizilongxu.gitbooks.io/stackoverflow-about-python/content/1/README.html">stackoverflow 答案的翻译</a></li>
-</ul>
-</li>
-<li>
-<p>Python 中的 GIL 是什么？全称？举个例子说说其具体体现。</p>
-<ul>
-<li>GIL 全称 Global Interpreter Lock（全局解释器锁），任何 Python 线程执行前，必须先获得 GIL 锁，然后，每执行100条字节码，解释器就自动释放GIL锁，让别的线程有机会执行。要避免这种“现象”利用操作系统的多核优势可以有下面几种方法：
-<ul>
-<li>使用 C 语言编写扩展，创建原生线程，摆脱 GIL，但是即使是扩展，在 Python 代码内，任意一条Python 代码还是会有 GIL 限制</li>
-<li>使用多进程代替多线程，使用多进程时，每个进程都有自己的 GIL。故不存在进程与进程之间的 GIL 限制。但是多进程不能共享内存。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p><code>s = 'abcd', s[2] = 'e'</code> 运行结果是什么？</p>
-<ul>
-<li>报错，字符串是不可变对象</li>
-</ul>
-</li>
-<li>
-<p>Python 中，<code>sorted</code> 函数内部是什么算法？</p>
-<ul>
-<li>在 <a href="https://docs.python.org/3/howto/sorting.html?highlight=Timsort">官方文档</a> 里面有提到，用的是 <a href="https://en.wikipedia.org/wiki/Timsort">Timsort</a> 算法</li>
-</ul>
-</li>
-<li>
-<p>编码是一个什么样的过程？</p>
-<ul>
-<li>编码是二进制到字符的过程</li>
-</ul>
-</li>
-<li>
-<p><em>Python 里面怎么实现协程？</em></p>
-<ul>
-<li><a href="http://mp.weixin.qq.com/s/TKrb0i5fF0pJdRIgGC9qQQ">说清道明：协程是什么</a></li>
-</ul>
-</li>
-<li>
-<p><code>requests</code> 包新建一个 <code>session</code> 再 <code>get</code> 和普通的 <code>requests.get</code> 有什么区别？（tcp长连接）</p>
-<ul>
-<li>维持一个会话，** 建立一个tcp长连接** ，cookie 自动保存，下次请求还是一个会话。</li>
-</ul>
-</li>
-<li>
-<p><em>Python 都有哪些数据结构？可变对象，不可变对象分别有哪些？</em></p>
-<ul>
-<li>可变对象：列表，字典</li>
-<li>不可变对象：字符串，数字，元组，集合</li>
-</ul>
-</li>
-<li>
-<p><em>在 Python 内，函数传参是引用传递还是值传递？</em></p>
-<ul>
-<li>引用传递。</li>
-</ul>
-</li>
-<li>
-<p>你会对你的项目写测试么？用哪些方法哪些库？</p>
-<ul>
-<li>doctest</li>
-<li>pytest</li>
-<li>unitest</li>
-</ul>
-</li>
-<li>
-<p>请新建一个只有一个元素 <code>1</code> 的列表和元组。</p>
-<ul>
-<li><code>lst = [1]</code></li>
-<li><code>tup = (1,)</code></li>
-</ul>
-</li>
-<li>
-<p><em>函数默认参数是可变对象情况。</em></p>
-</li>
-</ul>
-<hr>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">&gt;&gt;&gt;</span> <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">foo</span>(a, b<span style="color:#f92672">=</span>[<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>]):
-        print(b)
-        b<span style="color:#f92672">.</span>append(a)
-        print(b)
-<span style="color:#f92672">&gt;&gt;&gt;</span> val <span style="color:#f92672">=</span> <span style="color:#ae81ff">4</span>
-<span style="color:#f92672">&gt;&gt;&gt;</span> foo(val)
-<span style="color:#75715e"># [1, 2]</span>
-<span style="color:#75715e"># [1, 2, 4]</span>
-<span style="color:#f92672">&gt;&gt;&gt;</span> foo(val)
-<span style="color:#75715e"># [1, 2, 4]</span>
-<span style="color:#75715e"># [1, 2, 4, 4]</span>
-<span style="color:#75715e"># 这里可以看到，第二次执行函数时，默认参数 b 的值已经变成 `[1, 2, 4]` 了，原因是，默认参数只在第</span>
-<span style="color:#75715e"># 一次执行时会进行初始化，后面就默认使用 **初始化后的这个对象(引用)**，但是这里 b 是可变对象，</span>
-<span style="color:#75715e">#添加了一个元素还是之前的对象，所以，引用没变，不过是值变了而已。</span>
-</code></pre></div><ul>
-<li>
-<p><em>Flask 的 Route 是怎么实现的？</em> 你认为 Flask 框架有什么优缺点？</p>
-<ul>
-<li>实际上在 Flask 类里面，<code>route</code> 可以简单理解为不过是把对应的路由规则作为键，装饰的视图函数作为值，存到 <code>werkzeug.routing.Map</code> 对象（可以看成是和字典类似的数据结构）里。这里是 <a href="https://github.com/pallets/flask/blob/master/flask/app.py#L1076-L1120">源码</a>，好理解些。这是之前写的一篇 <a href="https://github.com/x1ah/Blog/issues/4">笔记</a></li>
-<li>Flask 优点是轻量，灵活，可高度定制，插件化。缺点也是过于轻量，功能必须通过第三方插件实现，插件质量参差不齐，也不能完全保证后期维护。</li>
-<li>这几点都只是个人之见，更详细标准的还需自行寻找答案。</li>
-</ul>
-</li>
-<li>
-<p><em>WSGI 是什么？uWSGI， nginx 这些都是什么用途？</em></p>
-<ul>
-<li>这里有<a href="https://zh.wikipedia.org/wiki/Web%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BD%91%E5%85%B3%E6%8E%A5%E5%8F%A3">维基百科</a> 的解释，WSGI 就是一个通用的标准，遵守这个标准，我们能让我们的 Web 框架更加通用，编写更加简单。</li>
-<li>uwsgi 和 Nginx 都是 Web Server，不同的是 Nginx 负责 外网请求 &mdash;(转换)&ndash;&gt; 内网请求，uwsgi 负责的是 内网请求 -&gt; Python Web 程序。</li>
-</ul>
-</li>
-<li>
-<p>nginx 和 Apache 的区别？(参考 <a href="https://github.com/taizilongxu/interview_python#7-apache%E5%92%8Cnginx%E7%9A%84%E5%8C%BA%E5%88%AB">interview_python</a>)</p>
-<ul>
-<li>nginx 相对 apache 的优点：
-<ul>
-<li>轻量级，同样起web 服务，比apache 占用更少的内存及资源</li>
-<li>抗并发，nginx 处理请求是异步非阻塞的，支持更多的并发连接，而apache 则是阻塞型的，在高并发下nginx 能保持低资源低消耗高性能</li>
-<li>配置简洁</li>
-<li>高度模块化的设计，编写模块相对简单</li>
-<li>社区活跃</li>
-</ul>
-</li>
-<li>apache 相对nginx 的优点：
-<ul>
-<li>rewrite ，比nginx 的rewrite 强大</li>
-<li>模块超多，基本想到的都可以找到</li>
-<li>少bug ，nginx 的bug 相对较多</li>
-<li>超稳定</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>你部署 Python 项目时用的是 uWSGI 的哪个模式？</p>
-<ul>
-<li>默认模式</li>
-<li>这个应该问的可能性极小了，可翻阅 <a href="http://uwsgi-docs-cn.readthedocs.io/zh_CN/latest/WSGIquickstart.html">uwsgi 文档</a> 查找更详细的资料</li>
-</ul>
-</li>
-</ul>
-<h1 id="数据结构算法">数据结构，算法<a href="#数据结构算法" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-<ul>
-<li>层次遍历二叉树用什么方法？</li>
-</ul>
-<hr>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># coding: utf-8</span>
-
-<span style="color:#f92672">from</span> collections <span style="color:#f92672">import</span> deque
-
-
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BNode</span>:
-    <span style="color:#e6db74">&#34;&#34;&#34; 二叉树节点 &#34;&#34;&#34;</span>
-
-    <span style="color:#66d9ef">def</span> __init__(self, value, left<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>, right<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
-        self<span style="color:#f92672">.</span>value <span style="color:#f92672">=</span> value
-        self<span style="color:#f92672">.</span>left <span style="color:#f92672">=</span> left
-        self<span style="color:#f92672">.</span>right <span style="color:#f92672">=</span> right
-
-
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">level_traverse</span>(binary_tree):
-    <span style="color:#e6db74">&#34;&#34;&#34; 层次遍历二叉树 &#34;&#34;&#34;</span>
-    stack <span style="color:#f92672">=</span> deque([binary_tree])
-    <span style="color:#66d9ef">while</span> stack:
-        top <span style="color:#f92672">=</span> stack<span style="color:#f92672">.</span>popleft()
-        print(top<span style="color:#f92672">.</span>value)
-        <span style="color:#66d9ef">if</span> top<span style="color:#f92672">.</span>left:
-            stack<span style="color:#f92672">.</span>append(top<span style="color:#f92672">.</span>left)
-        <span style="color:#66d9ef">if</span> top<span style="color:#f92672">.</span>right:
-            stack<span style="color:#f92672">.</span>append(top<span style="color:#f92672">.</span>right)
-
-
-<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
-    b_tree <span style="color:#f92672">=</span> BNode(<span style="color:#ae81ff">1</span>, BNode(<span style="color:#ae81ff">2</span>, BNode(<span style="color:#ae81ff">4</span>, BNode(<span style="color:#ae81ff">5</span>, BNode(<span style="color:#ae81ff">7</span>)))), BNode(<span style="color:#ae81ff">3</span>, BNode(<span style="color:#ae81ff">6</span>, right<span style="color:#f92672">=</span>BNode(<span style="color:#ae81ff">8</span>))))
-    level_traverse(b_tree)
-</code></pre></div><ul>
-<li>
-<p>非平衡二叉数如何变成平衡二叉数？</p>
-<ul>
-<li>参考 <a href="https://segmentfault.com/a/1190000006123188">AVL平衡二叉树详解与实现</a></li>
-</ul>
-</li>
-<li>
-<p>先，中，后序遍历二叉数。完全二叉数是什么？</p>
-<ul>
-<li>完全二叉树：深度为k有n个节点的二叉树，当且仅当其中的每一节点，都可以和同样深度k的满二叉树，序号为1到n的节点一对一对应时，称为“完全二叉树”。（摘自维基百科）</li>
-<li>先序：先根后左再右</li>
-<li>中序：先左后中再右</li>
-<li>后序：先左后右再根</li>
-</ul>
-</li>
-<li>
-<p>如何判断两个单链表是否相交于某个节点，包括 X 型，Y 型，V 型。</p>
-<ul>
-<li>X 型不可能存在，一个单链表节点不存在两个不同的后继。</li>
-</ul>
-</li>
-</ul>
-<hr>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。</span>
-<span style="color:#75715e"># 反转单链表</span>
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">reverse_single_link_lst</span>(link_lst):
-    <span style="color:#66d9ef">if</span> <span style="color:#f92672">not</span> link_lst:
-        <span style="color:#66d9ef">return</span> link_lst
-    pre <span style="color:#f92672">=</span> link_lst
-    cur <span style="color:#f92672">=</span> link_lst<span style="color:#f92672">.</span>next
-    pre<span style="color:#f92672">.</span>next <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
-    <span style="color:#66d9ef">while</span> cur:
-        tmp <span style="color:#f92672">=</span> cur<span style="color:#f92672">.</span>next
-        cur<span style="color:#f92672">.</span>next <span style="color:#f92672">=</span> pre
-        pre <span style="color:#f92672">=</span> cur
-        cur <span style="color:#f92672">=</span> tmp
-    <span style="color:#66d9ef">return</span> pre
-
-<span style="color:#75715e"># 寻找交叉点</span>
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">point</span>(node_a, node_b):
-    <span style="color:#66d9ef">if</span> node_a <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">or</span> node_b <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>:
-        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">None</span>
-    next_a, next_b <span style="color:#f92672">=</span> node_a, node_b
-    <span style="color:#66d9ef">while</span> next_a <span style="color:#f92672">or</span> next_b:
-        <span style="color:#66d9ef">if</span> next_a<span style="color:#f92672">.</span>val <span style="color:#f92672">==</span> next_b<span style="color:#f92672">.</span>val:
-            <span style="color:#66d9ef">if</span> next_a<span style="color:#f92672">.</span>next <span style="color:#f92672">and</span> next_b<span style="color:#f92672">.</span>next <span style="color:#f92672">and</span> (next_a<span style="color:#f92672">.</span>next<span style="color:#f92672">.</span>val <span style="color:#f92672">==</span> next_b<span style="color:#f92672">.</span>next<span style="color:#f92672">.</span>val):
-                next_a, next_b <span style="color:#f92672">=</span> next_a<span style="color:#f92672">.</span>next, next_b<span style="color:#f92672">.</span>next
-                <span style="color:#66d9ef">continue</span>
-            <span style="color:#66d9ef">return</span> next_a<span style="color:#f92672">.</span>val
-        next_a, next_b <span style="color:#f92672">=</span> next_a<span style="color:#f92672">.</span>next, next_b<span style="color:#f92672">.</span>next
-    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">None</span>
-
-<span style="color:#75715e"># 构造单链表</span>
-<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Node</span>(object):
-    <span style="color:#66d9ef">def</span> __init__(self, value, next<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
-        self<span style="color:#f92672">.</span>val <span style="color:#f92672">=</span> value
-        self<span style="color:#f92672">.</span>next <span style="color:#f92672">=</span> next
-
-a <span style="color:#f92672">=</span> ListNode(<span style="color:#ae81ff">1</span>, ListNode(<span style="color:#ae81ff">2</span>, ListNode(<span style="color:#ae81ff">3</span>, ListNode(<span style="color:#ae81ff">4</span>, ListNode(<span style="color:#ae81ff">5</span>)))))
-b <span style="color:#f92672">=</span> ListNode(<span style="color:#ae81ff">7</span>, ListNode(<span style="color:#ae81ff">9</span>, ListNode(<span style="color:#ae81ff">4</span>, ListNode(<span style="color:#ae81ff">5</span>))))
-
-ra <span style="color:#f92672">=</span> reverse_single_link_lst(a)
-rb <span style="color:#f92672">=</span> reverse_single_link_lst(b)
-point(ra, rb)
-<span style="color:#75715e"># output:</span>
-<span style="color:#75715e"># 4</span>
-</code></pre></div><ul>
-<li>
-<p>如何判断两个单链表是否是同一个链表。</p>
-<ul>
-<li>直接判断第一个节点即可。</li>
-</ul>
-</li>
-<li>
-<p>单链表逆转。</p>
-<ul>
-<li>见上面判断交叉链表内的 <code>reverse_single_link_lst()</code> 函数。</li>
-</ul>
-</li>
-<li>
-<p><em>堆，栈，队列。</em></p>
-<ul>
-<li><a href="https://zh.wikipedia.org/wiki/%E5%A0%86_(%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84)">堆</a>， <a href="https://zh.wikipedia.org/zh-hans/%E5%A0%86%E6%A0%88">栈</a>， <a href="https://zh.wikipedia.org/wiki/%E9%98%9F%E5%88%97">队列</a></li>
-</ul>
-</li>
-<li>
-<p><em>说说你知道的排序算法以及其时间复杂度。</em>
-<img src="http://ww1.sinaimg.cn/large/005NaGmtly1fenoomcn03j30iz07874f.jpg" alt=""></p>
-</li>
-<li>
-<p><em>手写快速排序。画画堆排序的原理及过程。</em></p>
-</li>
-</ul>
-<hr>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下</span>
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">quick_sort</span>(lst, start, stop):
-    <span style="color:#66d9ef">if</span> start <span style="color:#f92672">&lt;</span> stop:
-        i, j, x <span style="color:#f92672">=</span> start, stop, lst[start]
-        <span style="color:#66d9ef">while</span> i <span style="color:#f92672">&lt;</span> j:
-            <span style="color:#66d9ef">while</span> (i <span style="color:#f92672">&lt;</span> j) <span style="color:#f92672">and</span> (lst[j] <span style="color:#f92672">&gt;</span> x):
-                j <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
-            <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">&lt;</span> j):
-                lst[i] <span style="color:#f92672">=</span> lst[j]
-                i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
-            <span style="color:#66d9ef">while</span> (i <span style="color:#f92672">&lt;</span> j) <span style="color:#f92672">and</span> (lst[i] <span style="color:#f92672">&lt;</span> x):
-                i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
-            <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">&lt;</span> j):
-                lst[j] <span style="color:#f92672">=</span> lst[i]
-                j <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
-        lst[i] <span style="color:#f92672">=</span> x
-        quick_sort(lst, start, i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)
-        quick_sort(lst, i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>, stop)
-    <span style="color:#66d9ef">return</span> lst
-</code></pre></div><p>之后面试官 <a href="https://github.com/akun">akun</a> 大哥给了个特别简洁的写法，三路复用，地址在 <a href="https://gist.github.com/akun/d90998068f4e1f3eb169">Gist</a></p>
-<hr>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">qsort</span>(alist):
-    <span style="color:#e6db74">&#34;&#34;&#34;
-</span><span style="color:#e6db74">    quick sort(easy way, but more memory)
-</span><span style="color:#e6db74">    test: python -m doctest qsort.py
-</span><span style="color:#e6db74">    &gt;&gt;&gt; import math
-</span><span style="color:#e6db74">    &gt;&gt;&gt; import random
-</span><span style="color:#e6db74">    &gt;&gt;&gt; size = 100
-</span><span style="color:#e6db74">    &gt;&gt;&gt; alist = [random.randint(0, size * 10) for i in range(size)]
-</span><span style="color:#e6db74">    &gt;&gt;&gt; qlist = qsort(alist)
-</span><span style="color:#e6db74">    &gt;&gt;&gt; alist.sort()
-</span><span style="color:#e6db74">    &gt;&gt;&gt; assert qlist == alist
-</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
-
-    <span style="color:#66d9ef">if</span> len(alist) <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">1</span>:
-        <span style="color:#66d9ef">return</span> alist
-
-    key <span style="color:#f92672">=</span> alist[<span style="color:#ae81ff">0</span>]
-    left_list, middle_list, right_list <span style="color:#f92672">=</span> [], [], []
-
-    [{i <span style="color:#f92672">&lt;</span> key: left_list, i <span style="color:#f92672">==</span> key: middle_list, i <span style="color:#f92672">&gt;</span> key: right_list}[
-        <span style="color:#66d9ef">True</span>
-    ]<span style="color:#f92672">.</span>append(i) <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> alist]
-
-    <span style="color:#66d9ef">return</span> qsort(left_list) <span style="color:#f92672">+</span> middle_list <span style="color:#f92672">+</span> qsort(right_list)
-</code></pre></div><ul>
-<li>说说你所了解的加密算法，编码算法，以及压缩算法。了解 base64 的原理么？
-<ul>
-<li>只说了听过 base64, md5 这几种编码。。。。。自行搜索吧，考的概率极小。</li>
-</ul>
-</li>
-</ul>
-<h1 id="数据库">数据库<a href="#数据库" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-<ul>
-<li>
-<p>索引是什么原理？有什么优缺点？</p>
-<ul>
-<li>参考 <a href="http://blog.csdn.net/kennyrose/article/details/7532032">数据库索引的实现原理</a></li>
-</ul>
-</li>
-<li>
-<p>乐观锁和悲观锁是什么？</p>
-<ul>
-<li><a href="http://www.hollischuang.com/archives/934">深入理解乐观锁与悲观锁</a></li>
-</ul>
-</li>
-<li>
-<p>你为什么选择 Redis 而不是 MongoDB 或者其他的？（有个项目用了 Redis）</p>
-<ul>
-<li><a href="https://segmentfault.com/q/1010000002588088/a-1020000002589415">redis、memcache、mongoDB有哪些区别？</a></li>
-</ul>
-</li>
-<li>
-<p>SQL 和 NoSQL 区别？</p>
-<ul>
-<li><a href="http://www.jianshu.com/p/b32fe4fe45a3">SQL 和 NoSQL 的区别</a></li>
-</ul>
-</li>
-</ul>
-<h1 id="网络">网络<a href="#网络" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-<ul>
-<li>
-<p>从浏览器输入网址到网页渲染完毕这过程发生了什么？</p>
-<ul>
-<li><a href="https://github.com/skyline75489/what-happens-when-zh_CN">这里</a> 说的非常详细，看面的岗位不同，回答的侧重点不一样。如面的 Web ，可以侧重说说 nginx -&gt; uwsgi -&gt; Python -&gt; uwsgi -&gt; nginx 这个过程，（WSGI 标准）</li>
-</ul>
-</li>
-<li>
-<p><em>TCP 三次握手四次挥手详细说下。</em></p>
-<ul>
-<li><a href="http://blog.csdn.net/whuslei/article/details/6667471">TCP协议中的三次握手和四次挥手(图解)</a></li>
-</ul>
-</li>
-<li>
-<p>为什么是三次握手？两次不行么？</p>
-<ul>
-<li><a href="http://www.cnblogs.com/techzi/archive/2011/10/18/2216751.html">TCP连接建立过程中为什么需要“三次握手”</a></li>
-</ul>
-</li>
-<li>
-<p><em>说说 TCP 和 UDP 的区别。</em></p>
-<ul>
-<li>TCP（传输层）
-<ul>
-<li>优点：TCP 面向连接，可靠，稳定，传输数据前需要建立连接，故有三次握手四次挥手，还有拥塞控制，重传等</li>
-<li>缺点：慢，占用系统资源，有确认机制，三次握手，所以容易被攻击，DDos</li>
-</ul>
-</li>
-<li>UDP
-<ul>
-<li>优点：快，无状态传输协议</li>
-<li>缺点：不稳定，不可靠，容易丢包</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<p>谈谈你对 SQL 注入、 XSS 、 CSRF 的理解。以及如何防范。</p>
-<ul>
-<li><a href="https://cnodejs.org/topic/50463565329c5139760c34a1">关于XSS（跨站脚本攻击）和CSRF（跨站请求伪造)</a></li>
-<li><a href="https://zh.m.wikipedia.org/zh-hans/SQL%E8%B3%87%E6%96%99%E9%9A%B1%E7%A2%BC%E6%94%BB%E6%93%8A">SQL 注入</a>，现在多数采用 ORM，以及参数化查询，很少再出现。</li>
-</ul>
-</li>
-<li>
-<p><em>说说 DNS 是什么东西。</em></p>
-<ul>
-<li>根据域名寻找 主机 IP 的协议。</li>
-</ul>
-</li>
-<li>
-<p>HTTP 是工作在七层模型的哪一层？DNS 又是哪一层？TCP 和 IP 呢？</p>
-<ul>
-<li>HTTP，DNS 应用层，TCP 传输层，IP 网络层。</li>
-</ul>
-</li>
-<li>
-<p><em>说说你知道的 HTTP 方法和 状态码。</em></p>
-<ul>
-<li><a href="https://zh.wikipedia.org/wiki/HTTP%E7%8A%B6%E6%80%81%E7%A0%81">状态码</a>，这里只需要大概说说，以 1××，2××，3×× 这样的层面说，没有必要细到每一个状态码。</li>
-<li><a href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE#.E8.AF.B7.E6.B1.82.E6.96.B9.E6.B3.95">HTTP 请求方法</a></li>
-</ul>
-</li>
-<li>
-<p><em>HTTP 的 GET 和 POST 有什么区别？</em></p>
-<ul>
-<li>本质上，GET 和 POST 只不过是 <strong>发送机制不同</strong> 。</li>
-</ul>
-</li>
-<li>
-<p>HTTP 和 HTTPS 的区别？</p>
-<ul>
-<li>HTTPS = HTTP + SSL</li>
-<li>HTTP 默认使用 80 端口，HTTPS 使用 443 端口。</li>
-<li><a href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%AE%89%E5%85%A8%E5%8D%8F%E8%AE%AE#.E4.B8.8EHTTP.E7.9A.84.E5.B7.AE.E5.BC.82">更详细</a></li>
-</ul>
-</li>
-<li>
-<p>说说你知道的 HTTP 包头部信息里都有哪些字段。</p>
-<ul>
-<li>这个随便抓下包就知道了，就不说了～</li>
-</ul>
-</li>
-<li>
-<p><em>HTTP 包头部信息里面的 <code>Host</code> 字段是什么作用？</em></p>
-<ul>
-<li>表示当前请求服务器的主机名</li>
-</ul>
-</li>
-<li>
-<p>说说 cookie 里面你都知道哪些字段。</p>
-<ul>
-<li><a href="http://javascript.ruanyifeng.com/bom/cookie.html">Cookie</a></li>
-</ul>
-</li>
-<li>
-<p>Session 是什么东西？</p>
-<ul>
-<li><a href="http://harttle.com/2015/08/10/cookie-session.html">Cookie/Session的机制与安全</a></li>
-</ul>
-</li>
-<li>
-<p>在写爬虫过程中，如果遇见需要加载 js 的情况你是如何处理的。</p>
-<ul>
-<li>Selenium，PhantomJS</li>
-</ul>
-</li>
-<li>
-<p>普通匿名代理和高匿代理有什么区别？</p>
-<ul>
-<li>来自普通匿名代理的请求在服务端能看见真实 IP， 而高匿代理在服务端看不见真实 IP，只能看见代理服务器 IP。</li>
-</ul>
-</li>
-<li>
-<p>你知道哪些反爬措施？</p>
-<ul>
-<li>加代理，加头部，爬取速度控制，随机 UA，模拟真实用户的点击习惯去请求。</li>
-</ul>
-</li>
-</ul>
-<h1 id="操作系统">操作系统<a href="#操作系统" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-<ul>
-<li><em>进程和线程以及协程的区别？</em></li>
-<li><em>多线程和多进程的区别？</em></li>
-<li>信号量和互斥量的区别？</li>
-<li>堆内存是干嘛的？</li>
-<li>如何检验当前机器是大端模式还是小端模式？</li>
-<li>如何让某个程序在后台运行？（Linux）</li>
-<li>sed, awk 用法（Linux）</li>
-</ul>
-<h1 id="编程题">编程题<a href="#编程题" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-<ul>
-<li>手写二分查找，<em>快速排序</em>。</li>
-<li>~还有一个 SQL 语句的，一条 SQL 语句打印某张表某个 group count  TOP 5。~</li>
-<li>Python 中正则模块 <code>re</code> 里 <code>match</code> 函数 和 <code>search</code> 函数有什么区别？举例说明。</li>
-<li>一条语句求 0 - 999999 内能被 7 整除的所有数的和。</li>
-<li>实现一个链表结构，要求其插入第一个节点，删除最后一个节点的复杂度为 O(1)。</li>
-<li>实现一个 <code>retry</code> 装饰器，使用如下：</li>
-</ul>
-<hr>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 可以指定重试次数，直到函数返回正确结果。</span>
-<span style="color:#a6e22e">@retry</span>(retries<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>)
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">func</span>(<span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kw):
-    <span style="color:#66d9ef">try</span>:
-        <span style="color:#75715e"># some action</span>
-        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">True</span>
-    <span style="color:#66d9ef">except</span>:
-        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">False</span>
-</code></pre></div><p>大概可以像下面这样写，</p>
-<hr>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> functools <span style="color:#f92672">import</span> wraps
-
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">retry</span>(retries<span style="color:#f92672">=</span><span style="color:#ae81ff">3</span>):
-    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">timesf</span>(func):
-        <span style="color:#a6e22e">@wraps</span>(func)
-        <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">wrap</span>(<span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kw):
-            i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-            status <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
-            <span style="color:#66d9ef">while</span> status <span style="color:#f92672">and</span> i <span style="color:#f92672">&lt;</span> times:
-                status <span style="color:#f92672">=</span> func(<span style="color:#f92672">*</span>args, <span style="color:#f92672">**</span>kw)
-                i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
-            <span style="color:#66d9ef">return</span> status
-        <span style="color:#66d9ef">return</span> wrap
-    <span style="color:#66d9ef">return</span> timesf
-</code></pre></div><ul>
-<li>有一个4G 的文本文件，存储的是酒店信息，每行存的是一个酒店ID，可以重复。请编写程序输出一个新文件，新文件内容为每行一条数据，每行的数据格式如下：<code>酒店ID + 出现次数</code>（最后提到了其他想法，如文件切片，bitmap 之类）</li>
-<li>实现一个函数，根据字典序比较两字符串大小，不允许用库函数，尽量越底层实现越好。（手写）</li>
-<li>实现一个函数，检验一个字符串是否符合 <code>xxxx-xx-xx</code> 这样的日期格式，注意润年，大小月，不允许用库函数，尽量越底层实现越好。（手写）</li>
-<li>我们是做地图相关工作的，现在给你提供一个三维的数据，数据描述的是不同时间一些地图上的一些地点坐标，分别有时间，x轴坐标，y轴坐标，请你设计一个算法，能够得到一天内地图上的 TOP 10 热点地区，地区大小也相应的自己作合适调整，开放性题目。</li>
-</ul>
-<h1 id="概率论">概率论<a href="#概率论" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-<ul>
-<li>一副扑克除去大小王，共 52 张排，随机取三张扑克，求同花（三张扑克同一种花色）和顺子的概率。</li>
-<li>其他忘了 Orz</li>
-</ul>
-<hr>
-<blockquote>
-<p>原文：https://github.com/x1ah/Blog/issues/9</p>
-</blockquote>
-
-      </div></div>
-
-  
-  
-<div class="pagination">
-    <div class="pagination__title">
-        <span class="pagination__title-h">其他文章</span>
-        <hr />
-    </div>
-    <div class="pagination__buttons">
-        
-        <span class="button previous">
-            <a href="https://when.run/posts/flask-extensions/">
-                <span class="button__icon">←</span>
-                <span class="button__text"> 如何开发 Flask 扩展</span>
-            </a>
-        </span>
-        
-        
-        <span class="button next">
-            <a href="https://when.run/posts/unmain/">
-                <span class="button__text">[转]如何编写无法维护的代码</span>
-                <span class="button__icon">→</span>
-            </a>
-        </span>
-        
-    </div>
-</div>
-
-  
-
-  <script src="https://utteranc.es/client.js"
-        repo="x1ah/x1ah.github.io"
-        issue-term="pathname"
-        label="Comment"
-        theme="photon-dark"
-        crossorigin="anonymous"
-        async>
-</script>
-</div>
-
-  </div>
-
-  
-    <footer class="footer">
-  <div class="footer__inner">
-    
-      <div class="copyright">
-        <span>© 2023 Powered by <a href="http://gohugo.io">Hugo</a></span>
-    
-        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
-      </div>
-  </div>
-</footer>
-
-<script src="https://when.run/assets/main.js"></script>
-<script src="https://when.run/assets/prism.js"></script>
-
-
-
-
-
-
-
-  
-</div>
-
-</body>
-</html>
+<!doctype html><html lang=cn><head><title>Python 面试题整理[实习] :: x1ah</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。（斜体的为遇见两次以上的。）"><meta name=keywords content="Python"><meta name=robots content="noodp"><link rel=canonical href=https://when.run/posts/python-interview/><script async src="https://www.googletagmanager.com/gtag/js?id=G-21PQZQT56W"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-21PQZQT56W",{anonymize_ip:!1})}</script><link rel=stylesheet href=https://when.run/assets/style.css><link rel=apple-touch-icon href=https://when.run/img/apple-touch-icon-192x192.png><link rel="shortcut icon" href=https://when.run/avator.jpeg><meta name=twitter:card content="summary"><meta property="og:locale" content="cn"><meta property="og:type" content="article"><meta property="og:title" content="Python 面试题整理[实习]"><meta property="og:description" content="内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。（斜体的为遇见两次以上的。）"><meta property="og:url" content="https://when.run/posts/python-interview/"><meta property="og:site_name" content="x1ah"><meta property="og:image" content="https://when.run"><meta property="og:image:width" content="2048"><meta property="og:image:height" content="1024"><meta property="article:published_time" content="2017-04-28 00:00:00 +0000 UTC"><script async src="https://www.googletagmanager.com/gtag/js?id=G-21PQZQT56W"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-21PQZQT56W",{anonymize_ip:!1})}</script></head><body class=orange><div class="container center headings--one-size"><header class=header><div class=header__inner><div class=header__logo><a href=/><div class=logo>x1ah</div></a></div><div class=menu-trigger>menu</div></div><nav class=menu><ul class="menu__inner menu__inner--desktop"><li><a href=/about/>About</a></li><li><a href=/index.xml>RSS</a></li></ul><ul class="menu__inner menu__inner--mobile"><li><a href=/about/>About</a></li><li><a href=/index.xml>RSS</a></li></ul></nav></header><div class=content><div class=post><h1 class=post-title><a href=https://when.run/posts/python-interview/>Python 面试题整理[实习]</a></h1><div class=post-meta><span class=post-date>2017-04-28</span>
+<span class=post-author>:: x1ah</span></div><span class=post-tags>#<a href=https://when.run/tags/python/>Python</a>&nbsp;</span><div class=post-content><div><blockquote><p>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）</p></blockquote><h1 id=python-语法>Python 语法<a href=#python-语法 class=hanchor arialabel=Anchor>&#8983;</a></h1><ul><li><p><em>说说你平时 Python 都用哪些库</em></p></li><li><p><code>==</code> 和 <code>is</code> 区别。</p><ul><li><code>==</code> 是比较两对象的值，<code>is</code> 是比较在内存中的地址(id)， <code>is</code> 相当于 <code>id(objx) == id(objy)</code>。</li></ul></li><li><p><em>深拷贝和浅拷贝。</em></p></li></ul><hr><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 贝对象的所有层级对象，也就是一个真正意义上的拷贝。</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> <span style=color:#f92672>from</span> copy <span style=color:#f92672>import</span> copy, deepcopy
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> lst <span style=color:#f92672>=</span> [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>4</span>]]
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> a, b <span style=color:#f92672>=</span> copy(lst), deepcopy(lst)
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> a, b
+</span></span><span style=display:flex><span>([<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>4</span>]], [<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>4</span>]])
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> id(lst[<span style=color:#ae81ff>2</span>]), id(a[<span style=color:#ae81ff>2</span>]), id(b[<span style=color:#ae81ff>2</span>])
+</span></span><span style=display:flex><span>(<span style=color:#ae81ff>139842737414224</span>, <span style=color:#ae81ff>139842737414224</span>, <span style=color:#ae81ff>139842737414584</span>)
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> lst[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> <span style=color:#ae81ff>10</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> a
+</span></span><span style=display:flex><span>[<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>4</span>]]
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> b
+</span></span><span style=display:flex><span>[<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>4</span>]]
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> lst[<span style=color:#ae81ff>2</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;test&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> lst
+</span></span><span style=display:flex><span>[<span style=color:#ae81ff>10</span>, <span style=color:#ae81ff>2</span>, [<span style=color:#e6db74>&#39;test&#39;</span>, <span style=color:#ae81ff>4</span>]]
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> a
+</span></span><span style=display:flex><span>[<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, [<span style=color:#e6db74>&#39;test&#39;</span>, <span style=color:#ae81ff>4</span>]]
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> b
+</span></span><span style=display:flex><span>[<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>, [<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>4</span>]]
+</span></span></code></pre></div><ul><li><p><code>__init__</code> 和 <code>__new__</code>。</p><ul><li><code>__init__</code> 只是单纯的对实例进行某些属性的初始化，以及执行一些需要在新建对象时的必要自定义操作，无返回值。而 <code>__new__</code> 返回的是用户创建的实例，这个才是真正用来创建实例的，所以 <code>__new__</code> 是在 <code>__init__</code> 之前执行的，先创建再初始化。</li></ul></li><li><p><em>Python 2 和 Python 3 有哪些区别？</em></p><ul><li><a href=http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html>http://sebastianraschka.com/Articles/2014_python_2_3_key_diff.html</a></li></ul></li><li><p>连接字符串都有哪些方式？</p><ul><li>格式化字符连接（<code>%s</code>)</li><li><code>format</code></li><li><code>join</code></li><li><code>+</code></li><li>fstring</li></ul></li><li><p>如何判断某个对象是什么类型？</p><ul><li><code>type(obj)</code></li><li><code>isinstance(obj, x)</code></li></ul></li><li><p><em>生成器是什么？</em></p><ul><li>一言难尽，推荐看这个 <a href=https://taizilongxu.gitbooks.io/stackoverflow-about-python/content/1/README.html>stackoverflow 答案的翻译</a></li></ul></li><li><p>Python 中的 GIL 是什么？全称？举个例子说说其具体体现。</p><ul><li>GIL 全称 Global Interpreter Lock（全局解释器锁），任何 Python 线程执行前，必须先获得 GIL 锁，然后，每执行100条字节码，解释器就自动释放GIL锁，让别的线程有机会执行。要避免这种“现象”利用操作系统的多核优势可以有下面几种方法：<ul><li>使用 C 语言编写扩展，创建原生线程，摆脱 GIL，但是即使是扩展，在 Python 代码内，任意一条Python 代码还是会有 GIL 限制</li><li>使用多进程代替多线程，使用多进程时，每个进程都有自己的 GIL。故不存在进程与进程之间的 GIL 限制。但是多进程不能共享内存。</li></ul></li></ul></li><li><p><code>s = 'abcd', s[2] = 'e'</code> 运行结果是什么？</p><ul><li>报错，字符串是不可变对象</li></ul></li><li><p>Python 中，<code>sorted</code> 函数内部是什么算法？</p><ul><li>在 <a href="https://docs.python.org/3/howto/sorting.html?highlight=Timsort">官方文档</a> 里面有提到，用的是 <a href=https://en.wikipedia.org/wiki/Timsort>Timsort</a> 算法</li></ul></li><li><p>编码是一个什么样的过程？</p><ul><li>编码是二进制到字符的过程</li></ul></li><li><p><em>Python 里面怎么实现协程？</em></p><ul><li><a href=http://mp.weixin.qq.com/s/TKrb0i5fF0pJdRIgGC9qQQ>说清道明：协程是什么</a></li></ul></li><li><p><code>requests</code> 包新建一个 <code>session</code> 再 <code>get</code> 和普通的 <code>requests.get</code> 有什么区别？（tcp长连接）</p><ul><li>维持一个会话，** 建立一个tcp长连接** ，cookie 自动保存，下次请求还是一个会话。</li></ul></li><li><p><em>Python 都有哪些数据结构？可变对象，不可变对象分别有哪些？</em></p><ul><li>可变对象：列表，字典</li><li>不可变对象：字符串，数字，元组，集合</li></ul></li><li><p><em>在 Python 内，函数传参是引用传递还是值传递？</em></p><ul><li>引用传递。</li></ul></li><li><p>你会对你的项目写测试么？用哪些方法哪些库？</p><ul><li>doctest</li><li>pytest</li><li>unitest</li></ul></li><li><p>请新建一个只有一个元素 <code>1</code> 的列表和元组。</p><ul><li><code>lst = [1]</code></li><li><code>tup = (1,)</code></li></ul></li><li><p><em>函数默认参数是可变对象情况。</em></p></li></ul><hr><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>foo</span>(a, b<span style=color:#f92672>=</span>[<span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>2</span>]):
+</span></span><span style=display:flex><span>        print(b)
+</span></span><span style=display:flex><span>        b<span style=color:#f92672>.</span>append(a)
+</span></span><span style=display:flex><span>        print(b)
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> val <span style=color:#f92672>=</span> <span style=color:#ae81ff>4</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> foo(val)
+</span></span><span style=display:flex><span><span style=color:#75715e># [1, 2]</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># [1, 2, 4]</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>&gt;&gt;&gt;</span> foo(val)
+</span></span><span style=display:flex><span><span style=color:#75715e># [1, 2, 4]</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># [1, 2, 4, 4]</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 这里可以看到，第二次执行函数时，默认参数 b 的值已经变成 `[1, 2, 4]` 了，原因是，默认参数只在第</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 一次执行时会进行初始化，后面就默认使用 **初始化后的这个对象(引用)**，但是这里 b 是可变对象，</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>#添加了一个元素还是之前的对象，所以，引用没变，不过是值变了而已。</span>
+</span></span></code></pre></div><ul><li><p><em>Flask 的 Route 是怎么实现的？</em> 你认为 Flask 框架有什么优缺点？</p><ul><li>实际上在 Flask 类里面，<code>route</code> 可以简单理解为不过是把对应的路由规则作为键，装饰的视图函数作为值，存到 <code>werkzeug.routing.Map</code> 对象（可以看成是和字典类似的数据结构）里。这里是 <a href=https://github.com/pallets/flask/blob/master/flask/app.py#L1076-L1120>源码</a>，好理解些。这是之前写的一篇 <a href=https://github.com/x1ah/Blog/issues/4>笔记</a></li><li>Flask 优点是轻量，灵活，可高度定制，插件化。缺点也是过于轻量，功能必须通过第三方插件实现，插件质量参差不齐，也不能完全保证后期维护。</li><li>这几点都只是个人之见，更详细标准的还需自行寻找答案。</li></ul></li><li><p><em>WSGI 是什么？uWSGI， nginx 这些都是什么用途？</em></p><ul><li>这里有<a href=https://zh.wikipedia.org/wiki/Web%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BD%91%E5%85%B3%E6%8E%A5%E5%8F%A3>维基百科</a> 的解释，WSGI 就是一个通用的标准，遵守这个标准，我们能让我们的 Web 框架更加通用，编写更加简单。</li><li>uwsgi 和 Nginx 都是 Web Server，不同的是 Nginx 负责 外网请求 &mdash;(转换)&ndash;> 内网请求，uwsgi 负责的是 内网请求 -> Python Web 程序。</li></ul></li><li><p>nginx 和 Apache 的区别？(参考 <a href=https://github.com/taizilongxu/interview_python#7-apache%E5%92%8Cnginx%E7%9A%84%E5%8C%BA%E5%88%AB>interview_python</a>)</p><ul><li>nginx 相对 apache 的优点：<ul><li>轻量级，同样起web 服务，比apache 占用更少的内存及资源</li><li>抗并发，nginx 处理请求是异步非阻塞的，支持更多的并发连接，而apache 则是阻塞型的，在高并发下nginx 能保持低资源低消耗高性能</li><li>配置简洁</li><li>高度模块化的设计，编写模块相对简单</li><li>社区活跃</li></ul></li><li>apache 相对nginx 的优点：<ul><li>rewrite ，比nginx 的rewrite 强大</li><li>模块超多，基本想到的都可以找到</li><li>少bug ，nginx 的bug 相对较多</li><li>超稳定</li></ul></li></ul></li><li><p>你部署 Python 项目时用的是 uWSGI 的哪个模式？</p><ul><li>默认模式</li><li>这个应该问的可能性极小了，可翻阅 <a href=http://uwsgi-docs-cn.readthedocs.io/zh_CN/latest/WSGIquickstart.html>uwsgi 文档</a> 查找更详细的资料</li></ul></li></ul><h1 id=数据结构算法>数据结构，算法<a href=#数据结构算法 class=hanchor arialabel=Anchor>&#8983;</a></h1><ul><li>层次遍历二叉树用什么方法？</li></ul><hr><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># coding: utf-8</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>from</span> collections <span style=color:#f92672>import</span> deque
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>BNode</span>:
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;&#34;&#34; 二叉树节点 &#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> __init__(self, value, left<span style=color:#f92672>=</span><span style=color:#66d9ef>None</span>, right<span style=color:#f92672>=</span><span style=color:#66d9ef>None</span>):
+</span></span><span style=display:flex><span>        self<span style=color:#f92672>.</span>value <span style=color:#f92672>=</span> value
+</span></span><span style=display:flex><span>        self<span style=color:#f92672>.</span>left <span style=color:#f92672>=</span> left
+</span></span><span style=display:flex><span>        self<span style=color:#f92672>.</span>right <span style=color:#f92672>=</span> right
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>level_traverse</span>(binary_tree):
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;&#34;&#34; 层次遍历二叉树 &#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>    stack <span style=color:#f92672>=</span> deque([binary_tree])
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>while</span> stack:
+</span></span><span style=display:flex><span>        top <span style=color:#f92672>=</span> stack<span style=color:#f92672>.</span>popleft()
+</span></span><span style=display:flex><span>        print(top<span style=color:#f92672>.</span>value)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> top<span style=color:#f92672>.</span>left:
+</span></span><span style=display:flex><span>            stack<span style=color:#f92672>.</span>append(top<span style=color:#f92672>.</span>left)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> top<span style=color:#f92672>.</span>right:
+</span></span><span style=display:flex><span>            stack<span style=color:#f92672>.</span>append(top<span style=color:#f92672>.</span>right)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>if</span> __name__ <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;__main__&#34;</span>:
+</span></span><span style=display:flex><span>    b_tree <span style=color:#f92672>=</span> BNode(<span style=color:#ae81ff>1</span>, BNode(<span style=color:#ae81ff>2</span>, BNode(<span style=color:#ae81ff>4</span>, BNode(<span style=color:#ae81ff>5</span>, BNode(<span style=color:#ae81ff>7</span>)))), BNode(<span style=color:#ae81ff>3</span>, BNode(<span style=color:#ae81ff>6</span>, right<span style=color:#f92672>=</span>BNode(<span style=color:#ae81ff>8</span>))))
+</span></span><span style=display:flex><span>    level_traverse(b_tree)
+</span></span></code></pre></div><ul><li><p>非平衡二叉数如何变成平衡二叉数？</p><ul><li>参考 <a href=https://segmentfault.com/a/1190000006123188>AVL平衡二叉树详解与实现</a></li></ul></li><li><p>先，中，后序遍历二叉数。完全二叉数是什么？</p><ul><li>完全二叉树：深度为k有n个节点的二叉树，当且仅当其中的每一节点，都可以和同样深度k的满二叉树，序号为1到n的节点一对一对应时，称为“完全二叉树”。（摘自维基百科）</li><li>先序：先根后左再右</li><li>中序：先左后中再右</li><li>后序：先左后右再根</li></ul></li><li><p>如何判断两个单链表是否相交于某个节点，包括 X 型，Y 型，V 型。</p><ul><li>X 型不可能存在，一个单链表节点不存在两个不同的后继。</li></ul></li></ul><hr><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># 存在 V 型和 Y 型，如果交叉，则最后一个节点肯定是相同的，故直接从最后一个节点进行反向遍历。</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 反转单链表</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>reverse_single_link_lst</span>(link_lst):
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#f92672>not</span> link_lst:
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> link_lst
+</span></span><span style=display:flex><span>    pre <span style=color:#f92672>=</span> link_lst
+</span></span><span style=display:flex><span>    cur <span style=color:#f92672>=</span> link_lst<span style=color:#f92672>.</span>next
+</span></span><span style=display:flex><span>    pre<span style=color:#f92672>.</span>next <span style=color:#f92672>=</span> <span style=color:#66d9ef>None</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>while</span> cur:
+</span></span><span style=display:flex><span>        tmp <span style=color:#f92672>=</span> cur<span style=color:#f92672>.</span>next
+</span></span><span style=display:flex><span>        cur<span style=color:#f92672>.</span>next <span style=color:#f92672>=</span> pre
+</span></span><span style=display:flex><span>        pre <span style=color:#f92672>=</span> cur
+</span></span><span style=display:flex><span>        cur <span style=color:#f92672>=</span> tmp
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> pre
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 寻找交叉点</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>point</span>(node_a, node_b):
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> node_a <span style=color:#f92672>is</span> <span style=color:#66d9ef>None</span> <span style=color:#f92672>or</span> node_b <span style=color:#f92672>is</span> <span style=color:#66d9ef>None</span>:
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>None</span>
+</span></span><span style=display:flex><span>    next_a, next_b <span style=color:#f92672>=</span> node_a, node_b
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>while</span> next_a <span style=color:#f92672>or</span> next_b:
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> next_a<span style=color:#f92672>.</span>val <span style=color:#f92672>==</span> next_b<span style=color:#f92672>.</span>val:
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> next_a<span style=color:#f92672>.</span>next <span style=color:#f92672>and</span> next_b<span style=color:#f92672>.</span>next <span style=color:#f92672>and</span> (next_a<span style=color:#f92672>.</span>next<span style=color:#f92672>.</span>val <span style=color:#f92672>==</span> next_b<span style=color:#f92672>.</span>next<span style=color:#f92672>.</span>val):
+</span></span><span style=display:flex><span>                next_a, next_b <span style=color:#f92672>=</span> next_a<span style=color:#f92672>.</span>next, next_b<span style=color:#f92672>.</span>next
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>continue</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> next_a<span style=color:#f92672>.</span>val
+</span></span><span style=display:flex><span>        next_a, next_b <span style=color:#f92672>=</span> next_a<span style=color:#f92672>.</span>next, next_b<span style=color:#f92672>.</span>next
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>None</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 构造单链表</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Node</span>(object):
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> __init__(self, value, next<span style=color:#f92672>=</span><span style=color:#66d9ef>None</span>):
+</span></span><span style=display:flex><span>        self<span style=color:#f92672>.</span>val <span style=color:#f92672>=</span> value
+</span></span><span style=display:flex><span>        self<span style=color:#f92672>.</span>next <span style=color:#f92672>=</span> next
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>a <span style=color:#f92672>=</span> ListNode(<span style=color:#ae81ff>1</span>, ListNode(<span style=color:#ae81ff>2</span>, ListNode(<span style=color:#ae81ff>3</span>, ListNode(<span style=color:#ae81ff>4</span>, ListNode(<span style=color:#ae81ff>5</span>)))))
+</span></span><span style=display:flex><span>b <span style=color:#f92672>=</span> ListNode(<span style=color:#ae81ff>7</span>, ListNode(<span style=color:#ae81ff>9</span>, ListNode(<span style=color:#ae81ff>4</span>, ListNode(<span style=color:#ae81ff>5</span>))))
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>ra <span style=color:#f92672>=</span> reverse_single_link_lst(a)
+</span></span><span style=display:flex><span>rb <span style=color:#f92672>=</span> reverse_single_link_lst(b)
+</span></span><span style=display:flex><span>point(ra, rb)
+</span></span><span style=display:flex><span><span style=color:#75715e># output:</span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 4</span>
+</span></span></code></pre></div><ul><li><p>如何判断两个单链表是否是同一个链表。</p><ul><li>直接判断第一个节点即可。</li></ul></li><li><p>单链表逆转。</p><ul><li>见上面判断交叉链表内的 <code>reverse_single_link_lst()</code> 函数。</li></ul></li><li><p><em>堆，栈，队列。</em></p><ul><li><a href=https://zh.wikipedia.org/wiki/%E5%A0%86_(%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84)>堆</a>， <a href=https://zh.wikipedia.org/zh-hans/%E5%A0%86%E6%A0%88>栈</a>， <a href=https://zh.wikipedia.org/wiki/%E9%98%9F%E5%88%97>队列</a></li></ul></li><li><p><em>说说你知道的排序算法以及其时间复杂度。</em>
+<img src=http://ww1.sinaimg.cn/large/005NaGmtly1fenoomcn03j30iz07874f.jpg alt></p></li><li><p><em>手写快速排序。画画堆排序的原理及过程。</em></p></li></ul><hr><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># 快速排序，lz 当时写的比较复杂，但是是最常见的写法（紧张导致有几个小bug），如下</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>quick_sort</span>(lst, start, stop):
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> start <span style=color:#f92672>&lt;</span> stop:
+</span></span><span style=display:flex><span>        i, j, x <span style=color:#f92672>=</span> start, stop, lst[start]
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>while</span> i <span style=color:#f92672>&lt;</span> j:
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>while</span> (i <span style=color:#f92672>&lt;</span> j) <span style=color:#f92672>and</span> (lst[j] <span style=color:#f92672>&gt;</span> x):
+</span></span><span style=display:flex><span>                j <span style=color:#f92672>-=</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (i <span style=color:#f92672>&lt;</span> j):
+</span></span><span style=display:flex><span>                lst[i] <span style=color:#f92672>=</span> lst[j]
+</span></span><span style=display:flex><span>                i <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>while</span> (i <span style=color:#f92672>&lt;</span> j) <span style=color:#f92672>and</span> (lst[i] <span style=color:#f92672>&lt;</span> x):
+</span></span><span style=display:flex><span>                i <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (i <span style=color:#f92672>&lt;</span> j):
+</span></span><span style=display:flex><span>                lst[j] <span style=color:#f92672>=</span> lst[i]
+</span></span><span style=display:flex><span>                j <span style=color:#f92672>-=</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>        lst[i] <span style=color:#f92672>=</span> x
+</span></span><span style=display:flex><span>        quick_sort(lst, start, i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)
+</span></span><span style=display:flex><span>        quick_sort(lst, i<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>, stop)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> lst
+</span></span></code></pre></div><p>之后面试官 <a href=https://github.com/akun>akun</a> 大哥给了个特别简洁的写法，三路复用，地址在 <a href=https://gist.github.com/akun/d90998068f4e1f3eb169>Gist</a></p><hr><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>qsort</span>(alist):
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;&#34;&#34;
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    quick sort(easy way, but more memory)
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    test: python -m doctest qsort.py
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    &gt;&gt;&gt; import math
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    &gt;&gt;&gt; import random
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    &gt;&gt;&gt; size = 100
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    &gt;&gt;&gt; alist = [random.randint(0, size * 10) for i in range(size)]
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    &gt;&gt;&gt; qlist = qsort(alist)
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    &gt;&gt;&gt; alist.sort()
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    &gt;&gt;&gt; assert qlist == alist
+</span></span></span><span style=display:flex><span><span style=color:#e6db74>    &#34;&#34;&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> len(alist) <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>1</span>:
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> alist
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    key <span style=color:#f92672>=</span> alist[<span style=color:#ae81ff>0</span>]
+</span></span><span style=display:flex><span>    left_list, middle_list, right_list <span style=color:#f92672>=</span> [], [], []
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    [{i <span style=color:#f92672>&lt;</span> key: left_list, i <span style=color:#f92672>==</span> key: middle_list, i <span style=color:#f92672>&gt;</span> key: right_list}[
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>True</span>
+</span></span><span style=display:flex><span>    ]<span style=color:#f92672>.</span>append(i) <span style=color:#66d9ef>for</span> i <span style=color:#f92672>in</span> alist]
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> qsort(left_list) <span style=color:#f92672>+</span> middle_list <span style=color:#f92672>+</span> qsort(right_list)
+</span></span></code></pre></div><ul><li>说说你所了解的加密算法，编码算法，以及压缩算法。了解 base64 的原理么？<ul><li>只说了听过 base64, md5 这几种编码。。。。。自行搜索吧，考的概率极小。</li></ul></li></ul><h1 id=数据库>数据库<a href=#数据库 class=hanchor arialabel=Anchor>&#8983;</a></h1><ul><li><p>索引是什么原理？有什么优缺点？</p><ul><li>参考 <a href=http://blog.csdn.net/kennyrose/article/details/7532032>数据库索引的实现原理</a></li></ul></li><li><p>乐观锁和悲观锁是什么？</p><ul><li><a href=http://www.hollischuang.com/archives/934>深入理解乐观锁与悲观锁</a></li></ul></li><li><p>你为什么选择 Redis 而不是 MongoDB 或者其他的？（有个项目用了 Redis）</p><ul><li><a href=https://segmentfault.com/q/1010000002588088/a-1020000002589415>redis、memcache、mongoDB有哪些区别？</a></li></ul></li><li><p>SQL 和 NoSQL 区别？</p><ul><li><a href=http://www.jianshu.com/p/b32fe4fe45a3>SQL 和 NoSQL 的区别</a></li></ul></li></ul><h1 id=网络>网络<a href=#网络 class=hanchor arialabel=Anchor>&#8983;</a></h1><ul><li><p>从浏览器输入网址到网页渲染完毕这过程发生了什么？</p><ul><li><a href=https://github.com/skyline75489/what-happens-when-zh_CN>这里</a> 说的非常详细，看面的岗位不同，回答的侧重点不一样。如面的 Web ，可以侧重说说 nginx -> uwsgi -> Python -> uwsgi -> nginx 这个过程，（WSGI 标准）</li></ul></li><li><p><em>TCP 三次握手四次挥手详细说下。</em></p><ul><li><a href=http://blog.csdn.net/whuslei/article/details/6667471>TCP协议中的三次握手和四次挥手(图解)</a></li></ul></li><li><p>为什么是三次握手？两次不行么？</p><ul><li><a href=http://www.cnblogs.com/techzi/archive/2011/10/18/2216751.html>TCP连接建立过程中为什么需要“三次握手”</a></li></ul></li><li><p><em>说说 TCP 和 UDP 的区别。</em></p><ul><li>TCP（传输层）<ul><li>优点：TCP 面向连接，可靠，稳定，传输数据前需要建立连接，故有三次握手四次挥手，还有拥塞控制，重传等</li><li>缺点：慢，占用系统资源，有确认机制，三次握手，所以容易被攻击，DDos</li></ul></li><li>UDP<ul><li>优点：快，无状态传输协议</li><li>缺点：不稳定，不可靠，容易丢包</li></ul></li></ul></li><li><p>谈谈你对 SQL 注入、 XSS 、 CSRF 的理解。以及如何防范。</p><ul><li><a href=https://cnodejs.org/topic/50463565329c5139760c34a1>关于XSS（跨站脚本攻击）和CSRF（跨站请求伪造)</a></li><li><a href=https://zh.m.wikipedia.org/zh-hans/SQL%E8%B3%87%E6%96%99%E9%9A%B1%E7%A2%BC%E6%94%BB%E6%93%8A>SQL 注入</a>，现在多数采用 ORM，以及参数化查询，很少再出现。</li></ul></li><li><p><em>说说 DNS 是什么东西。</em></p><ul><li>根据域名寻找 主机 IP 的协议。</li></ul></li><li><p>HTTP 是工作在七层模型的哪一层？DNS 又是哪一层？TCP 和 IP 呢？</p><ul><li>HTTP，DNS 应用层，TCP 传输层，IP 网络层。</li></ul></li><li><p><em>说说你知道的 HTTP 方法和 状态码。</em></p><ul><li><a href=https://zh.wikipedia.org/wiki/HTTP%E7%8A%B6%E6%80%81%E7%A0%81>状态码</a>，这里只需要大概说说，以 1××，2××，3×× 这样的层面说，没有必要细到每一个状态码。</li><li><a href=https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE#.E8.AF.B7.E6.B1.82.E6.96.B9.E6.B3.95>HTTP 请求方法</a></li></ul></li><li><p><em>HTTP 的 GET 和 POST 有什么区别？</em></p><ul><li>本质上，GET 和 POST 只不过是 <strong>发送机制不同</strong> 。</li></ul></li><li><p>HTTP 和 HTTPS 的区别？</p><ul><li>HTTPS = HTTP + SSL</li><li>HTTP 默认使用 80 端口，HTTPS 使用 443 端口。</li><li><a href=https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%AE%89%E5%85%A8%E5%8D%8F%E8%AE%AE#.E4.B8.8EHTTP.E7.9A.84.E5.B7.AE.E5.BC.82>更详细</a></li></ul></li><li><p>说说你知道的 HTTP 包头部信息里都有哪些字段。</p><ul><li>这个随便抓下包就知道了，就不说了～</li></ul></li><li><p><em>HTTP 包头部信息里面的 <code>Host</code> 字段是什么作用？</em></p><ul><li>表示当前请求服务器的主机名</li></ul></li><li><p>说说 cookie 里面你都知道哪些字段。</p><ul><li><a href=http://javascript.ruanyifeng.com/bom/cookie.html>Cookie</a></li></ul></li><li><p>Session 是什么东西？</p><ul><li><a href=http://harttle.com/2015/08/10/cookie-session.html>Cookie/Session的机制与安全</a></li></ul></li><li><p>在写爬虫过程中，如果遇见需要加载 js 的情况你是如何处理的。</p><ul><li>Selenium，PhantomJS</li></ul></li><li><p>普通匿名代理和高匿代理有什么区别？</p><ul><li>来自普通匿名代理的请求在服务端能看见真实 IP， 而高匿代理在服务端看不见真实 IP，只能看见代理服务器 IP。</li></ul></li><li><p>你知道哪些反爬措施？</p><ul><li>加代理，加头部，爬取速度控制，随机 UA，模拟真实用户的点击习惯去请求。</li></ul></li></ul><h1 id=操作系统>操作系统<a href=#操作系统 class=hanchor arialabel=Anchor>&#8983;</a></h1><ul><li><em>进程和线程以及协程的区别？</em></li><li><em>多线程和多进程的区别？</em></li><li>信号量和互斥量的区别？</li><li>堆内存是干嘛的？</li><li>如何检验当前机器是大端模式还是小端模式？</li><li>如何让某个程序在后台运行？（Linux）</li><li>sed, awk 用法（Linux）</li></ul><h1 id=编程题>编程题<a href=#编程题 class=hanchor arialabel=Anchor>&#8983;</a></h1><ul><li>手写二分查找，<em>快速排序</em>。</li><li>~还有一个 SQL 语句的，一条 SQL 语句打印某张表某个 group count TOP 5。~</li><li>Python 中正则模块 <code>re</code> 里 <code>match</code> 函数 和 <code>search</code> 函数有什么区别？举例说明。</li><li>一条语句求 0 - 999999 内能被 7 整除的所有数的和。</li><li>实现一个链表结构，要求其插入第一个节点，删除最后一个节点的复杂度为 O(1)。</li><li>实现一个 <code>retry</code> 装饰器，使用如下：</li></ul><hr><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#75715e># 可以指定重试次数，直到函数返回正确结果。</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@retry</span>(retries<span style=color:#f92672>=</span><span style=color:#ae81ff>3</span>)
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>func</span>(<span style=color:#f92672>*</span>args, <span style=color:#f92672>**</span>kw):
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>try</span>:
+</span></span><span style=display:flex><span>        <span style=color:#75715e># some action</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>True</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>except</span>:
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>False</span>
+</span></span></code></pre></div><p>大概可以像下面这样写，</p><hr><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#f92672>from</span> functools <span style=color:#f92672>import</span> wraps
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>def</span> <span style=color:#a6e22e>retry</span>(retries<span style=color:#f92672>=</span><span style=color:#ae81ff>3</span>):
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>timesf</span>(func):
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>@wraps</span>(func)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>wrap</span>(<span style=color:#f92672>*</span>args, <span style=color:#f92672>**</span>kw):
+</span></span><span style=display:flex><span>            i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>            status <span style=color:#f92672>=</span> <span style=color:#66d9ef>True</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>while</span> status <span style=color:#f92672>and</span> i <span style=color:#f92672>&lt;</span> times:
+</span></span><span style=display:flex><span>                status <span style=color:#f92672>=</span> func(<span style=color:#f92672>*</span>args, <span style=color:#f92672>**</span>kw)
+</span></span><span style=display:flex><span>                i <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> status
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> wrap
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> timesf
+</span></span></code></pre></div><ul><li>有一个4G 的文本文件，存储的是酒店信息，每行存的是一个酒店ID，可以重复。请编写程序输出一个新文件，新文件内容为每行一条数据，每行的数据格式如下：<code>酒店ID + 出现次数</code>（最后提到了其他想法，如文件切片，bitmap 之类）</li><li>实现一个函数，根据字典序比较两字符串大小，不允许用库函数，尽量越底层实现越好。（手写）</li><li>实现一个函数，检验一个字符串是否符合 <code>xxxx-xx-xx</code> 这样的日期格式，注意润年，大小月，不允许用库函数，尽量越底层实现越好。（手写）</li><li>我们是做地图相关工作的，现在给你提供一个三维的数据，数据描述的是不同时间一些地图上的一些地点坐标，分别有时间，x轴坐标，y轴坐标，请你设计一个算法，能够得到一天内地图上的 TOP 10 热点地区，地区大小也相应的自己作合适调整，开放性题目。</li></ul><h1 id=概率论>概率论<a href=#概率论 class=hanchor arialabel=Anchor>&#8983;</a></h1><ul><li>一副扑克除去大小王，共 52 张排，随机取三张扑克，求同花（三张扑克同一种花色）和顺子的概率。</li><li>其他忘了 Orz</li></ul><hr><blockquote><p>原文：https://github.com/x1ah/Blog/issues/9</p></blockquote></div></div><div class=pagination><div class=pagination__title><span class=pagination__title-h>其他文章</span><hr></div><div class=pagination__buttons><span class="button previous"><a href=https://when.run/posts/flask-extensions/><span class=button__icon>←</span>
+<span class=button__text>如何开发 Flask 扩展</span></a></span>
+<span class="button next"><a href=https://when.run/posts/unmain/><span class=button__text>[转]如何编写无法维护的代码</span>
+<span class=button__icon>→</span></a></span></div></div><script src=https://utteranc.es/client.js repo=x1ah/x1ah.github.io issue-term=pathname label=Comment theme=photon-dark crossorigin=anonymous async></script></div></div><footer class=footer><div class=footer__inner><div class=copyright><span>© 2023 Powered by <a href=http://gohugo.io>Hugo</a></span>
+<span>:: Theme made by <a href=https://twitter.com/panr>panr</a></span></div></div></footer><script src=https://when.run/assets/main.js></script>
+<script src=https://when.run/assets/prism.js></script></div></body></html>

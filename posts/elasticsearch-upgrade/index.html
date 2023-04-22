@@ -1,223 +1,22 @@
-<!DOCTYPE html>
-<html lang="cn">
-<head>
-  
-    <title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x :: x1ah</title>
-  
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="这篇博客记录了我将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x 的过程，以及迁移流程和步骤" />
-<meta name="keywords" content="Elasticsearch" />
-<meta name="robots" content="noodp" />
-<link rel="canonical" href="https://when.run/posts/elasticsearch-upgrade/" />
+<!doctype html><html lang=cn><head><title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x :: x1ah</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="这篇博客记录了我将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x 的过程，以及迁移流程和步骤"><meta name=keywords content="Elasticsearch"><meta name=robots content="noodp"><link rel=canonical href=https://when.run/posts/elasticsearch-upgrade/><script async src="https://www.googletagmanager.com/gtag/js?id=G-21PQZQT56W"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-21PQZQT56W",{anonymize_ip:!1})}</script><link rel=stylesheet href=https://when.run/assets/style.css><link rel=apple-touch-icon href=https://when.run/img/apple-touch-icon-192x192.png><link rel="shortcut icon" href=https://when.run/avator.jpeg><meta name=twitter:card content="summary"><meta property="og:locale" content="cn"><meta property="og:type" content="article"><meta property="og:title" content="如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x"><meta property="og:description" content="这篇博客记录了我将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x 的过程，以及迁移流程和步骤"><meta property="og:url" content="https://when.run/posts/elasticsearch-upgrade/"><meta property="og:site_name" content="x1ah"><meta property="og:image" content="https://when.run"><meta property="og:image:width" content="2048"><meta property="og:image:height" content="1024"><meta property="article:published_time" content="2021-03-02 00:00:00 +0000 UTC"><script async src="https://www.googletagmanager.com/gtag/js?id=G-21PQZQT56W"></script>
+<script>var doNotTrack=!1;if(!doNotTrack){window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-21PQZQT56W",{anonymize_ip:!1})}</script></head><body class=orange><div class="container center headings--one-size"><header class=header><div class=header__inner><div class=header__logo><a href=/><div class=logo>x1ah</div></a></div><div class=menu-trigger>menu</div></div><nav class=menu><ul class="menu__inner menu__inner--desktop"><li><a href=/about/>About</a></li><li><a href=/index.xml>RSS</a></li></ul><ul class="menu__inner menu__inner--mobile"><li><a href=/about/>About</a></li><li><a href=/index.xml>RSS</a></li></ul></nav></header><div class=content><div class=post><h1 class=post-title><a href=https://when.run/posts/elasticsearch-upgrade/>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x</a></h1><div class=post-meta><span class=post-date>2021-03-02</span>
+<span class=post-author>:: x1ah</span></div><span class=post-tags>#<a href=https://when.run/tags/elasticsearch/>Elasticsearch</a>&nbsp;</span><div class=post-content><div><h2 id=背景>背景<a href=#背景 class=hanchor arialabel=Anchor>&#8983;</a></h2><p>公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。</p><p>需要升级到新版本 es 的主要原因有以下几个：</p><ol><li>前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug</li><li>Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升</li></ol><h2 id=升级方案调研>升级方案调研<a href=#升级方案调研 class=hanchor arialabel=Anchor>&#8983;</a></h2><h4 id=rolling-upgrades>Rolling upgrades<a href=#rolling-upgrades class=hanchor arialabel=Anchor>&#8983;</a></h4><blockquote><p>官方文档：<a href=https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html>rolling upgrades</a></p></blockquote><p>由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 <a href=https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html>rolling upgrade</a> 步骤，中间需要两次 rolling upgrade，分别为：</p><ol><li>From 5.x to 5.6</li><li>From 5.6 to 6.8 (<strong>rolling upgrade</strong>)</li><li>From 6.8 to 7.x (<strong>rolling upgrade</strong>)</li></ol><p>升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。</p><h4 id=新集群--新索引>新集群 & 新索引<a href=#新集群--新索引 class=hanchor arialabel=Anchor>&#8983;</a></h4><p>除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：</p><ol><li>搭建新集群，尽量保持配置与老集群一致。比如如果有 ik 插件，那么需要保证 ik 的词典文件与老集群一致</li><li>新建索引。这一步的目的是方便后面的索引能够同步双写到新老两个集群。同时建索引时需要注意，es7 已经废弃了 mapping 里的 document type，mapping 不再需要指定 type 了</li><li>索引双写。第二步已经将索引在新集群中建好了，这里在业务代码中开始双写，保证新增的 document 能够与老集群的索引一致</li><li>全量索引。新增索引一致后，存量的 document 也需要一致，因此需要把存量的 doc 重新全部导入到新集群内。这一步官方提供了一个 <a href=https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html#reindex-from-remote>reindex from remote</a>，但是实际操作后发现，reindex 后，mapping 和 settings 会有出入，并且不确定这个操作对老集群的压力大不大，因此还是决定跑下脚本人工重建</li><li>线上测试，包括性能测试、稳定性观察、数据比对等</li><li>停掉索引双写</li><li>下线老集群，全面覆盖新集群</li></ol><h2 id=测试新集群>测试新集群<a href=#测试新集群 class=hanchor arialabel=Anchor>&#8983;</a></h2><p>新集群准备好之后，需要进行一些必要的测试，比如：性能测试、数据比对、老的查询语句兼容性测试。</p><h4 id=性能测试>性能测试<a href=#性能测试 class=hanchor arialabel=Anchor>&#8983;</a></h4><p>性能测试可以挑拣一个业务代码里最常用的查询语句，然后进行压测。比如我这里使用 wrk 压测一个最简单的全文搜索</p><pre tabindex=0><code>// dsl.lua 文件内容
 
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-21PQZQT56W"></script>
-<script>
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-21PQZQT56W', { 'anonymize_ip': false });
-}
-</script>
-
-
-
-<link rel="stylesheet" href="https://when.run/assets/style.css">
-
-
-
-
-
-
-<link rel="apple-touch-icon" href="https://when.run/img/apple-touch-icon-192x192.png">
-
-  <link rel="shortcut icon" href="https://when.run/avator.jpeg">
-
-
-
-<meta name="twitter:card" content="summary" />
-
-
-
-<meta property="og:locale" content="cn" />
-<meta property="og:type" content="article" />
-<meta property="og:title" content="如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x">
-<meta property="og:description" content="这篇博客记录了我将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x 的过程，以及迁移流程和步骤" />
-<meta property="og:url" content="https://when.run/posts/elasticsearch-upgrade/" />
-<meta property="og:site_name" content="x1ah" />
-
-  <meta property="og:image" content="https://when.run">
-
-<meta property="og:image:width" content="2048">
-<meta property="og:image:height" content="1024">
-
-
-  <meta property="article:published_time" content="2021-03-02 00:00:00 &#43;0000 UTC" />
-
-
-
-
-
-
-
-
-
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-21PQZQT56W"></script>
-<script>
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-21PQZQT56W', { 'anonymize_ip': false });
-}
-</script>
-
-
-
-
-</head>
-<body class="orange">
-
-
-<div class="container center headings--one-size">
-
-  <header class="header">
-  <div class="header__inner">
-    <div class="header__logo">
-      <a href="/">
-  <div class="logo">
-    x1ah
-  </div>
-</a>
-
-    </div>
-    
-      <div class="menu-trigger">menu</div>
-    
-  </div>
-  
-    <nav class="menu">
-  <ul class="menu__inner menu__inner--desktop">
-    
-      
-        
-          <li><a href="/about/">About</a></li>
-        
-      
-        
-          <li><a href="/index.xml">RSS</a></li>
-        
-      
-      
-    
-
-    
-  </ul>
-
-  <ul class="menu__inner menu__inner--mobile">
-    
-      
-        <li><a href="/about/">About</a></li>
-      
-    
-      
-        <li><a href="/index.xml">RSS</a></li>
-      
-    
-    
-  </ul>
-</nav>
-
-  
-</header>
-
-
-  <div class="content">
-    
-<div class="post">
-  <h1 class="post-title">
-    <a href="https://when.run/posts/elasticsearch-upgrade/">如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x</a></h1>
-  <div class="post-meta">
-    
-      <span class="post-date">
-        2021-03-02 
-      </span>
-    
-    
-    <span class="post-author">:: x1ah</span>
-    
-  </div>
-
-  
-  <span class="post-tags">
-    
-    #<a href="https://when.run/tags/elasticsearch/">Elasticsearch</a>&nbsp;
-    
-  </span>
-  
-
-  
-
-  
-
-  <div class="post-content"><div>
-        <h2 id="背景">背景<a href="#背景" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-<p>公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。</p>
-<p>需要升级到新版本 es 的主要原因有以下几个：</p>
-<ol>
-<li>前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug</li>
-<li>Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升</li>
-</ol>
-<h2 id="升级方案调研">升级方案调研<a href="#升级方案调研" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-<h4 id="rolling-upgrades">Rolling upgrades<a href="#rolling-upgrades" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
-<blockquote>
-<p>官方文档：<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html">rolling upgrades</a></p>
-</blockquote>
-<p>由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html">rolling upgrade</a> 步骤，中间需要两次 rolling upgrade，分别为：</p>
-<ol>
-<li>From 5.x to 5.6</li>
-<li>From 5.6 to 6.8 (<strong>rolling upgrade</strong>)</li>
-<li>From 6.8 to 7.x (<strong>rolling upgrade</strong>)</li>
-</ol>
-<p>升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。</p>
-<h4 id="新集群--新索引">新集群 &amp; 新索引<a href="#新集群--新索引" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
-<p>除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：</p>
-<ol>
-<li>搭建新集群，尽量保持配置与老集群一致。比如如果有 ik 插件，那么需要保证 ik 的词典文件与老集群一致</li>
-<li>新建索引。这一步的目的是方便后面的索引能够同步双写到新老两个集群。同时建索引时需要注意，es7 已经废弃了 mapping 里的 document type，mapping 不再需要指定 type 了</li>
-<li>索引双写。第二步已经将索引在新集群中建好了，这里在业务代码中开始双写，保证新增的 document 能够与老集群的索引一致</li>
-<li>全量索引。新增索引一致后，存量的 document 也需要一致，因此需要把存量的 doc 重新全部导入到新集群内。这一步官方提供了一个 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html#reindex-from-remote">reindex from remote</a>，但是实际操作后发现，reindex 后，mapping 和 settings 会有出入，并且不确定这个操作对老集群的压力大不大，因此还是决定跑下脚本人工重建</li>
-<li>线上测试，包括性能测试、稳定性观察、数据比对等</li>
-<li>停掉索引双写</li>
-<li>下线老集群，全面覆盖新集群</li>
-</ol>
-<h2 id="测试新集群">测试新集群<a href="#测试新集群" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-<p>新集群准备好之后，需要进行一些必要的测试，比如：性能测试、数据比对、老的查询语句兼容性测试。</p>
-<h4 id="性能测试">性能测试<a href="#性能测试" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
-<p>性能测试可以挑拣一个业务代码里最常用的查询语句，然后进行压测。比如我这里使用 wrk 压测一个最简单的全文搜索</p>
-<pre tabindex="0"><code>// dsl.lua 文件内容
-
-wrk.method = &quot;GET&quot;
+wrk.method = &#34;GET&#34;
 wrk.body = [[{
-    &quot;query&quot;:{
-        &quot;match&quot;:{
-            &quot;name&quot;:{
-                &quot;query&quot;:&quot;烘焙&quot;
+    &#34;query&#34;:{
+        &#34;match&#34;:{
+            &#34;name&#34;:{
+                &#34;query&#34;:&#34;烘焙&#34;
             }
         }
     },
-    &quot;size&quot;:100
+    &#34;size&#34;:100
 }]]
-wrk.headers[&quot;Content-Type&quot;] = &quot;application/json&quot;
-</code></pre><p>压测命令：</p>
-<pre tabindex="0"><code>wrk -t10 -c10 -d10s --script=dsl.lua http://elasticsearch-address:9200/you_index/_search
-</code></pre><p>结果示例：</p>
-<pre tabindex="0"><code>Running 10s test @ http://elasticsearch-address:9200/you_index/_search
+wrk.headers[&#34;Content-Type&#34;] = &#34;application/json&#34;
+</code></pre><p>压测命令：</p><pre tabindex=0><code>wrk -t10 -c10 -d10s --script=dsl.lua http://elasticsearch-address:9200/you_index/_search
+</code></pre><p>结果示例：</p><pre tabindex=0><code>Running 10s test @ http://elasticsearch-address:9200/you_index/_search
   10 threads and 10 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
     Latency     8.31ms    2.12ms  35.71ms   75.93%
@@ -225,120 +24,24 @@ wrk.headers[&quot;Content-Type&quot;] = &quot;application/json&quot;
   12068 requests in 10.01s, 3.80GB read
 Requests/sec:   1205.70
 Transfer/sec:    388.64MB
-</code></pre><p>可以适当调整压测参数，以及查询语句，通过比对 wrk 输出的 Avg latency 得出性能差异的结论。</p>
-<h4 id="数据比对">数据比对<a href="#数据比对" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
-<p>与性能压测类似，找一些业务常用的查询语句，分别对两个集群查询结果采样，比对搜出来的结果是否有差异，依次判断索引是否有差异。</p>
-<p>业务数据测试的同时，还需要测试插件加载是否与老集群一致，比如 ik 的词典文件是否正常加载，通常可以使用 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html"><code>/index/_analyze</code></a> 接口来进行测试，并比对结果是否一致</p>
-<h4 id="诡异的毛刺">诡异的毛刺<a href="#诡异的毛刺" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
-<p>在将索引迁移到新集群后，性能监控发现， 搜索请求经常性的出现毛刺，而且看起来是有规律的毛刺，如果 30s 内没有 search 请求，那么下一次必然会出现一根毛刺
-<img src="/image/es_latency.png" alt="es-latency"></p>
-<p>这个问题困扰了很久，排查思路如下：</p>
-<ol>
-<li>
-<p>首先查看是否为 SDK 的问题，是不是客户端到 es server 的长连接断了，导致 30s 后需要重新建立长连接，调长链接时间后发现并未改善</p>
-</li>
-<li>
-<p>接下来看索引的 <code>_stats</code> 信息，发现 <code>docs.deleted</code> 特别多。产生这么多 deleted 的原因可以解释，因为一个 update 操作等于一个 create + 一个 delete，创建新 doc，标记老 doc 为 deleted。但是在经过一段时间之后，merge 会把老的 segment 给合并掉，deleted 的 doc 也一并被清理了，但是这个指标却没有见变少，一直在增加，此时怀疑是 merge 流程的问题。是否 merge 未正常工作。
-<img src="/image/docs_deleted.png" alt="docs.deleted"></p>
-</li>
-<li>
-<p>继续看索引的 <code>_stats</code> 信息，发现 <code>refresh</code> 数非常奇怪，默认 <code>refresh_interval</code> 是 1s，也就是正常情况下是每秒刷新一次，refresh.total 也就是索引创建到当前时间的秒数，而几天前创建的索引，现在却只 refresh 了800+次，那么是否跟这个没有 refresh 有关系呢？为了验证这个问题，手动跑个脚本，在后台不间断的发送 search 请求，发现开始 refresh 了，毛刺也消失了，说明问题出在了 refresh 上面，出于某些原因没有正常的执行 refresh
-<img src="/image/refresh_total.png" alt="refresh.total"></p>
-</li>
-<li>
-<p>在一番查找之后，在 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-refresh-interval-setting">es 文档</a> 的 <code>refresh_interval</code> 字段解释里发现这么一句话，如果没有显示的指定 <code>refresh_interval</code>，那么如果 30s 内没有 search 请求来，会跳过 refresh 步骤，直到有 search 请求来时，才会触发 refresh，并等 refresh 完之后才开始处理 search 请求。这也就能解释为什么 30s 没有搜索流量就会出现一根毛刺了。当手动给索引指定 <code>refresh_interval</code> 之后，默认行为就变得和老版本一样，不再跳过 refresh，毛刺也就消失了。在 elasticsearch 7.0 的 <a href="https://www.elastic.co/cn/blog/elasticsearch-7-0-0-released">release note</a> 里也提到了：
-<img src="/image/refresh_interval_doc.png" alt="refresh.doc">
-<img src="/image/es7_release.png" alt="release"></p>
-</li>
-</ol>
-<h4 id="兼容性测试">兼容性测试<a href="#兼容性测试" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h4>
-<p>由于两个集群版本跨度比较大，容易出乌龙。比如下面这个 DSL，在 es 5.x 和 es7.x 两个版本的搜索结果迥然不同。</p>
-<pre tabindex="0"><code>{
-  &quot;query&quot;: {
-    &quot;bool&quot; : {
-      &quot;should&quot; : [
-        { &quot;term&quot; : { &quot;tags&quot; : &quot;env1&quot; } },
-        { &quot;term&quot; : { &quot;tags&quot; : &quot;deployed&quot; } }
+</code></pre><p>可以适当调整压测参数，以及查询语句，通过比对 wrk 输出的 Avg latency 得出性能差异的结论。</p><h4 id=数据比对>数据比对<a href=#数据比对 class=hanchor arialabel=Anchor>&#8983;</a></h4><p>与性能压测类似，找一些业务常用的查询语句，分别对两个集群查询结果采样，比对搜出来的结果是否有差异，依次判断索引是否有差异。</p><p>业务数据测试的同时，还需要测试插件加载是否与老集群一致，比如 ik 的词典文件是否正常加载，通常可以使用 <a href=https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html><code>/index/_analyze</code></a> 接口来进行测试，并比对结果是否一致</p><h4 id=诡异的毛刺>诡异的毛刺<a href=#诡异的毛刺 class=hanchor arialabel=Anchor>&#8983;</a></h4><p>在将索引迁移到新集群后，性能监控发现， 搜索请求经常性的出现毛刺，而且看起来是有规律的毛刺，如果 30s 内没有 search 请求，那么下一次必然会出现一根毛刺
+<img src=/image/es_latency.png alt=es-latency></p><p>这个问题困扰了很久，排查思路如下：</p><ol><li><p>首先查看是否为 SDK 的问题，是不是客户端到 es server 的长连接断了，导致 30s 后需要重新建立长连接，调长链接时间后发现并未改善</p></li><li><p>接下来看索引的 <code>_stats</code> 信息，发现 <code>docs.deleted</code> 特别多。产生这么多 deleted 的原因可以解释，因为一个 update 操作等于一个 create + 一个 delete，创建新 doc，标记老 doc 为 deleted。但是在经过一段时间之后，merge 会把老的 segment 给合并掉，deleted 的 doc 也一并被清理了，但是这个指标却没有见变少，一直在增加，此时怀疑是 merge 流程的问题。是否 merge 未正常工作。
+<img src=/image/docs_deleted.png alt=docs.deleted></p></li><li><p>继续看索引的 <code>_stats</code> 信息，发现 <code>refresh</code> 数非常奇怪，默认 <code>refresh_interval</code> 是 1s，也就是正常情况下是每秒刷新一次，refresh.total 也就是索引创建到当前时间的秒数，而几天前创建的索引，现在却只 refresh 了800+次，那么是否跟这个没有 refresh 有关系呢？为了验证这个问题，手动跑个脚本，在后台不间断的发送 search 请求，发现开始 refresh 了，毛刺也消失了，说明问题出在了 refresh 上面，出于某些原因没有正常的执行 refresh
+<img src=/image/refresh_total.png alt=refresh.total></p></li><li><p>在一番查找之后，在 <a href=https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-refresh-interval-setting>es 文档</a> 的 <code>refresh_interval</code> 字段解释里发现这么一句话，如果没有显示的指定 <code>refresh_interval</code>，那么如果 30s 内没有 search 请求来，会跳过 refresh 步骤，直到有 search 请求来时，才会触发 refresh，并等 refresh 完之后才开始处理 search 请求。这也就能解释为什么 30s 没有搜索流量就会出现一根毛刺了。当手动给索引指定 <code>refresh_interval</code> 之后，默认行为就变得和老版本一样，不再跳过 refresh，毛刺也就消失了。在 elasticsearch 7.0 的 <a href=https://www.elastic.co/cn/blog/elasticsearch-7-0-0-released>release note</a> 里也提到了：
+<img src=/image/refresh_interval_doc.png alt=refresh.doc>
+<img src=/image/es7_release.png alt=release></p></li></ol><h4 id=兼容性测试>兼容性测试<a href=#兼容性测试 class=hanchor arialabel=Anchor>&#8983;</a></h4><p>由于两个集群版本跨度比较大，容易出乌龙。比如下面这个 DSL，在 es 5.x 和 es7.x 两个版本的搜索结果迥然不同。</p><pre tabindex=0><code>{
+  &#34;query&#34;: {
+    &#34;bool&#34; : {
+      &#34;should&#34; : [
+        { &#34;term&#34; : { &#34;tags&#34; : &#34;env1&#34; } },
+        { &#34;term&#34; : { &#34;tags&#34; : &#34;deployed&#34; } }
       ]
     }
   }
 }
-</code></pre><p>原因为：es5 bool query 只有 should 条件时，默认 <code>minimum_should_match = 1</code>，而到了 es7 里，默认值为 0 了，导致 es7 里搜出来的是全部 doc，而 es5 只会搜出符合条件的结果(<a href="https://stackoverflow.com/questions/48984706/default-value-of-minimum-should-match/49012705#49012705">default value of minimum should match</a>。对于这些差异，可以事先阅读 <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-7.0.html">breaking changes 7.0</a>，并进行相应修改。对于有不兼容或者有差异的语句，在 <em>数据比对</em> 步骤也能够测出来。</p>
-<h2 id="后记">后记<a href="#后记" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-<p>在测试通过之后，就可以下线老集群，全面切换到新集群了🎉。</p>
-<p>迁移过程中，有几个踩过的坑需要注意：</p>
-<ul>
-<li>es 7 已经废弃了 mapping type: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html">Removal of mapping types</a></li>
-<li>切词插件(ik) 结果比对，保证插件加载正常</li>
-<li>关注新版本的一些默认值改动，一些 breaking changes</li>
-</ul>
-
-      </div></div>
-
-  
-  
-<div class="pagination">
-    <div class="pagination__title">
-        <span class="pagination__title-h">其他文章</span>
-        <hr />
-    </div>
-    <div class="pagination__buttons">
-        
-        <span class="button previous">
-            <a href="https://when.run/posts/interview/">
-                <span class="button__icon">←</span>
-                <span class="button__text">面试 Checklist</span>
-            </a>
-        </span>
-        
-        
-        <span class="button next">
-            <a href="https://when.run/posts/es-terminology/">
-                <span class="button__text">Elasticsearch terminology: Index &amp; Shard &amp; Segment</span>
-                <span class="button__icon">→</span>
-            </a>
-        </span>
-        
-    </div>
-</div>
-
-  
-
-  <script src="https://utteranc.es/client.js"
-        repo="x1ah/x1ah.github.io"
-        issue-term="pathname"
-        label="Comment"
-        theme="photon-dark"
-        crossorigin="anonymous"
-        async>
-</script>
-</div>
-
-  </div>
-
-  
-    <footer class="footer">
-  <div class="footer__inner">
-    
-      <div class="copyright">
-        <span>© 2023 Powered by <a href="http://gohugo.io">Hugo</a></span>
-    
-        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
-      </div>
-  </div>
-</footer>
-
-<script src="https://when.run/assets/main.js"></script>
-<script src="https://when.run/assets/prism.js"></script>
-
-
-
-
-
-
-
-  
-</div>
-
-</body>
-</html>
+</code></pre><p>原因为：es5 bool query 只有 should 条件时，默认 <code>minimum_should_match = 1</code>，而到了 es7 里，默认值为 0 了，导致 es7 里搜出来的是全部 doc，而 es5 只会搜出符合条件的结果(<a href=https://stackoverflow.com/questions/48984706/default-value-of-minimum-should-match/49012705#49012705>default value of minimum should match</a>。对于这些差异，可以事先阅读 <a href=https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-7.0.html>breaking changes 7.0</a>，并进行相应修改。对于有不兼容或者有差异的语句，在 <em>数据比对</em> 步骤也能够测出来。</p><h2 id=后记>后记<a href=#后记 class=hanchor arialabel=Anchor>&#8983;</a></h2><p>在测试通过之后，就可以下线老集群，全面切换到新集群了🎉。</p><p>迁移过程中，有几个踩过的坑需要注意：</p><ul><li>es 7 已经废弃了 mapping type: <a href=https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html>Removal of mapping types</a></li><li>切词插件(ik) 结果比对，保证插件加载正常</li><li>关注新版本的一些默认值改动，一些 breaking changes</li></ul></div></div><div class=pagination><div class=pagination__title><span class=pagination__title-h>其他文章</span><hr></div><div class=pagination__buttons><span class="button previous"><a href=https://when.run/posts/read/><span class=button__icon>←</span>
+<span class=button__text>读书</span></a></span>
+<span class="button next"><a href=https://when.run/posts/es-terminology/><span class=button__text>Elasticsearch terminology: Index & Shard & Segment</span>
+<span class=button__icon>→</span></a></span></div></div><script src=https://utteranc.es/client.js repo=x1ah/x1ah.github.io issue-term=pathname label=Comment theme=photon-dark crossorigin=anonymous async></script></div></div><footer class=footer><div class=footer__inner><div class=copyright><span>© 2023 Powered by <a href=http://gohugo.io>Hugo</a></span>
+<span>:: Theme made by <a href=https://twitter.com/panr>panr</a></span></div></div></footer><script src=https://when.run/assets/main.js></script>
+<script src=https://when.run/assets/prism.js></script></div></body></html>

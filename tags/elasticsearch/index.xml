@@ -1,164 +1,132 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Elasticsearch on x1ah</title>
-    <link>https://when.run/tags/elasticsearch/</link>
-    <description>Recent content in Elasticsearch on x1ah</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>zh</language>
-    <lastBuildDate>Tue, 02 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://when.run/tags/elasticsearch/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x</title>
-      <link>https://when.run/posts/elasticsearch-upgrade/</link>
-      <pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://when.run/posts/elasticsearch-upgrade/</guid>
-      <description>背景 公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Elasticsearch on x1ah</title><link>https://when.run/tags/elasticsearch/</link><description>Recent content in Elasticsearch on x1ah</description><generator>Hugo -- gohugo.io</generator><language>zh</language><lastBuildDate>Tue, 02 Mar 2021 00:00:00 +0000</lastBuildDate><atom:link href="https://when.run/tags/elasticsearch/index.xml" rel="self" type="application/rss+xml"/><item><title>如何平稳的将 Elasticsearch 5.x 集群迁移到 Elasticsearch 7.x</title><link>https://when.run/posts/elasticsearch-upgrade/</link><pubDate>Tue, 02 Mar 2021 00:00:00 +0000</pubDate><guid>https://when.run/posts/elasticsearch-upgrade/</guid><description>背景 公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。
 需要升级到新版本 es 的主要原因有以下几个：
- 前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升  升级方案调研 Rolling upgrades  官方文档：rolling upgrades
- 由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 rolling upgrade 步骤，中间需要两次 rolling upgrade，分别为：
- From 5.x to 5.6 From 5.6 to 6.8 (rolling upgrade) From 6.8 to 7.x (rolling upgrade)  升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。
-新集群 &amp;amp; 新索引 除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：</description>
-      <content>&lt;h2 id=&#34;背景&#34;&gt;背景&lt;/h2&gt;
-&lt;p&gt;公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。&lt;/p&gt;
-&lt;p&gt;需要升级到新版本 es 的主要原因有以下几个：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug&lt;/li&gt;
-&lt;li&gt;Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;升级方案调研&#34;&gt;升级方案调研&lt;/h2&gt;
-&lt;h4 id=&#34;rolling-upgrades&#34;&gt;Rolling upgrades&lt;/h4&gt;
-&lt;blockquote&gt;
-&lt;p&gt;官方文档：&lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html&#34;&gt;rolling upgrades&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html&#34;&gt;rolling upgrade&lt;/a&gt; 步骤，中间需要两次 rolling upgrade，分别为：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;From 5.x to 5.6&lt;/li&gt;
-&lt;li&gt;From 5.6 to 6.8 (&lt;strong&gt;rolling upgrade&lt;/strong&gt;)&lt;/li&gt;
-&lt;li&gt;From 6.8 to 7.x (&lt;strong&gt;rolling upgrade&lt;/strong&gt;)&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。&lt;/p&gt;
-&lt;h4 id=&#34;新集群--新索引&#34;&gt;新集群 &amp;amp; 新索引&lt;/h4&gt;
-&lt;p&gt;除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;搭建新集群，尽量保持配置与老集群一致。比如如果有 ik 插件，那么需要保证 ik 的词典文件与老集群一致&lt;/li&gt;
-&lt;li&gt;新建索引。这一步的目的是方便后面的索引能够同步双写到新老两个集群。同时建索引时需要注意，es7 已经废弃了 mapping 里的 document type，mapping 不再需要指定 type 了&lt;/li&gt;
-&lt;li&gt;索引双写。第二步已经将索引在新集群中建好了，这里在业务代码中开始双写，保证新增的 document 能够与老集群的索引一致&lt;/li&gt;
-&lt;li&gt;全量索引。新增索引一致后，存量的 document 也需要一致，因此需要把存量的 doc 重新全部导入到新集群内。这一步官方提供了一个 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html#reindex-from-remote&#34;&gt;reindex from remote&lt;/a&gt;，但是实际操作后发现，reindex 后，mapping 和 settings 会有出入，并且不确定这个操作对老集群的压力大不大，因此还是决定跑下脚本人工重建&lt;/li&gt;
-&lt;li&gt;线上测试，包括性能测试、稳定性观察、数据比对等&lt;/li&gt;
-&lt;li&gt;停掉索引双写&lt;/li&gt;
-&lt;li&gt;下线老集群，全面覆盖新集群&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;测试新集群&#34;&gt;测试新集群&lt;/h2&gt;
-&lt;p&gt;新集群准备好之后，需要进行一些必要的测试，比如：性能测试、数据比对、老的查询语句兼容性测试。&lt;/p&gt;
-&lt;h4 id=&#34;性能测试&#34;&gt;性能测试&lt;/h4&gt;
-&lt;p&gt;性能测试可以挑拣一个业务代码里最常用的查询语句，然后进行压测。比如我这里使用 wrk 压测一个最简单的全文搜索&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;// dsl.lua 文件内容
-
-wrk.method = &amp;quot;GET&amp;quot;
+前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升 升级方案调研 Rolling upgrades 官方文档：rolling upgrades
+由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 rolling upgrade 步骤，中间需要两次 rolling upgrade，分别为：
+From 5.x to 5.6 From 5.6 to 6.8 (rolling upgrade) From 6.8 to 7.x (rolling upgrade) 升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。
+新集群 &amp;amp; 新索引 除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：
+搭建新集群，尽量保持配置与老集群一致。比如如果有 ik 插件，那么需要保证 ik 的词典文件与老集群一致 新建索引。这一步的目的是方便后面的索引能够同步双写到新老两个集群。同时建索引时需要注意，es7 已经废弃了 mapping 里的 document type，mapping 不再需要指定 type 了 索引双写。第二步已经将索引在新集群中建好了，这里在业务代码中开始双写，保证新增的 document 能够与老集群的索引一致 全量索引。新增索引一致后，存量的 document 也需要一致，因此需要把存量的 doc 重新全部导入到新集群内。这一步官方提供了一个 reindex from remote，但是实际操作后发现，reindex 后，mapping 和 settings 会有出入，并且不确定这个操作对老集群的压力大不大，因此还是决定跑下脚本人工重建 线上测试，包括性能测试、稳定性观察、数据比对等 停掉索引双写 下线老集群，全面覆盖新集群 测试新集群 新集群准备好之后，需要进行一些必要的测试，比如：性能测试、数据比对、老的查询语句兼容性测试。</description><content>&lt;h2 id="背景">背景&lt;/h2>
+&lt;p>公司的内容搜索业务主要基于 Elasticsearch 做的，老集群已经有五六年的历史，版本停留在了 5.6, 集群内的 document 数约有 20 亿的规模，磁盘占用不到 500 GB。&lt;/p>
+&lt;p>需要升级到新版本 es 的主要原因有以下几个：&lt;/p>
+&lt;ol>
+&lt;li>前段时间偶发性的集群故障，导致崩溃，排查发现疑似版本 bug&lt;/li>
+&lt;li>Elasticsearch 7.x 带来了一系列优化，包括性能有不小的提升&lt;/li>
+&lt;/ol>
+&lt;h2 id="升级方案调研">升级方案调研&lt;/h2>
+&lt;h4 id="rolling-upgrades">Rolling upgrades&lt;/h4>
+&lt;blockquote>
+&lt;p>官方文档：&lt;a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html">rolling upgrades&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>由于旧集群版本为 5.x ，需要升级到的版本为 7.x，中间横跨两个大版本，根据 elastic 官方建议的升级 &lt;a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html">rolling upgrade&lt;/a> 步骤，中间需要两次 rolling upgrade，分别为：&lt;/p>
+&lt;ol>
+&lt;li>From 5.x to 5.6&lt;/li>
+&lt;li>From 5.6 to 6.8 (&lt;strong>rolling upgrade&lt;/strong>)&lt;/li>
+&lt;li>From 6.8 to 7.x (&lt;strong>rolling upgrade&lt;/strong>)&lt;/li>
+&lt;/ol>
+&lt;p>升级过程中，还需要给集群设置一堆选项，这个过程看似很平滑，貌似可以做到 graceful shutdown，但是实际是不可逆的，中间任何一个步骤出错都很难立马恢复到升级前的状态。搜索服务需要高可用，而这些操作都是直接对线上集群进行操作，风险极大，一不小心可能会导致集群故障。因此这个升级方案不可行。&lt;/p>
+&lt;h4 id="新集群--新索引">新集群 &amp;amp; 新索引&lt;/h4>
+&lt;p>除了对原集群 rolling upgrade，还有一种万无一失的升级方案，那就是直接开启一个 Elasticsearch 7.x 版本的新集群，集群 ready 之后，再把老的索引重建到新集群。一切准备好之后，还可以进行压测，对比性能、数据差异，并且全程不影响服务的可用性。具体升级流程如下：&lt;/p>
+&lt;ol>
+&lt;li>搭建新集群，尽量保持配置与老集群一致。比如如果有 ik 插件，那么需要保证 ik 的词典文件与老集群一致&lt;/li>
+&lt;li>新建索引。这一步的目的是方便后面的索引能够同步双写到新老两个集群。同时建索引时需要注意，es7 已经废弃了 mapping 里的 document type，mapping 不再需要指定 type 了&lt;/li>
+&lt;li>索引双写。第二步已经将索引在新集群中建好了，这里在业务代码中开始双写，保证新增的 document 能够与老集群的索引一致&lt;/li>
+&lt;li>全量索引。新增索引一致后，存量的 document 也需要一致，因此需要把存量的 doc 重新全部导入到新集群内。这一步官方提供了一个 &lt;a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html#reindex-from-remote">reindex from remote&lt;/a>，但是实际操作后发现，reindex 后，mapping 和 settings 会有出入，并且不确定这个操作对老集群的压力大不大，因此还是决定跑下脚本人工重建&lt;/li>
+&lt;li>线上测试，包括性能测试、稳定性观察、数据比对等&lt;/li>
+&lt;li>停掉索引双写&lt;/li>
+&lt;li>下线老集群，全面覆盖新集群&lt;/li>
+&lt;/ol>
+&lt;h2 id="测试新集群">测试新集群&lt;/h2>
+&lt;p>新集群准备好之后，需要进行一些必要的测试，比如：性能测试、数据比对、老的查询语句兼容性测试。&lt;/p>
+&lt;h4 id="性能测试">性能测试&lt;/h4>
+&lt;p>性能测试可以挑拣一个业务代码里最常用的查询语句，然后进行压测。比如我这里使用 wrk 压测一个最简单的全文搜索&lt;/p>
+&lt;pre tabindex="0">&lt;code>// dsl.lua 文件内容
+wrk.method = &amp;#34;GET&amp;#34;
 wrk.body = [[{
-    &amp;quot;query&amp;quot;:{
-        &amp;quot;match&amp;quot;:{
-            &amp;quot;name&amp;quot;:{
-                &amp;quot;query&amp;quot;:&amp;quot;烘焙&amp;quot;
-            }
-        }
-    },
-    &amp;quot;size&amp;quot;:100
-}]]
-wrk.headers[&amp;quot;Content-Type&amp;quot;] = &amp;quot;application/json&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;压测命令：&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;wrk -t10 -c10 -d10s --script=dsl.lua http://elasticsearch-address:9200/you_index/_search
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;结果示例：&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Running 10s test @ http://elasticsearch-address:9200/you_index/_search
-  10 threads and 10 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     8.31ms    2.12ms  35.71ms   75.93%
-    Req/Sec   121.09     12.97   151.00     78.10%
-  12068 requests in 10.01s, 3.80GB read
-Requests/sec:   1205.70
-Transfer/sec:    388.64MB
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;可以适当调整压测参数，以及查询语句，通过比对 wrk 输出的 Avg latency 得出性能差异的结论。&lt;/p&gt;
-&lt;h4 id=&#34;数据比对&#34;&gt;数据比对&lt;/h4&gt;
-&lt;p&gt;与性能压测类似，找一些业务常用的查询语句，分别对两个集群查询结果采样，比对搜出来的结果是否有差异，依次判断索引是否有差异。&lt;/p&gt;
-&lt;p&gt;业务数据测试的同时，还需要测试插件加载是否与老集群一致，比如 ik 的词典文件是否正常加载，通常可以使用 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html&#34;&gt;&lt;code&gt;/index/_analyze&lt;/code&gt;&lt;/a&gt; 接口来进行测试，并比对结果是否一致&lt;/p&gt;
-&lt;h4 id=&#34;诡异的毛刺&#34;&gt;诡异的毛刺&lt;/h4&gt;
-&lt;p&gt;在将索引迁移到新集群后，性能监控发现， 搜索请求经常性的出现毛刺，而且看起来是有规律的毛刺，如果 30s 内没有 search 请求，那么下一次必然会出现一根毛刺
-&lt;img src=&#34;https://when.run/image/es_latency.png&#34; alt=&#34;es-latency&#34;&gt;&lt;/p&gt;
-&lt;p&gt;这个问题困扰了很久，排查思路如下：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;首先查看是否为 SDK 的问题，是不是客户端到 es server 的长连接断了，导致 30s 后需要重新建立长连接，调长链接时间后发现并未改善&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;接下来看索引的 &lt;code&gt;_stats&lt;/code&gt; 信息，发现 &lt;code&gt;docs.deleted&lt;/code&gt; 特别多。产生这么多 deleted 的原因可以解释，因为一个 update 操作等于一个 create + 一个 delete，创建新 doc，标记老 doc 为 deleted。但是在经过一段时间之后，merge 会把老的 segment 给合并掉，deleted 的 doc 也一并被清理了，但是这个指标却没有见变少，一直在增加，此时怀疑是 merge 流程的问题。是否 merge 未正常工作。
-&lt;img src=&#34;https://when.run/image/docs_deleted.png&#34; alt=&#34;docs.deleted&#34;&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;继续看索引的 &lt;code&gt;_stats&lt;/code&gt; 信息，发现 &lt;code&gt;refresh&lt;/code&gt; 数非常奇怪，默认 &lt;code&gt;refresh_interval&lt;/code&gt; 是 1s，也就是正常情况下是每秒刷新一次，refresh.total 也就是索引创建到当前时间的秒数，而几天前创建的索引，现在却只 refresh 了800+次，那么是否跟这个没有 refresh 有关系呢？为了验证这个问题，手动跑个脚本，在后台不间断的发送 search 请求，发现开始 refresh 了，毛刺也消失了，说明问题出在了 refresh 上面，出于某些原因没有正常的执行 refresh
-&lt;img src=&#34;https://when.run/image/refresh_total.png&#34; alt=&#34;refresh.total&#34;&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;在一番查找之后，在 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-refresh-interval-setting&#34;&gt;es 文档&lt;/a&gt; 的 &lt;code&gt;refresh_interval&lt;/code&gt; 字段解释里发现这么一句话，如果没有显示的指定 &lt;code&gt;refresh_interval&lt;/code&gt;，那么如果 30s 内没有 search 请求来，会跳过 refresh 步骤，直到有 search 请求来时，才会触发 refresh，并等 refresh 完之后才开始处理 search 请求。这也就能解释为什么 30s 没有搜索流量就会出现一根毛刺了。当手动给索引指定 &lt;code&gt;refresh_interval&lt;/code&gt; 之后，默认行为就变得和老版本一样，不再跳过 refresh，毛刺也就消失了。在 elasticsearch 7.0 的 &lt;a href=&#34;https://www.elastic.co/cn/blog/elasticsearch-7-0-0-released&#34;&gt;release note&lt;/a&gt; 里也提到了：
-&lt;img src=&#34;https://when.run/image/refresh_interval_doc.png&#34; alt=&#34;refresh.doc&#34;&gt;
-&lt;img src=&#34;https://when.run/image/es7_release.png&#34; alt=&#34;release&#34;&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4 id=&#34;兼容性测试&#34;&gt;兼容性测试&lt;/h4&gt;
-&lt;p&gt;由于两个集群版本跨度比较大，容易出乌龙。比如下面这个 DSL，在 es 5.x 和 es7.x 两个版本的搜索结果迥然不同。&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
-  &amp;quot;query&amp;quot;: {
-    &amp;quot;bool&amp;quot; : {
-      &amp;quot;should&amp;quot; : [
-        { &amp;quot;term&amp;quot; : { &amp;quot;tags&amp;quot; : &amp;quot;env1&amp;quot; } },
-        { &amp;quot;term&amp;quot; : { &amp;quot;tags&amp;quot; : &amp;quot;deployed&amp;quot; } }
-      ]
-    }
-  }
+&amp;#34;query&amp;#34;:{
+&amp;#34;match&amp;#34;:{
+&amp;#34;name&amp;#34;:{
+&amp;#34;query&amp;#34;:&amp;#34;烘焙&amp;#34;
 }
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;原因为：es5 bool query 只有 should 条件时，默认 &lt;code&gt;minimum_should_match = 1&lt;/code&gt;，而到了 es7 里，默认值为 0 了，导致 es7 里搜出来的是全部 doc，而 es5 只会搜出符合条件的结果(&lt;a href=&#34;https://stackoverflow.com/questions/48984706/default-value-of-minimum-should-match/49012705#49012705&#34;&gt;default value of minimum should match&lt;/a&gt;。对于这些差异，可以事先阅读 &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-7.0.html&#34;&gt;breaking changes 7.0&lt;/a&gt;，并进行相应修改。对于有不兼容或者有差异的语句，在 &lt;em&gt;数据比对&lt;/em&gt; 步骤也能够测出来。&lt;/p&gt;
-&lt;h2 id=&#34;后记&#34;&gt;后记&lt;/h2&gt;
-&lt;p&gt;在测试通过之后，就可以下线老集群，全面切换到新集群了🎉。&lt;/p&gt;
-&lt;p&gt;迁移过程中，有几个踩过的坑需要注意：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;es 7 已经废弃了 mapping type: &lt;a href=&#34;https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html&#34;&gt;Removal of mapping types&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;切词插件(ik) 结果比对，保证插件加载正常&lt;/li&gt;
-&lt;li&gt;关注新版本的一些默认值改动，一些 breaking changes&lt;/li&gt;
-&lt;/ul&gt;
-</content>
-    </item>
-    
-    <item>
-      <title>Elasticsearch terminology: Index &amp; Shard &amp; Segment</title>
-      <link>https://when.run/posts/es-terminology/</link>
-      <pubDate>Wed, 04 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://when.run/posts/es-terminology/</guid>
-      <description>References from https://stackoverflow.com/a/15429578
+}
+},
+&amp;#34;size&amp;#34;:100
+}]]
+wrk.headers[&amp;#34;Content-Type&amp;#34;] = &amp;#34;application/json&amp;#34;
+&lt;/code>&lt;/pre>&lt;p>压测命令：&lt;/p>
+&lt;pre tabindex="0">&lt;code>wrk -t10 -c10 -d10s --script=dsl.lua http://elasticsearch-address:9200/you_index/_search
+&lt;/code>&lt;/pre>&lt;p>结果示例：&lt;/p>
+&lt;pre tabindex="0">&lt;code>Running 10s test @ http://elasticsearch-address:9200/you_index/_search
+10 threads and 10 connections
+Thread Stats Avg Stdev Max +/- Stdev
+Latency 8.31ms 2.12ms 35.71ms 75.93%
+Req/Sec 121.09 12.97 151.00 78.10%
+12068 requests in 10.01s, 3.80GB read
+Requests/sec: 1205.70
+Transfer/sec: 388.64MB
+&lt;/code>&lt;/pre>&lt;p>可以适当调整压测参数，以及查询语句，通过比对 wrk 输出的 Avg latency 得出性能差异的结论。&lt;/p>
+&lt;h4 id="数据比对">数据比对&lt;/h4>
+&lt;p>与性能压测类似，找一些业务常用的查询语句，分别对两个集群查询结果采样，比对搜出来的结果是否有差异，依次判断索引是否有差异。&lt;/p>
+&lt;p>业务数据测试的同时，还需要测试插件加载是否与老集群一致，比如 ik 的词典文件是否正常加载，通常可以使用 &lt;a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html">&lt;code>/index/_analyze&lt;/code>&lt;/a> 接口来进行测试，并比对结果是否一致&lt;/p>
+&lt;h4 id="诡异的毛刺">诡异的毛刺&lt;/h4>
+&lt;p>在将索引迁移到新集群后，性能监控发现， 搜索请求经常性的出现毛刺，而且看起来是有规律的毛刺，如果 30s 内没有 search 请求，那么下一次必然会出现一根毛刺
+&lt;img src="https://when.run/image/es_latency.png" alt="es-latency">&lt;/p>
+&lt;p>这个问题困扰了很久，排查思路如下：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>首先查看是否为 SDK 的问题，是不是客户端到 es server 的长连接断了，导致 30s 后需要重新建立长连接，调长链接时间后发现并未改善&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>接下来看索引的 &lt;code>_stats&lt;/code> 信息，发现 &lt;code>docs.deleted&lt;/code> 特别多。产生这么多 deleted 的原因可以解释，因为一个 update 操作等于一个 create + 一个 delete，创建新 doc，标记老 doc 为 deleted。但是在经过一段时间之后，merge 会把老的 segment 给合并掉，deleted 的 doc 也一并被清理了，但是这个指标却没有见变少，一直在增加，此时怀疑是 merge 流程的问题。是否 merge 未正常工作。
+&lt;img src="https://when.run/image/docs_deleted.png" alt="docs.deleted">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>继续看索引的 &lt;code>_stats&lt;/code> 信息，发现 &lt;code>refresh&lt;/code> 数非常奇怪，默认 &lt;code>refresh_interval&lt;/code> 是 1s，也就是正常情况下是每秒刷新一次，refresh.total 也就是索引创建到当前时间的秒数，而几天前创建的索引，现在却只 refresh 了800+次，那么是否跟这个没有 refresh 有关系呢？为了验证这个问题，手动跑个脚本，在后台不间断的发送 search 请求，发现开始 refresh 了，毛刺也消失了，说明问题出在了 refresh 上面，出于某些原因没有正常的执行 refresh
+&lt;img src="https://when.run/image/refresh_total.png" alt="refresh.total">&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>在一番查找之后，在 &lt;a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-refresh-interval-setting">es 文档&lt;/a> 的 &lt;code>refresh_interval&lt;/code> 字段解释里发现这么一句话，如果没有显示的指定 &lt;code>refresh_interval&lt;/code>，那么如果 30s 内没有 search 请求来，会跳过 refresh 步骤，直到有 search 请求来时，才会触发 refresh，并等 refresh 完之后才开始处理 search 请求。这也就能解释为什么 30s 没有搜索流量就会出现一根毛刺了。当手动给索引指定 &lt;code>refresh_interval&lt;/code> 之后，默认行为就变得和老版本一样，不再跳过 refresh，毛刺也就消失了。在 elasticsearch 7.0 的 &lt;a href="https://www.elastic.co/cn/blog/elasticsearch-7-0-0-released">release note&lt;/a> 里也提到了：
+&lt;img src="https://when.run/image/refresh_interval_doc.png" alt="refresh.doc">
+&lt;img src="https://when.run/image/es7_release.png" alt="release">&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h4 id="兼容性测试">兼容性测试&lt;/h4>
+&lt;p>由于两个集群版本跨度比较大，容易出乌龙。比如下面这个 DSL，在 es 5.x 和 es7.x 两个版本的搜索结果迥然不同。&lt;/p>
+&lt;pre tabindex="0">&lt;code>{
+&amp;#34;query&amp;#34;: {
+&amp;#34;bool&amp;#34; : {
+&amp;#34;should&amp;#34; : [
+{ &amp;#34;term&amp;#34; : { &amp;#34;tags&amp;#34; : &amp;#34;env1&amp;#34; } },
+{ &amp;#34;term&amp;#34; : { &amp;#34;tags&amp;#34; : &amp;#34;deployed&amp;#34; } }
+]
+}
+}
+}
+&lt;/code>&lt;/pre>&lt;p>原因为：es5 bool query 只有 should 条件时，默认 &lt;code>minimum_should_match = 1&lt;/code>，而到了 es7 里，默认值为 0 了，导致 es7 里搜出来的是全部 doc，而 es5 只会搜出符合条件的结果(&lt;a href="https://stackoverflow.com/questions/48984706/default-value-of-minimum-should-match/49012705#49012705">default value of minimum should match&lt;/a>。对于这些差异，可以事先阅读 &lt;a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/breaking-changes-7.0.html">breaking changes 7.0&lt;/a>，并进行相应修改。对于有不兼容或者有差异的语句，在 &lt;em>数据比对&lt;/em> 步骤也能够测出来。&lt;/p>
+&lt;h2 id="后记">后记&lt;/h2>
+&lt;p>在测试通过之后，就可以下线老集群，全面切换到新集群了🎉。&lt;/p>
+&lt;p>迁移过程中，有几个踩过的坑需要注意：&lt;/p>
+&lt;ul>
+&lt;li>es 7 已经废弃了 mapping type: &lt;a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html">Removal of mapping types&lt;/a>&lt;/li>
+&lt;li>切词插件(ik) 结果比对，保证插件加载正常&lt;/li>
+&lt;li>关注新版本的一些默认值改动，一些 breaking changes&lt;/li>
+&lt;/ul></content></item><item><title>Elasticsearch terminology: Index &amp; Shard &amp; Segment</title><link>https://when.run/posts/es-terminology/</link><pubDate>Wed, 04 Nov 2020 00:00:00 +0000</pubDate><guid>https://when.run/posts/es-terminology/</guid><description>References from https://stackoverflow.com/a/15429578
 To explain:
 Index An &amp;ldquo;index&amp;rdquo; in Elasticsearch is a bit like a database in a relational DB. It&amp;rsquo;s where you store/index your data. But actually, that&amp;rsquo;s just what your application sees. Internally, an index is a logical namespace that points to one or more shards.
 Also, &amp;ldquo;to index&amp;rdquo; means to &amp;ldquo;put&amp;rdquo; your data into Elasticsearch. Your data is both stored (for retrieval) and &amp;ldquo;indexed&amp;rdquo; for search.
-Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure that Lucene uses to make data searchable.</description>
-      <content>&lt;p&gt;&lt;em&gt;&lt;strong&gt;References from &lt;a href=&#34;https://stackoverflow.com/a/15429578&#34;&gt;https://stackoverflow.com/a/15429578&lt;/a&gt;&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;To explain:&lt;/p&gt;
-&lt;h2 id=&#34;index&#34;&gt;Index&lt;/h2&gt;
-&lt;p&gt;An &amp;ldquo;index&amp;rdquo; in Elasticsearch is a bit like a database in a relational DB. It&amp;rsquo;s where you store/index your data. But actually, that&amp;rsquo;s just what your application sees. Internally, an index is a logical namespace that points to one or more shards.&lt;/p&gt;
-&lt;p&gt;Also, &amp;ldquo;to index&amp;rdquo; means to &amp;ldquo;put&amp;rdquo; your data into Elasticsearch. Your data is both stored (for retrieval) and &amp;ldquo;indexed&amp;rdquo; for search.&lt;/p&gt;
-&lt;h2 id=&#34;inverted-index&#34;&gt;Inverted Index&lt;/h2&gt;
-&lt;p&gt;An &amp;ldquo;inverted index&amp;rdquo; is the data structure that Lucene uses to make data searchable. It processes the data, pulls out unique terms or tokens, then records which documents contain those tokens. See &lt;a href=&#34;http://en.wikipedia.org/wiki/Inverted_index&#34;&gt;http://en.wikipedia.org/wiki/Inverted_index&lt;/a&gt; for more.&lt;/p&gt;
-&lt;h2 id=&#34;shard&#34;&gt;Shard&lt;/h2&gt;
-&lt;p&gt;A &amp;ldquo;shard&amp;rdquo; is an instance of Lucene. It is a fully functional search engine in its own right. An &amp;ldquo;index&amp;rdquo; could consist of a single shard, but generally consists of several shards, to allow the index to grow and to be split over several machines.&lt;/p&gt;
-&lt;p&gt;A &amp;ldquo;primary shard&amp;rdquo; is the main home for a document. A &amp;ldquo;replica shard&amp;rdquo; is a copy of the primary shard that provides (1) failover in case the primary dies and (2) increased read throughput&lt;/p&gt;
-&lt;h2 id=&#34;segment&#34;&gt;Segment&lt;/h2&gt;
-&lt;p&gt;Each shard contains multiple &amp;ldquo;segments&amp;rdquo;, where a segment is an inverted index. A search in a shard will search each segment in turn, then combine their results into the final results for that shard.&lt;/p&gt;
-&lt;p&gt;While you are indexing documents, Elasticsearch collects them in memory (and in the transaction log, for safety) then every second or so, writes a new small segment to disk, and &amp;ldquo;refreshes&amp;rdquo; the search.&lt;/p&gt;
-&lt;p&gt;This makes the data in the new segment visible to search (ie they are &amp;ldquo;searchable&amp;rdquo;), but the segment has not been fsync&amp;rsquo;ed to disk, so is still at risk of data loss.&lt;/p&gt;
-&lt;p&gt;Every so often, Elasticsearch will &amp;ldquo;flush&amp;rdquo;, which means fsync&amp;rsquo;ing the segments, (they are now &amp;ldquo;committed&amp;rdquo;) and clearing out the transaction log, which is no longer needed because we know that the new data has been written to disk.&lt;/p&gt;
-&lt;p&gt;The more segments there are, the longer each search takes. So Elasticsearch will merge a number of segments of a similar size (&amp;ldquo;tier&amp;rdquo;) into a single bigger segment, through a background merge process. Once the new bigger segment is written, the old segments are dropped. This process is repeated on the bigger segments when there are too many of the same size.&lt;/p&gt;
-&lt;p&gt;Segments are immutable. When a document is updated, it actually just marks the old document as deleted, and indexes a new document. The merge process also expunges these old deleted documents.&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;&lt;strong&gt;References from &lt;a href=&#34;https://stackoverflow.com/a/15429578&#34;&gt;https://stackoverflow.com/a/15429578&lt;/a&gt;&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
-</content>
-    </item>
-    
-  </channel>
-</rss>
+Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure that Lucene uses to make data searchable.</description><content>&lt;p>&lt;em>&lt;strong>References from &lt;a href="https://stackoverflow.com/a/15429578">https://stackoverflow.com/a/15429578&lt;/a>&lt;/strong>&lt;/em>&lt;/p>
+&lt;p>To explain:&lt;/p>
+&lt;h2 id="index">Index&lt;/h2>
+&lt;p>An &amp;ldquo;index&amp;rdquo; in Elasticsearch is a bit like a database in a relational DB. It&amp;rsquo;s where you store/index your data. But actually, that&amp;rsquo;s just what your application sees. Internally, an index is a logical namespace that points to one or more shards.&lt;/p>
+&lt;p>Also, &amp;ldquo;to index&amp;rdquo; means to &amp;ldquo;put&amp;rdquo; your data into Elasticsearch. Your data is both stored (for retrieval) and &amp;ldquo;indexed&amp;rdquo; for search.&lt;/p>
+&lt;h2 id="inverted-index">Inverted Index&lt;/h2>
+&lt;p>An &amp;ldquo;inverted index&amp;rdquo; is the data structure that Lucene uses to make data searchable. It processes the data, pulls out unique terms or tokens, then records which documents contain those tokens. See &lt;a href="http://en.wikipedia.org/wiki/Inverted_index">http://en.wikipedia.org/wiki/Inverted_index&lt;/a> for more.&lt;/p>
+&lt;h2 id="shard">Shard&lt;/h2>
+&lt;p>A &amp;ldquo;shard&amp;rdquo; is an instance of Lucene. It is a fully functional search engine in its own right. An &amp;ldquo;index&amp;rdquo; could consist of a single shard, but generally consists of several shards, to allow the index to grow and to be split over several machines.&lt;/p>
+&lt;p>A &amp;ldquo;primary shard&amp;rdquo; is the main home for a document. A &amp;ldquo;replica shard&amp;rdquo; is a copy of the primary shard that provides (1) failover in case the primary dies and (2) increased read throughput&lt;/p>
+&lt;h2 id="segment">Segment&lt;/h2>
+&lt;p>Each shard contains multiple &amp;ldquo;segments&amp;rdquo;, where a segment is an inverted index. A search in a shard will search each segment in turn, then combine their results into the final results for that shard.&lt;/p>
+&lt;p>While you are indexing documents, Elasticsearch collects them in memory (and in the transaction log, for safety) then every second or so, writes a new small segment to disk, and &amp;ldquo;refreshes&amp;rdquo; the search.&lt;/p>
+&lt;p>This makes the data in the new segment visible to search (ie they are &amp;ldquo;searchable&amp;rdquo;), but the segment has not been fsync&amp;rsquo;ed to disk, so is still at risk of data loss.&lt;/p>
+&lt;p>Every so often, Elasticsearch will &amp;ldquo;flush&amp;rdquo;, which means fsync&amp;rsquo;ing the segments, (they are now &amp;ldquo;committed&amp;rdquo;) and clearing out the transaction log, which is no longer needed because we know that the new data has been written to disk.&lt;/p>
+&lt;p>The more segments there are, the longer each search takes. So Elasticsearch will merge a number of segments of a similar size (&amp;ldquo;tier&amp;rdquo;) into a single bigger segment, through a background merge process. Once the new bigger segment is written, the old segments are dropped. This process is repeated on the bigger segments when there are too many of the same size.&lt;/p>
+&lt;p>Segments are immutable. When a document is updated, it actually just marks the old document as deleted, and indexes a new document. The merge process also expunges these old deleted documents.&lt;/p>
+&lt;p>&lt;em>&lt;strong>References from &lt;a href="https://stackoverflow.com/a/15429578">https://stackoverflow.com/a/15429578&lt;/a>&lt;/strong>&lt;/em>&lt;/p></content></item></channel></rss>
