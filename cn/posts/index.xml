@@ -230,7 +230,7 @@ Transfer/sec: 388.64MB
 &lt;p>业务数据测试的同时，还需要测试插件加载是否与老集群一致，比如 ik 的词典文件是否正常加载，通常可以使用 &lt;a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html">&lt;code>/index/_analyze&lt;/code>&lt;/a> 接口来进行测试，并比对结果是否一致&lt;/p>
 &lt;h4 id="诡异的毛刺">诡异的毛刺&lt;/h4>
 &lt;p>在将索引迁移到新集群后，性能监控发现， 搜索请求经常性的出现毛刺，而且看起来是有规律的毛刺，如果 30s 内没有 search 请求，那么下一次必然会出现一根毛刺
-&lt;img src="https://when.run/image/es_latency.png" alt="es-latency">&lt;/p>
+&lt;img alt="es-latency" src="https://when.run/image/es_latency.png">&lt;/p>
 &lt;p>这个问题困扰了很久，排查思路如下：&lt;/p>
 &lt;ol>
 &lt;li>
@@ -238,16 +238,16 @@ Transfer/sec: 388.64MB
 &lt;/li>
 &lt;li>
 &lt;p>接下来看索引的 &lt;code>_stats&lt;/code> 信息，发现 &lt;code>docs.deleted&lt;/code> 特别多。产生这么多 deleted 的原因可以解释，因为一个 update 操作等于一个 create + 一个 delete，创建新 doc，标记老 doc 为 deleted。但是在经过一段时间之后，merge 会把老的 segment 给合并掉，deleted 的 doc 也一并被清理了，但是这个指标却没有见变少，一直在增加，此时怀疑是 merge 流程的问题。是否 merge 未正常工作。
-&lt;img src="https://when.run/image/docs_deleted.png" alt="docs.deleted">&lt;/p>
+&lt;img alt="docs.deleted" src="https://when.run/image/docs_deleted.png">&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>继续看索引的 &lt;code>_stats&lt;/code> 信息，发现 &lt;code>refresh&lt;/code> 数非常奇怪，默认 &lt;code>refresh_interval&lt;/code> 是 1s，也就是正常情况下是每秒刷新一次，refresh.total 也就是索引创建到当前时间的秒数，而几天前创建的索引，现在却只 refresh 了800+次，那么是否跟这个没有 refresh 有关系呢？为了验证这个问题，手动跑个脚本，在后台不间断的发送 search 请求，发现开始 refresh 了，毛刺也消失了，说明问题出在了 refresh 上面，出于某些原因没有正常的执行 refresh
-&lt;img src="https://when.run/image/refresh_total.png" alt="refresh.total">&lt;/p>
+&lt;img alt="refresh.total" src="https://when.run/image/refresh_total.png">&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>在一番查找之后，在 &lt;a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-refresh-interval-setting">es 文档&lt;/a> 的 &lt;code>refresh_interval&lt;/code> 字段解释里发现这么一句话，如果没有显示的指定 &lt;code>refresh_interval&lt;/code>，那么如果 30s 内没有 search 请求来，会跳过 refresh 步骤，直到有 search 请求来时，才会触发 refresh，并等 refresh 完之后才开始处理 search 请求。这也就能解释为什么 30s 没有搜索流量就会出现一根毛刺了。当手动给索引指定 &lt;code>refresh_interval&lt;/code> 之后，默认行为就变得和老版本一样，不再跳过 refresh，毛刺也就消失了。在 elasticsearch 7.0 的 &lt;a href="https://www.elastic.co/cn/blog/elasticsearch-7-0-0-released">release note&lt;/a> 里也提到了：
-&lt;img src="https://when.run/image/refresh_interval_doc.png" alt="refresh.doc">
-&lt;img src="https://when.run/image/es7_release.png" alt="release">&lt;/p>
+&lt;img alt="refresh.doc" src="https://when.run/image/refresh_interval_doc.png">
+&lt;img alt="release" src="https://when.run/image/es7_release.png">&lt;/p>
 &lt;/li>
 &lt;/ol>
 &lt;h4 id="兼容性测试">兼容性测试&lt;/h4>
@@ -417,7 +417,7 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
 &lt;p>通信双方任何时候都能相互通信。并且都有发送缓存、接受缓存。&lt;/p>
 &lt;h3 id="面向字节流">面向字节流&lt;/h3>
 &lt;p>虽然应用层和 TCP 的交互是一次一个数据块（大小不等），但是 TCP 把这些数据看成仅仅是一连串的无结构字节流。TCP 并不知道所传送的字节流的含义。传输过程如下：&lt;/p>
-&lt;p>&lt;img src="https://when.run/image/tcp_stream.jpg" alt="tcp 面向流的概念">&lt;/p>
+&lt;p>&lt;img alt="tcp 面向流的概念" src="https://when.run/image/tcp_stream.jpg">&lt;/p>
 &lt;p>这里看到，应用层发送其实不是同步发送的，而只是把数据拷到 TCP 发送缓存里，而下一步如何发送，如何把数据切成报文段，都与应用层无关了。&lt;/p>
 &lt;p>基于这个字节流传输概念，对于偶尔能听到的 “黏包” 概念也能较为直接的解释。因为 TCP 并没有包的概念，因此自然也就不存在 “黏包” &lt;a href="https://draveness.me/whys-the-design-tcp-message-frame/">为什么 TCP 协议有粘包问题&lt;/a>。&amp;ldquo;黏包&amp;rdquo; 误解的原因是：&amp;ldquo;应用层协议没有使用基于长度或者基于终结符的消息边界，导致多个消息的粘连&amp;rdquo;&lt;/p>
 &lt;h2 id="报文段字节流">报文段、字节流&lt;/h2>
@@ -504,7 +504,7 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
 系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：
 初始时，所有进程的时钟都为 0 进程每次处理一个内部事件，其逻辑时钟加 1 每次发送消息，其逻辑时钟加 1，并且将其向量时钟一起发送 每次收到消息，其逻辑时钟加 1，并更新本地时钟，逻辑时钟的值为本地时钟里值的最大值 每个进程维护的所有逻辑时钟为一个向量时钟。假设进程 A 向量时钟如下：
 +----+ |A:0 | |B:3 | ===&amp;gt; 这个整体称为 A 的 &amp;#34;向量时钟&amp;#34;，其中，A:0 为 A 的逻辑时钟 |C:5 | +----+ 因果关系判断规则 如果时钟 V1 的每个逻辑时钟值都比时钟 V2 大，那么称 V1 比 V2 先发生。如： V1: [A:2,B:4,C:2] 与 V2: [A:1,B:2,C:1] 如果不满足条件 1), 即有的值 V1 比 V2 大，有的 V2 比 V1 大，那么看做两个事件同时发生 应用 向量时钟通常用于检测 replication 之间的数据冲突。例如 Dynamo: Data Versioning With DynamoDB。</description><content>&lt;h2 id="向量时钟vector-clock">向量时钟(Vector Clock)&lt;/h2>
-&lt;p>向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：&lt;img src="https://i.imgur.com/0XRtT9o.png" alt="Imgur">&lt;/p>
+&lt;p>向量时钟是在分布式系统中检测事件因果关系的一种算法。如图：&lt;img alt="Imgur" src="https://i.imgur.com/0XRtT9o.png">&lt;/p>
 &lt;p>系统中有 ABC 三个进程，每个进程都维护自己的一个向量时钟，时钟的规则如下：&lt;/p>
 &lt;ol>
 &lt;li>初始时，所有进程的时钟都为 0&lt;/li>
@@ -573,7 +573,7 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
 &lt;li>服务端请求排队，请求到达了不即时返回，而是塞进队列里，FIFO 方式进行处理，然后异步通知客户端（体验不好，用户无法实时收到反馈）&lt;/li>
 &lt;li>分层校验，保证落到数据库的请求都是有效请求&lt;/li>
 &lt;/ul>
-&lt;p>&lt;img src="https://i.imgur.com/fb7F5UO.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://i.imgur.com/fb7F5UO.png">&lt;/p>
 &lt;hr>
 &lt;h1 id="减库存">减库存&lt;/h1>
 &lt;p>减库存是最关键的一个逻辑，需要保证高并发的情况下，不会发生超售。常用的有三种减库存方案：&lt;/p>
@@ -590,7 +590,7 @@ Inverted Index An &amp;ldquo;inverted index&amp;rdquo; is the data structure tha
 &lt;li>限流：在事先进行压力测试时，预估一个最高 QPS，并将其设为阈值，到达这个阈值之后，其他请求扔队列或者直接丢弃&lt;/li>
 &lt;li>拒绝服务：最坏的情况，达到某个临界点（CPU 90%）直接拒绝服务，保护服务，等负载下降之后恢复，避免被直接长时间拖垮。&lt;/li>
 &lt;/ul>
-&lt;p>&lt;img src="https://i.imgur.com/vRlVzqW.png" alt="">&lt;/p></content></item><item><title> 如何开发 Flask 扩展</title><link>https://when.run/cn/posts/flask-extensions/</link><pubDate>Sat, 28 Oct 2017 00:00:00 +0000</pubDate><guid>https://when.run/cn/posts/flask-extensions/</guid><description>假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python + Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。
+&lt;p>&lt;img src="https://i.imgur.com/vRlVzqW.png">&lt;/p></content></item><item><title> 如何开发 Flask 扩展</title><link>https://when.run/cn/posts/flask-extensions/</link><pubDate>Sat, 28 Oct 2017 00:00:00 +0000</pubDate><guid>https://when.run/cn/posts/flask-extensions/</guid><description>假设我是一个接口贩子，专门提供各种各样的 API 给我的客户们，主要这些 API 后端是用 Python + Flask 实现的。我需要管理和监控我的这些 API 们，看看哪些更受欢迎，哪些响应慢，哪些需要改进，于是我想给我的后端服务做个 Dashboard，能看到上面那些数据，并且想把这个东西抽象出来，以后我还能卖其他 API，还能用在我的其他项目上，于是乎打算做成一个插件。
 先假装有一个存数据的客户端，👇
 class APIDogClient: &amp;#39;&amp;#39;&amp;#39;APIDog: 收集接口服务的各种信息，请求耗时，请求路径，请求 IP 等等等等&amp;#39;&amp;#39;&amp;#39; def __init__(self, secret_key): self.host = &amp;#39;x.x.x.x&amp;#39; # 假装我有一些配置需要初始化 self.port = &amp;#39;xxx&amp;#39; self.secret_key = secret_key self.secret_id = &amp;#39;xxx&amp;#39; self.bucket = [] def storge(self, data): # clean data self.bucket.append(data) 现在可以开始着手插件了，给插件取名为 flask-APIDog，第一代打算收集每次请求的路径，每个请求的耗时，每次请求的 IP。每次请求都这些数据一起发送到我的 APIDog 服务端存起来，并展示到 Dashboard 上。
 import time from flask import Flask, request, current_app try: from flask import _app_ctx_stack as stack except ImportError: from flask import _request_ctx_stack as stack class APIDog: &amp;#39;&amp;#39;&amp;#39;Flask-APIDog extendsion&amp;#39;&amp;#39;&amp;#39; def __init__(self, app=None): self.</description><content>&lt;blockquote>

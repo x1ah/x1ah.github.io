@@ -47,7 +47,7 @@
 &lt;li>服务端请求排队，请求到达了不即时返回，而是塞进队列里，FIFO 方式进行处理，然后异步通知客户端（体验不好，用户无法实时收到反馈）&lt;/li>
 &lt;li>分层校验，保证落到数据库的请求都是有效请求&lt;/li>
 &lt;/ul>
-&lt;p>&lt;img src="https://i.imgur.com/fb7F5UO.png" alt="">&lt;/p>
+&lt;p>&lt;img src="https://i.imgur.com/fb7F5UO.png">&lt;/p>
 &lt;hr>
 &lt;h1 id="减库存">减库存&lt;/h1>
 &lt;p>减库存是最关键的一个逻辑，需要保证高并发的情况下，不会发生超售。常用的有三种减库存方案：&lt;/p>
@@ -64,4 +64,4 @@
 &lt;li>限流：在事先进行压力测试时，预估一个最高 QPS，并将其设为阈值，到达这个阈值之后，其他请求扔队列或者直接丢弃&lt;/li>
 &lt;li>拒绝服务：最坏的情况，达到某个临界点（CPU 90%）直接拒绝服务，保护服务，等负载下降之后恢复，避免被直接长时间拖垮。&lt;/li>
 &lt;/ul>
-&lt;p>&lt;img src="https://i.imgur.com/vRlVzqW.png" alt="">&lt;/p></content></item></channel></rss>
+&lt;p>&lt;img src="https://i.imgur.com/vRlVzqW.png">&lt;/p></content></item></channel></rss>

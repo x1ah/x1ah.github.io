@@ -18,7 +18,7 @@
 &lt;p>通信双方任何时候都能相互通信。并且都有发送缓存、接受缓存。&lt;/p>
 &lt;h3 id="面向字节流">面向字节流&lt;/h3>
 &lt;p>虽然应用层和 TCP 的交互是一次一个数据块（大小不等），但是 TCP 把这些数据看成仅仅是一连串的无结构字节流。TCP 并不知道所传送的字节流的含义。传输过程如下：&lt;/p>
-&lt;p>&lt;img src="https://when.run/image/tcp_stream.jpg" alt="tcp 面向流的概念">&lt;/p>
+&lt;p>&lt;img alt="tcp 面向流的概念" src="https://when.run/image/tcp_stream.jpg">&lt;/p>
 &lt;p>这里看到，应用层发送其实不是同步发送的，而只是把数据拷到 TCP 发送缓存里，而下一步如何发送，如何把数据切成报文段，都与应用层无关了。&lt;/p>
 &lt;p>基于这个字节流传输概念，对于偶尔能听到的 “黏包” 概念也能较为直接的解释。因为 TCP 并没有包的概念，因此自然也就不存在 “黏包” &lt;a href="https://draveness.me/whys-the-design-tcp-message-frame/">为什么 TCP 协议有粘包问题&lt;/a>。&amp;ldquo;黏包&amp;rdquo; 误解的原因是：&amp;ldquo;应用层协议没有使用基于长度或者基于终结符的消息边界，导致多个消息的粘连&amp;rdquo;&lt;/p>
 &lt;h2 id="报文段字节流">报文段、字节流&lt;/h2>
