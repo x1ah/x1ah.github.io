@@ -1,7 +1,33 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on x1ah</title><link>https://when.run/cn/tags/python/</link><description>Recent content in Python on x1ah</description><generator>Hugo -- gohugo.io</generator><language>cn</language><lastBuildDate>Tue, 12 Nov 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://when.run/cn/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Python2 迁移到 Python3 规划和实施</title><link>https://when.run/cn/posts/python2-to-python3/</link><pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate><guid>https://when.run/cn/posts/python2-to-python3/</guid><description>前期规划 在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：
-主项目（主要的项目，承担了主要的日常开发任务以及业务需求） 其他服务（为主项目服务的各个服务，如支付、IM、广告等） 依赖库，依赖又包括： 公司内部基础组件 第三方依赖 在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，其他服务 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：
-排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本 排查公司内部基础组件库，测试，兼容适配 Python2/Python3 进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。 在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 pre-commit 对每个 commit 进行检查，使用 pylint 进行兼容性检查，配置如下：
-# .pre-commit-config.yaml - repo: https://github.com/xiachufang/mirrors-pylint rev: v1.9.2 hooks: - id: pylint args: - --py3k - --score=n 迁移中 迁移办法一般是先排查关键字，如 iteritems/itervalues/xrange 等，这些可以全部使用 six 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 futurize 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 Cheat Sheet: Writing Python 2-3 compatible code 来做对照，进行修改代码。</description><content>&lt;h2 id="前期规划">前期规划&lt;/h2>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Python on x1ah</title><link>https://when.run/cn/tags/python/</link><description>Recent content in Python on x1ah</description><generator>Hugo -- gohugo.io</generator><language>cn</language><lastBuildDate>Tue, 12 Nov 2019 00:00:00 +0000</lastBuildDate><atom:link href="https://when.run/cn/tags/python/index.xml" rel="self" type="application/rss+xml"/><item><title>Python2 迁移到 Python3 规划和实施</title><link>https://when.run/cn/posts/python2-to-python3/</link><pubDate>Tue, 12 Nov 2019 00:00:00 +0000</pubDate><guid>https://when.run/cn/posts/python2-to-python3/</guid><description>&lt;h2 id="前期规划">前期规划&lt;/h2>
+&lt;p>在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：&lt;/p>
+&lt;ul>
+&lt;li>主项目（主要的项目，承担了主要的日常开发任务以及业务需求）&lt;/li>
+&lt;li>其他服务（为主项目服务的各个服务，如支付、IM、广告等）&lt;/li>
+&lt;li>依赖库，依赖又包括：
+&lt;ul>
+&lt;li>公司内部基础组件&lt;/li>
+&lt;li>第三方依赖&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;p>在列出所有的 &amp;ldquo;代码清单&amp;rdquo; 后，需要有个先后顺序，来逐步的进行迁移。首先上面提到的三个大点中，&lt;strong>其他服务&lt;/strong> 其实优先级并不高，因为日常不怎么会开发，处于维护状态。因此保持正常运行即可，优先进行其他两项的迁移。而依赖库处处在引用，不提前进行 Python3 适配其他工作将无法进行。因此适配顺序如下：&lt;/p>
+&lt;ol>
+&lt;li>排查第三方依赖库，测试，升级到兼容 Python2/Python3 的版本&lt;/li>
+&lt;li>排查公司内部基础组件库，测试，兼容适配 Python2/Python3&lt;/li>
+&lt;li>进行主项目的代码层面适配，使用工具和一些库进行 2 和 3 的适配，使现有代码能同时在 2 和 3 下面跑。增加 py3 环境的单元测试。&lt;/li>
+&lt;/ol>
+&lt;p>在一切开始之前，还需要保证日常新加的代码不再引入不兼容的代码，因此应该提前使用 &lt;a href="https://pre-commit.com/">pre-commit&lt;/a> 对每个 commit 进行检查，使用 &lt;a href="https://github.com/pycqa/pylint">pylint&lt;/a> 进行兼容性检查，配置如下：&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># .pre-commit-config.yaml&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>- repo: https://github.com/xiachufang/mirrors-pylint
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> rev: v1.9.2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> hooks:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - id: pylint
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> args:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --py3k
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --score&lt;span style="color:#f92672">=&lt;/span>n
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="迁移中">迁移中&lt;/h2>
+&lt;p>迁移办法一般是先排查关键字，如 &lt;code>iteritems&lt;/code>/&lt;code>itervalues&lt;/code>/&lt;code>xrange&lt;/code> 等，这些可以全部使用 &lt;a href="https://six.readthedocs.io/">six&lt;/a> 相应方法直接替换。 除此之外，应该给单元测试增加 Python3 环境，这样首先保证单元测试能在 Python3 下跑通，在调通单元测试之后，如果测试覆盖率高，那么基本已经改完很大一部分代码了。在给代码做适配是，可以使用 &lt;a href="http://python-future.org/index.html">futurize&lt;/a> 来自动修改一些代码，减少一些重复工作。并且可以参考 futurize 的 &lt;a href="http://python-future.org/compatible_idioms.html">Cheat Sheet: Writing Python 2-3 compatible code&lt;/a> 来做对照，进行修改代码。&lt;/p></description><content>&lt;h2 id="前期规划">前期规划&lt;/h2>
 &lt;p>在开始迁移前，需要大致盘点一下都会有哪些工作量，哪些代码需要做兼容，哪些服务需要做迁移。前期可以大概分成一下几部分：&lt;/p>
 &lt;ul>
 &lt;li>主项目（主要的项目，承担了主要的日常开发任务以及业务需求）&lt;/li>
@@ -57,11 +83,50 @@
 &lt;/ol>
 &lt;h2 id="迁移后工作">迁移后工作&lt;/h2>
 &lt;p>全部迁移完成后，自然会给代码加上 type hint，前期可以使用 pre-commit 增加 mypy 类型检查，并且只检查改动到的文件。与此同时，使用 &lt;a href="https://github.com/Instagram/MonkeyType">MonkeyType&lt;/a> 收集类型，自动添加一部分，减少工作量。&lt;/p>
-&lt;p>至此，迁移工作已经全部完成。&lt;/p></content></item><item><title>Python 面试题整理[实习]</title><link>https://when.run/cn/posts/python-interview/</link><pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate><guid>https://when.run/cn/posts/python-interview/</guid><description>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）
-Python 语法 说说你平时 Python 都用哪些库
-== 和 is 区别。
-== 是比较两对象的值，is 是比较在内存中的地址(id)， is 相当于 id(objx) == id(objy)。 深拷贝和浅拷贝。
-# 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]` # 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷 # 贝对象的所有层级对象，也就是一个真正意义上的拷贝。 &amp;gt;&amp;gt;&amp;gt; from copy import copy, deepcopy &amp;gt;&amp;gt;&amp;gt; lst = [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; a, b = copy(lst), deepcopy(lst) &amp;gt;&amp;gt;&amp;gt; a, b ([1, 2, [3, 4]], [1, 2, [3, 4]]) &amp;gt;&amp;gt;&amp;gt; id(lst[2]), id(a[2]), id(b[2]) (139842737414224, 139842737414224, 139842737414584) &amp;gt;&amp;gt;&amp;gt; lst[0] = 10 &amp;gt;&amp;gt;&amp;gt; a [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] &amp;gt;&amp;gt;&amp;gt; lst[2][0] = &amp;#39;test&amp;#39; &amp;gt;&amp;gt;&amp;gt; lst [10, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; a [1, 2, [&amp;#39;test&amp;#39;, 4]] &amp;gt;&amp;gt;&amp;gt; b [1, 2, [3, 4]] __init__ 和 __new__。</description><content>&lt;blockquote>
+&lt;p>至此，迁移工作已经全部完成。&lt;/p></content></item><item><title>Python 面试题整理[实习]</title><link>https://when.run/cn/posts/python-interview/</link><pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate><guid>https://when.run/cn/posts/python-interview/</guid><description>&lt;blockquote>
+&lt;p>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）&lt;/p>
+&lt;/blockquote>
+&lt;h1 id="python-语法">Python 语法&lt;/h1>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;em>说说你平时 Python 都用哪些库&lt;/em>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>==&lt;/code> 和 &lt;code>is&lt;/code> 区别。&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>==&lt;/code> 是比较两对象的值，&lt;code>is&lt;/code> 是比较在内存中的地址(id)， &lt;code>is&lt;/code> 相当于 &lt;code>id(objx) == id(objy)&lt;/code>。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;em>深拷贝和浅拷贝。&lt;/em>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 浅拷贝操作只会拷贝被拷贝对象的第一层对象，对于更深层级的只不过是拷贝其引用，如下例中 `a[2]`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 和 `lst[2]` 这两个对象为第二层，实际上浅拷贝之后，这两个还是一个对象。深拷贝会完全的拷贝被拷&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 贝对象的所有层级对象，也就是一个真正意义上的拷贝。&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> &lt;span style="color:#f92672">from&lt;/span> copy &lt;span style="color:#f92672">import&lt;/span> copy, deepcopy
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> lst &lt;span style="color:#f92672">=&lt;/span> [&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, [&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> a, b &lt;span style="color:#f92672">=&lt;/span> copy(lst), deepcopy(lst)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> a, b
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>([&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, [&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>]], [&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, [&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>]])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> id(lst[&lt;span style="color:#ae81ff">2&lt;/span>]), id(a[&lt;span style="color:#ae81ff">2&lt;/span>]), id(b[&lt;span style="color:#ae81ff">2&lt;/span>])
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(&lt;span style="color:#ae81ff">139842737414224&lt;/span>, &lt;span style="color:#ae81ff">139842737414224&lt;/span>, &lt;span style="color:#ae81ff">139842737414584&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> lst[&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> a
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>[&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, [&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> b
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>[&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, [&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> lst[&lt;span style="color:#ae81ff">2&lt;/span>][&lt;span style="color:#ae81ff">0&lt;/span>] &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#39;test&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> lst
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>[&lt;span style="color:#ae81ff">10&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, [&lt;span style="color:#e6db74">&amp;#39;test&amp;#39;&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> a
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>[&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, [&lt;span style="color:#e6db74">&amp;#39;test&amp;#39;&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>]]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;gt;&amp;gt;&amp;gt;&lt;/span> b
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>[&lt;span style="color:#ae81ff">1&lt;/span>, &lt;span style="color:#ae81ff">2&lt;/span>, [&lt;span style="color:#ae81ff">3&lt;/span>, &lt;span style="color:#ae81ff">4&lt;/span>]]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;ul>
+&lt;li>
+&lt;p>&lt;code>__init__&lt;/code> 和 &lt;code>__new__&lt;/code>。&lt;/p></description><content>&lt;blockquote>
 &lt;p>下面的内容均为最近几周找 Python 实习遇见的各种面试题，记录备用。其中有 bat 之类大厂也有十几个人的初创公司～（斜体的为遇见两次以上的。）&lt;/p>
 &lt;/blockquote>
 &lt;h1 id="python-语法">Python 语法&lt;/h1>
@@ -613,7 +678,7 @@ Python 语法 说说你平时 Python 都用哪些库
 &lt;h1 id="编程题">编程题&lt;/h1>
 &lt;ul>
 &lt;li>手写二分查找，&lt;em>快速排序&lt;/em>。&lt;/li>
-&lt;li>~还有一个 SQL 语句的，一条 SQL 语句打印某张表某个 group count TOP 5。~&lt;/li>
+&lt;li>&lt;del>还有一个 SQL 语句的，一条 SQL 语句打印某张表某个 group count TOP 5。&lt;/del>&lt;/li>
 &lt;li>Python 中正则模块 &lt;code>re&lt;/code> 里 &lt;code>match&lt;/code> 函数 和 &lt;code>search&lt;/code> 函数有什么区别？举例说明。&lt;/li>
 &lt;li>一条语句求 0 - 999999 内能被 7 整除的所有数的和。&lt;/li>
 &lt;li>实现一个链表结构，要求其插入第一个节点，删除最后一个节点的复杂度为 O(1)。&lt;/li>
