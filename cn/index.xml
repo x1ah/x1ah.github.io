@@ -180,7 +180,7 @@
 &lt;li>定义：精益方法论是一种旨在通过消除浪费和优化流程来提高效率和效果的管理哲学。&lt;/li>
 &lt;li>使用场景：流程改进、成本控制。&lt;/li>
 &lt;li>分类：流程改进。&lt;/li>
-&lt;/ul></content></item><item><title>枷锁</title><link>https://when.run/cn/posts/working-hard/</link><pubDate>Thu, 03 Oct 2024 10:09:02 +0800</pubDate><guid>https://when.run/cn/posts/working-hard/</guid><description>&lt;h2 id="起因">起因&lt;/h2>
+&lt;/ul></content></item><item><title>枷锁</title><link>https://when.run/cn/archived/working-hard/</link><pubDate>Thu, 03 Oct 2024 10:09:02 +0800</pubDate><guid>https://when.run/cn/archived/working-hard/</guid><description>&lt;h2 id="起因">起因&lt;/h2>
 &lt;p>在普天同庆的国庆长假第一天，跟 xx 约好去福田国际车展逛一逛，下午 2 点出发刚上地铁没多久，突然看到一个 Oncall，用户表示很紧急，因此产研团队也紧急配合排查。&lt;/p>
 &lt;p>经过一通排查（此处忽略地铁上开了一路的会议、车展活动现场蹲角落开会的心酸经历），最终定位到是 9 月中旬上线的一个功能带来的 Bug，直到今天才出现第一例用户反馈。&lt;/p>
 &lt;h2 id="经过">经过&lt;/h2>
